@@ -14,12 +14,17 @@ export const metadata: Metadata = {
   title: 'Relocator — Find your ideal country',
   description:
     'Set your priorities. See your ranking. Backed by 10 validated data sources.',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocateindex.com'),
   openGraph: {
     title: 'Relocator — Find your ideal country',
     description:
       'Rank 40 countries across 10 data-driven dimensions. Set your priorities. See your ranking.',
     type: 'website',
     siteName: 'Relocator',
+    url: '/',
+  },
+  alternates: {
+    canonical: '/',
   },
 };
 

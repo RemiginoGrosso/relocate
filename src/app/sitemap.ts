@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { fetchAllCountryScores } from '@/lib/supabase';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocator.netlify.app';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocateindex.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const countries = await fetchAllCountryScores();

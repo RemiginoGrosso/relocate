@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { normaliseWeights, computeComposite, rankCountries, getScoreTier, computeClimateScore } from '../scoring';
+import { normaliseWeights, computeComposite, rankCountries, getScoreTier, computeClimateScore, applyClimatePreference } from '../scoring';
 import { minMaxNormalise, rankToScore, pisaAcademicNormalise, gpiNormalise, pewNormalise } from '../normalisation';
-import { DEFAULT_WEIGHTS } from '../constants';
+import { DEFAULT_WEIGHTS, CLIMATE_PROFILES } from '../constants';
 import type { CountryScores, UserWeights, DimensionKey } from '../types';
 
 function makeCountry(
@@ -193,6 +193,55 @@ describe('computeClimateScore', () => {
 
   it('returns null for null temperature', () => {
     expect(computeClimateScore(null, 100, 2000)).toBeNull();
+  });
+
+  it('scores high for warm_sunny profile with Mediterranean climate', () => {
+    const profile = CLIMATE_PROFILES.warm_sunny;
+    const score = computeClimateScore(22, 90, 2500, profile);
+    expect(score).toBe(100);
+  });
+
+  it('scores high for cold_crisp profile with Nordic climate', () => {
+    const profile = CLIMATE_PROFILES.cold_crisp;
+    const score = computeClimateScore(5, 150, 1200, profile);
+    expect(score).toBe(100);
+  });
+
+  it('penalises cold climate under warm_sunny profile', () => {
+    const profile = CLIMATE_PROFILES.warm_sunny;
+    const warmScore = computeClimateScore(22, 90, 2200, profile)!;
+    const coldScore = computeClimateScore(5, 90, 2200, profile)!;
+    expect(warmScore).toBeGreaterThan(coldScore);
+    expect(warmScore - coldScore).toBeGreaterThan(40);
+  });
+
+  it('penalises warm climate under cold_crisp profile', () => {
+    const profile = CLIMATE_PROFILES.cold_crisp;
+    const coldScore = computeClimateScore(5, 150, 1200, profile)!;
+    const warmScore = computeClimateScore(25, 150, 1200, profile)!;
+    expect(coldScore).toBeGreaterThan(warmScore);
+    expect(coldScore - warmScore).toBeGreaterThan(40);
+  });
+});
+
+describe('applyClimatePreference', () => {
+  it('returns countries unchanged for no_preference', () => {
+    const countries = [makeCountry({
+      scores: { climate: 50 },
+    })];
+    const result = applyClimatePreference(countries, 'no_preference');
+    expect(result).toBe(countries);
+  });
+
+  it('recomputes climate scores based on profile', () => {
+    const country = makeCountry({ scores: { climate: 50 } });
+    country.dimensionScores.climate!.components = {
+      avg_temp: 5, rain_days: 150, sunshine_hours: 1200,
+    };
+    const warmResult = applyClimatePreference([country], 'warm_sunny');
+    const coldResult = applyClimatePreference([country], 'cold_crisp');
+    expect(coldResult[0].dimensionScores.climate!.score)
+      .toBeGreaterThan(warmResult[0].dimensionScores.climate!.score!);
   });
 });
 

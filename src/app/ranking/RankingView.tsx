@@ -5,6 +5,7 @@ import type { CountryScores } from '@/lib/types';
 import { useWeightStore } from '@/stores/useWeightStore';
 import { CountryList } from '@/components/ranking/CountryList';
 import { WeightSliders } from '@/components/ranking/WeightSliders';
+import { ClimateTypeSelector } from '@/components/ranking/ClimateTypeSelector';
 import {
   Drawer,
   DrawerContent,
@@ -18,7 +19,7 @@ interface RankingViewProps {
 }
 
 export function RankingView({ countries }: RankingViewProps) {
-  const { weights, setWeight, resetToDefaults } = useWeightStore();
+  const { weights, setWeight, resetToDefaults, climateType, setClimateType } = useWeightStore();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
@@ -30,6 +31,10 @@ export function RankingView({ countries }: RankingViewProps) {
             weights={weights}
             onWeightChange={setWeight}
             onReset={resetToDefaults}
+          />
+          <ClimateTypeSelector
+            value={climateType}
+            onChange={setClimateType}
           />
         </div>
       </aside>
@@ -45,7 +50,7 @@ export function RankingView({ countries }: RankingViewProps) {
               Adjust your priorities to see how countries rank for you.
             </p>
           </div>
-          <CountryList countries={countries} weights={weights} />
+          <CountryList countries={countries} weights={weights} climateType={climateType} />
         </div>
       </main>
 
@@ -66,6 +71,10 @@ export function RankingView({ countries }: RankingViewProps) {
                 weights={weights}
                 onWeightChange={setWeight}
                 onReset={resetToDefaults}
+              />
+              <ClimateTypeSelector
+                value={climateType}
+                onChange={setClimateType}
               />
             </div>
           </DrawerContent>

@@ -70,7 +70,18 @@ export type HouseholdSituation = 'solo' | 'couple' | 'family_young' | 'family_te
 export type IncomeSource = 'remote' | 'local_job' | 'pension';
 export type CivicImportance = 'top_priority' | 'very_important' | 'nice_to_have' | 'not_important';
 export type WarmthImportance = 'essential' | 'matters' | 'not_priority';
-export type ClimatePreference = 'tropical' | 'mediterranean' | 'temperate' | 'dont_care';
+export type ClimatePreference = 'warm_sunny' | 'hot_tropical' | 'mild_green' | 'cold_crisp' | 'no_preference';
+
+export interface ClimateProfile {
+  label: string;
+  description: string;
+  referenceTemp: number;
+  tempPenalty: number;
+  rainThreshold: number;
+  rainPenalty: number;
+  sunshineThreshold: number;
+  sunshinePenalty: number;
+}
 export type ReligiousNeeds = 'important' | 'not_priority';
 
 export interface OnboardingAnswers {

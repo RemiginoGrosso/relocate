@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import type { OnboardingAnswers } from '@/lib/types';
+import type { ClimatePreference, OnboardingAnswers } from '@/lib/types';
 import { computeOnboardingWeights } from '@/lib/weights';
 import { useWeightStore } from '@/stores/useWeightStore';
 import { ProgressBar } from '@/components/onboarding/ProgressBar';
@@ -61,12 +61,13 @@ const QUESTIONS: Question[] = [
   },
   {
     key: 'climatePreference',
-    question: 'Climate preference?',
+    question: 'What kind of weather do you enjoy?',
     options: [
-      { label: 'Tropical', value: 'tropical' },
-      { label: 'Mediterranean', value: 'mediterranean' },
-      { label: 'Temperate', value: 'temperate' },
-      { label: "I don't mind", value: 'dont_care' },
+      { label: 'Warm & sunny', value: 'warm_sunny' },
+      { label: 'Hot & tropical', value: 'hot_tropical' },
+      { label: 'Mild & green', value: 'mild_green' },
+      { label: 'Cold & crisp', value: 'cold_crisp' },
+      { label: "I don't mind", value: 'no_preference' },
     ],
   },
   {
@@ -81,7 +82,7 @@ const QUESTIONS: Question[] = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { setAllWeights } = useWeightStore();
+  const { setAllWeights, setClimateType } = useWeightStore();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({});
 
@@ -103,13 +104,19 @@ export default function OnboardingPage() {
 
   const handleContinue = useCallback(() => {
     setAllWeights(computedWeights, true);
+    if (answers.climatePreference) {
+      setClimateType(answers.climatePreference as ClimatePreference);
+    }
     router.push('/ranking');
-  }, [computedWeights, setAllWeights, router]);
+  }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router]);
 
   const handleAdjust = useCallback(() => {
     setAllWeights(computedWeights, true);
+    if (answers.climatePreference) {
+      setClimateType(answers.climatePreference as ClimatePreference);
+    }
     router.push('/ranking');
-  }, [computedWeights, setAllWeights, router]);
+  }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router]);
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">

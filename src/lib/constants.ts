@@ -1,4 +1,4 @@
-import type { DimensionDefinition, DimensionKey, Region, ScoreTier, UserWeights } from './types';
+import type { ClimatePreference, ClimateProfile, DimensionDefinition, DimensionKey, Region, ScoreTier, UserWeights } from './types';
 
 export const DIMENSION_KEYS: DimensionKey[] = [
   'purchasing_power',
@@ -17,7 +17,7 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'purchasing_power',
     name: 'Purchasing Power',
-    description: 'How far your income stretches after adjusting for local price levels and out-of-pocket health costs.',
+    description: 'How far money stretches in each country — based on price levels, purchasing parity, and healthcare costs. Uses country-level data, not your personal salary.',
     methodology: 'purchasing_power = oecd_ppp_normalised × 0.55 + cost_affordability × 0.30 + (100 − oop_burden) × 0.15',
     category: 'economic',
     sources: ['OECD PPP', 'World Bank Price Level', 'WHO OOP Health Expenditure'],
@@ -101,14 +101,14 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'climate',
     name: 'Climate',
-    description: 'Temperature, sunshine, and rainfall. V1 uses a simple comfort heuristic biased toward temperate climates.',
-    methodology: 'climate = 100 − (|avg_temp − 20| × 3) − (rain_days > 150 ? 10 : 0) − (sunshine < 1500 ? 15 : 0)',
+    description: 'Temperature, sunshine, and rainfall scored against your preferred weather type. Select your preference during onboarding or adjust in the ranking view.',
+    methodology: 'climate = 100 − (|avg_temp − ref| × penalty) − rain_penalty − sunshine_penalty. Reference temp and thresholds vary by weather type.',
     category: 'lifestyle',
     sources: ['Open-Meteo ERA5'],
     defaultWeight: 10,
     sortOrder: 8,
     confidence: 'high',
-    knownLimitation: 'Simple heuristic biased toward temperate climates. No user preference matching in V1.',
+    knownLimitation: 'Uses capital city weather as proxy for the whole country. Heuristic scoring, not a climate model.',
   },
   {
     key: 'religious_freedom',
@@ -163,6 +163,59 @@ export const WARMTH_MISMATCH_THRESHOLD = 30;
 export const MAX_NULL_DIMENSIONS = 3;
 
 export const CLIMATE_REFERENCE_TEMP = 20;
+
+export const CLIMATE_PROFILES: Record<ClimatePreference, ClimateProfile> = {
+  warm_sunny: {
+    label: 'Warm & sunny',
+    description: 'Mediterranean, dry summers, mild winters',
+    referenceTemp: 22,
+    tempPenalty: 3,
+    rainThreshold: 120,
+    rainPenalty: 15,
+    sunshineThreshold: 2000,
+    sunshinePenalty: 15,
+  },
+  hot_tropical: {
+    label: 'Hot & tropical',
+    description: 'Year-round heat, humidity and rain are fine',
+    referenceTemp: 27,
+    tempPenalty: 2.5,
+    rainThreshold: 200,
+    rainPenalty: 5,
+    sunshineThreshold: 1800,
+    sunshinePenalty: 10,
+  },
+  mild_green: {
+    label: 'Mild & green',
+    description: 'Temperate, four seasons, rain is welcome',
+    referenceTemp: 13,
+    tempPenalty: 3,
+    rainThreshold: 200,
+    rainPenalty: 5,
+    sunshineThreshold: 1200,
+    sunshinePenalty: 10,
+  },
+  cold_crisp: {
+    label: 'Cold & crisp',
+    description: 'Cold winters, snow, Nordic or alpine',
+    referenceTemp: 5,
+    tempPenalty: 2.5,
+    rainThreshold: 180,
+    rainPenalty: 10,
+    sunshineThreshold: 1000,
+    sunshinePenalty: 5,
+  },
+  no_preference: {
+    label: "I don't mind",
+    description: 'No specific climate preference',
+    referenceTemp: 20,
+    tempPenalty: 3,
+    rainThreshold: 150,
+    rainPenalty: 10,
+    sunshineThreshold: 1500,
+    sunshinePenalty: 15,
+  },
+};
 
 export const REGIONS: Region[] = [
   'Western Europe',

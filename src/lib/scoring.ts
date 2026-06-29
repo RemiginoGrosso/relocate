@@ -1,5 +1,5 @@
-import type { CountryScores, DimensionKey, RankedCountry, ScoreTier, UserWeights } from './types';
-import { CLIMATE_REFERENCE_TEMP, MAX_NULL_DIMENSIONS, SCORE_THRESHOLDS } from './constants';
+import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, RankedCountry, ScoreTier, UserWeights } from './types';
+import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MAX_NULL_DIMENSIONS, SCORE_THRESHOLDS } from './constants';
 
 export function normaliseWeights(
   weights: UserWeights,
@@ -88,12 +88,45 @@ export function computeClimateScore(
   avgTemp: number | null,
   rainDays: number | null,
   sunshineHours: number | null,
+  profile?: ClimateProfile,
 ): number | null {
   if (avgTemp == null) return null;
 
-  let score = 100 - Math.abs(avgTemp - CLIMATE_REFERENCE_TEMP) * 3;
-  if (rainDays != null && rainDays > 150) score -= 10;
-  if (sunshineHours != null && sunshineHours < 1500) score -= 15;
+  const ref = profile?.referenceTemp ?? CLIMATE_REFERENCE_TEMP;
+  const tempPen = profile?.tempPenalty ?? 3;
+  const rainThresh = profile?.rainThreshold ?? 150;
+  const rainPen = profile?.rainPenalty ?? 10;
+  const sunThresh = profile?.sunshineThreshold ?? 1500;
+  const sunPen = profile?.sunshinePenalty ?? 15;
+
+  let score = 100 - Math.abs(avgTemp - ref) * tempPen;
+  if (rainDays != null && rainDays > rainThresh) score -= rainPen;
+  if (sunshineHours != null && sunshineHours < sunThresh) score -= sunPen;
 
   return Math.max(0, Math.min(100, score));
+}
+
+export function applyClimatePreference(
+  countries: CountryScores[],
+  climateType: ClimatePreference,
+): CountryScores[] {
+  if (climateType === 'no_preference') return countries;
+  const profile = CLIMATE_PROFILES[climateType];
+  return countries.map((c) => {
+    const climateDim = c.dimensionScores.climate;
+    if (!climateDim?.components) return c;
+    const newScore = computeClimateScore(
+      climateDim.components.avg_temp ?? null,
+      climateDim.components.rain_days ?? null,
+      climateDim.components.sunshine_hours ?? null,
+      profile,
+    );
+    return {
+      ...c,
+      dimensionScores: {
+        ...c.dimensionScores,
+        climate: { ...climateDim, score: newScore },
+      },
+    };
+  });
 }

@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { useMemo } from 'react';
 import type { CountryDetail } from '@/lib/types';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
 import { DimensionBreakdown } from '@/components/country/DimensionBreakdown';
 import { DataFreshness } from '@/components/country/DataFreshness';
 import { useWeightStore } from '@/stores/useWeightStore';
-import { computeComposite, normaliseWeights } from '@/lib/scoring';
+import { applyClimatePreference, computeComposite, normaliseWeights } from '@/lib/scoring';
 
 interface CountryDetailViewProps {
   detail: CountryDetail;
@@ -16,9 +17,15 @@ interface CountryDetailViewProps {
 
 export function CountryDetailView({ detail }: CountryDetailViewProps) {
   const { country, rawIndices, climate } = detail;
-  const { weights } = useWeightStore();
+  const { weights, climateType } = useWeightStore();
+
+  const adjustedCountry = useMemo(
+    () => applyClimatePreference([country], climateType)[0],
+    [country, climateType],
+  );
+
   const normWeights = normaliseWeights(weights);
-  const { score } = computeComposite(country, normWeights);
+  const { score } = computeComposite(adjustedCountry, normWeights);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 lg:px-8">
@@ -47,7 +54,7 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
         <div>
           <h2 className="mb-4 text-sm font-medium text-zinc-900">Overview</h2>
           <div className="rounded-lg border border-zinc-200 p-4">
-            <CountryRadarChart country={country} />
+            <CountryRadarChart country={adjustedCountry} />
           </div>
         </div>
 
@@ -57,7 +64,7 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
           </h2>
           <div className="rounded-lg border border-zinc-200">
             <DimensionBreakdown
-              country={country}
+              country={adjustedCountry}
               rawIndices={rawIndices}
               climate={climate}
             />

@@ -70,16 +70,15 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
 
   if (answers.climatePreference) {
     switch (answers.climatePreference) {
-      case 'tropical':
+      case 'warm_sunny':
+      case 'hot_tropical':
         weights.climate += 20;
         break;
-      case 'mediterranean':
+      case 'mild_green':
+      case 'cold_crisp':
         weights.climate += 15;
         break;
-      case 'temperate':
-        weights.climate += 10;
-        break;
-      case 'dont_care':
+      case 'no_preference':
         break;
     }
   }

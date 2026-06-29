@@ -1,8 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { CountryScores, RankedCountry, UserWeights } from '@/lib/types';
-import { rankCountries } from '@/lib/scoring';
+import type { ClimatePreference, CountryScores, RankedCountry, UserWeights } from '@/lib/types';
+import { applyClimatePreference, rankCountries } from '@/lib/scoring';
 import { REGION_FILTER_GROUPS } from '@/lib/constants';
 import { CountryRow } from './CountryRow';
 import { RegionFilter } from './RegionFilter';
@@ -10,14 +10,20 @@ import { RegionFilter } from './RegionFilter';
 interface CountryListProps {
   countries: CountryScores[];
   weights: UserWeights;
+  climateType: ClimatePreference;
 }
 
-export function CountryList({ countries, weights }: CountryListProps) {
+export function CountryList({ countries, weights, climateType }: CountryListProps) {
   const [regionGroup, setRegionGroup] = useState('All');
 
+  const adjusted = useMemo(
+    () => applyClimatePreference(countries, climateType),
+    [countries, climateType],
+  );
+
   const ranked: RankedCountry[] = useMemo(
-    () => rankCountries(countries, weights),
-    [countries, weights],
+    () => rankCountries(adjusted, weights),
+    [adjusted, weights],
   );
 
   const filtered = useMemo(() => {
