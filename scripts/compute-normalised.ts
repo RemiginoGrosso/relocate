@@ -58,9 +58,21 @@ async function main() {
     .select('id, iso_alpha2')
     .eq('is_active', true);
 
-  const { data: rawIndices } = await supabase
-    .from('raw_indices')
-    .select('country_id, source, indicator, value');
+  const allRawIndices: RawRow[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from('raw_indices')
+      .select('country_id, source, indicator, value')
+      .range(from, from + pageSize - 1);
+    if (error) throw new Error(`Failed to fetch raw_indices: ${error.message}`);
+    if (!data || data.length === 0) break;
+    allRawIndices.push(...data);
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
+  const rawIndices = allRawIndices;
 
   const { data: climateData } = await supabase
     .from('climate_data')
@@ -99,8 +111,8 @@ async function main() {
     const priceLevel = safeNum(raw['worldbank.price_level_ratio']);
     const oopPct = safeNum(raw['worldbank.who_oop_pct']);
     if (oecdPpp != null || priceLevel != null) {
-      const pppNorm = oecdPpp != null ? minMaxNormalise(oecdPpp, 15000, 75000) : null;
-      const affordNorm = priceLevel != null ? minMaxNormalise(priceLevel, 0.25, 1.45, true) : null;
+      const pppNorm = oecdPpp != null ? minMaxNormalise(oecdPpp, 8000, 160000) : null;
+      const affordNorm = priceLevel != null ? minMaxNormalise(priceLevel, 0.10, 1.50, true) : null;
       const oopNorm = oopPct != null ? minMaxNormalise(oopPct, 5, 65, true) : null;
       const parts = [
         pppNorm != null ? pppNorm * 0.55 : null,
@@ -108,7 +120,7 @@ async function main() {
         oopNorm != null ? oopNorm * 0.15 : null,
       ].filter((v): v is number => v != null);
       const weightSum = (pppNorm != null ? 0.55 : 0) + (affordNorm != null ? 0.30 : 0) + (oopNorm != null ? 0.15 : 0);
-      const score = weightSum > 0 ? parts.reduce((a, b) => a + b, 0) / weightSum * (pppNorm != null && affordNorm != null && oopNorm != null ? 1 : 1) : null;
+      const score = weightSum > 0 ? parts.reduce((a, b) => a + b, 0) / weightSum : null;
       scores.push({
         country_id: country.id,
         dimension_key: 'purchasing_power',
@@ -141,7 +153,7 @@ async function main() {
     // Safety
     const gpi = safeNum(raw['gpi.gpi_score']);
     if (gpi != null) {
-      const gpiNorm = minMaxNormalise(gpi, 1.07, 2.80, true);
+      const gpiNorm = minMaxNormalise(gpi, 1.00, 3.50, true);
       scores.push({
         country_id: country.id,
         dimension_key: 'safety',

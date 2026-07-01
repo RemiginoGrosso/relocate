@@ -1,0 +1,254 @@
+{
+  "_instructions": {
+    "source": "Institute for Economics & Peace - Global Peace Index",
+    "url": "https://www.visionofhumanity.org/maps/",
+    "report_url": "https://www.visionofhumanity.org/resources/",
+    "description": "The GPI score ranges from 1 (most peaceful) to 5 (least peaceful). Download the latest GPI report PDF or use the interactive map. Look for the 'Overall Score' column.",
+    "year": "2024 (or latest available)",
+    "field_name": "gpi.gpi_score",
+    "value_range": "1.0 to 5.0 (lower = more peaceful)",
+    "how_to_find": "1. Go to visionofhumanity.org/maps/ 2. Select GPI year 3. Click each country 4. Record the Overall Score value"
+  },
+  "data": {
+    "DK": {
+      "country": "Denmark",
+      "gpi_score": null
+    },
+    "NL": {
+      "country": "Netherlands",
+      "gpi_score": null
+    },
+    "DE": {
+      "country": "Germany",
+      "gpi_score": null
+    },
+    "CH": {
+      "country": "Switzerland",
+      "gpi_score": null
+    },
+    "SE": {
+      "country": "Sweden",
+      "gpi_score": null
+    },
+    "FI": {
+      "country": "Finland",
+      "gpi_score": null
+    },
+    "NO": {
+      "country": "Norway",
+      "gpi_score": null
+    },
+    "FR": {
+      "country": "France",
+      "gpi_score": null
+    },
+    "IE": {
+      "country": "Ireland",
+      "gpi_score": null
+    },
+    "GB": {
+      "country": "United Kingdom",
+      "gpi_score": null
+    },
+    "PT": {
+      "country": "Portugal",
+      "gpi_score": null
+    },
+    "ES": {
+      "country": "Spain",
+      "gpi_score": null
+    },
+    "IT": {
+      "country": "Italy",
+      "gpi_score": null
+    },
+    "AT": {
+      "country": "Austria",
+      "gpi_score": null
+    },
+    "LU": {
+      "country": "Luxembourg",
+      "gpi_score": null
+    },
+    "BE": {
+      "country": "Belgium",
+      "gpi_score": null
+    },
+    "CZ": {
+      "country": "Czech Republic",
+      "gpi_score": null
+    },
+    "PL": {
+      "country": "Poland",
+      "gpi_score": null
+    },
+    "HU": {
+      "country": "Hungary",
+      "gpi_score": null
+    },
+    "GR": {
+      "country": "Greece",
+      "gpi_score": null
+    },
+    "EE": {
+      "country": "Estonia",
+      "gpi_score": null
+    },
+    "HR": {
+      "country": "Croatia",
+      "gpi_score": null
+    },
+    "RO": {
+      "country": "Romania",
+      "gpi_score": null
+    },
+    "LT": {
+      "country": "Lithuania",
+      "gpi_score": null
+    },
+    "CA": {
+      "country": "Canada",
+      "gpi_score": null
+    },
+    "MX": {
+      "country": "Mexico",
+      "gpi_score": null
+    },
+    "CL": {
+      "country": "Chile",
+      "gpi_score": null
+    },
+    "CO": {
+      "country": "Colombia",
+      "gpi_score": null
+    },
+    "AR": {
+      "country": "Argentina",
+      "gpi_score": null
+    },
+    "UY": {
+      "country": "Uruguay",
+      "gpi_score": null
+    },
+    "JP": {
+      "country": "Japan",
+      "gpi_score": null
+    },
+    "KR": {
+      "country": "South Korea",
+      "gpi_score": null
+    },
+    "SG": {
+      "country": "Singapore",
+      "gpi_score": null
+    },
+    "TW": {
+      "country": "Taiwan",
+      "gpi_score": null
+    },
+    "MY": {
+      "country": "Malaysia",
+      "gpi_score": null
+    },
+    "TH": {
+      "country": "Thailand",
+      "gpi_score": null
+    },
+    "AU": {
+      "country": "Australia",
+      "gpi_score": null
+    },
+    "NZ": {
+      "country": "New Zealand",
+      "gpi_score": null
+    },
+    "IL": {
+      "country": "Israel",
+      "gpi_score": null
+    },
+    "AE": {
+      "country": "United Arab Emirates",
+      "gpi_score": null
+    },
+    "SK": {
+      "country": "Slovakia",
+      "gpi_score": null
+    },
+    "SI": {
+      "country": "Slovenia",
+      "gpi_score": null
+    },
+    "LV": {
+      "country": "Latvia",
+      "gpi_score": null
+    },
+    "IS": {
+      "country": "Iceland",
+      "gpi_score": null
+    },
+    "BG": {
+      "country": "Bulgaria",
+      "gpi_score": null
+    },
+    "CY": {
+      "country": "Cyprus",
+      "gpi_score": null
+    },
+    "BR": {
+      "country": "Brazil",
+      "gpi_score": null
+    },
+    "CR": {
+      "country": "Costa Rica",
+      "gpi_score": null
+    },
+    "PA": {
+      "country": "Panama",
+      "gpi_score": null
+    },
+    "IN": {
+      "country": "India",
+      "gpi_score": null
+    },
+    "PH": {
+      "country": "Philippines",
+      "gpi_score": null
+    },
+    "VN": {
+      "country": "Vietnam",
+      "gpi_score": null
+    },
+    "ID": {
+      "country": "Indonesia",
+      "gpi_score": null
+    },
+    "CN": {
+      "country": "China",
+      "gpi_score": null
+    },
+    "TR": {
+      "country": "Turkey",
+      "gpi_score": null
+    },
+    "SA": {
+      "country": "Saudi Arabia",
+      "gpi_score": null
+    },
+    "QA": {
+      "country": "Qatar",
+      "gpi_score": null
+    },
+    "ZA": {
+      "country": "South Africa",
+      "gpi_score": null
+    },
+    "MA": {
+      "country": "Morocco",
+      "gpi_score": null
+    },
+    "PE": {
+      "country": "Peru",
+      "gpi_score": null
+    }
+  }
+}

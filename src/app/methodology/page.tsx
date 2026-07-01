@@ -20,7 +20,7 @@ export default function MethodologyPage() {
         Methodology
       </h1>
       <p className="mt-4 text-zinc-500">
-        Relocator ranks 40 countries across 10 data-driven dimensions. It
+        Relocator ranks 59 countries across 10 data-driven dimensions. It
         narrows the field to a shortlist — it does not make the decision for
         you.
       </p>
@@ -52,7 +52,7 @@ export default function MethodologyPage() {
           All raw values are normalised to a 0–100 scale where higher is always
           better. For indices where a lower raw value is better (e.g., GPI,
           Pew restrictions), the scale is inverted. Min-max boundaries are set
-          from observed data across the 40-country panel.
+          from observed data across the 60-country panel.
         </p>
       </section>
 
@@ -122,7 +122,7 @@ export default function MethodologyPage() {
           Download raw data
         </h2>
         <p className="mt-2 text-sm text-zinc-500">
-          CSV of all normalised scores for all 40 countries. Use it for your
+          CSV of all normalised scores for all 59 countries. Use it for your
           own analysis.
         </p>
         <div className="mt-4">

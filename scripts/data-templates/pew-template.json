@@ -1,0 +1,321 @@
+{
+  "_instructions": {
+    "source": "Pew Research Center - Government Restrictions Index (GRI) & Social Hostilities Index (SHI)",
+    "url": "https://www.pewresearch.org/religion/datasets/",
+    "report_url": "https://www.pewresearch.org/religion/interactives/restrictions-on-religion/",
+    "description": "Two indices measuring religious freedom: GRI (Government Restrictions Index, 0-10 scale) and SHI (Social Hostilities Index, 0-10 scale). Lower = more religious freedom.",
+    "year": "2023 (or latest available, typically 2-year lag)",
+    "fields": {
+      "pew.govt_restrictions": "Government Restrictions Index (GRI), 0-10 scale",
+      "pew.social_hostility": "Social Hostilities Index (SHI), 0-10 scale"
+    },
+    "notes": [
+      "Pew covers 198 countries, so all 60 should be available.",
+      "Data is typically released with a 2-year lag (e.g., 2023 data released in 2025).",
+      "Access data at pewresearch.org/religion/datasets/ - look for the annual restrictions report.",
+      "GRI and SHI are scored 0.0-10.0 with one decimal."
+    ]
+  },
+  "data": {
+    "DK": {
+      "country": "Denmark",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "NL": {
+      "country": "Netherlands",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "DE": {
+      "country": "Germany",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CH": {
+      "country": "Switzerland",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "SE": {
+      "country": "Sweden",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "FI": {
+      "country": "Finland",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "NO": {
+      "country": "Norway",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "FR": {
+      "country": "France",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "IE": {
+      "country": "Ireland",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "GB": {
+      "country": "United Kingdom",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "PT": {
+      "country": "Portugal",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "ES": {
+      "country": "Spain",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "IT": {
+      "country": "Italy",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "AT": {
+      "country": "Austria",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "LU": {
+      "country": "Luxembourg",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "BE": {
+      "country": "Belgium",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CZ": {
+      "country": "Czech Republic",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "PL": {
+      "country": "Poland",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "HU": {
+      "country": "Hungary",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "GR": {
+      "country": "Greece",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "EE": {
+      "country": "Estonia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "HR": {
+      "country": "Croatia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "RO": {
+      "country": "Romania",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "LT": {
+      "country": "Lithuania",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CA": {
+      "country": "Canada",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "MX": {
+      "country": "Mexico",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CL": {
+      "country": "Chile",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CO": {
+      "country": "Colombia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "AR": {
+      "country": "Argentina",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "UY": {
+      "country": "Uruguay",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "JP": {
+      "country": "Japan",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "KR": {
+      "country": "South Korea",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "SG": {
+      "country": "Singapore",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "TW": {
+      "country": "Taiwan",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "MY": {
+      "country": "Malaysia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "TH": {
+      "country": "Thailand",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "AU": {
+      "country": "Australia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "NZ": {
+      "country": "New Zealand",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "IL": {
+      "country": "Israel",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "AE": {
+      "country": "United Arab Emirates",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "SK": {
+      "country": "Slovakia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "SI": {
+      "country": "Slovenia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "LV": {
+      "country": "Latvia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "IS": {
+      "country": "Iceland",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "BG": {
+      "country": "Bulgaria",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CY": {
+      "country": "Cyprus",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "BR": {
+      "country": "Brazil",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CR": {
+      "country": "Costa Rica",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "PA": {
+      "country": "Panama",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "IN": {
+      "country": "India",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "PH": {
+      "country": "Philippines",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "VN": {
+      "country": "Vietnam",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "ID": {
+      "country": "Indonesia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "CN": {
+      "country": "China",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "TR": {
+      "country": "Turkey",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "SA": {
+      "country": "Saudi Arabia",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "QA": {
+      "country": "Qatar",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "ZA": {
+      "country": "South Africa",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "MA": {
+      "country": "Morocco",
+      "govt_restrictions": null,
+      "social_hostility": null
+    },
+    "PE": {
+      "country": "Peru",
+      "govt_restrictions": null,
+      "social_hostility": null
+    }
+  }
+}

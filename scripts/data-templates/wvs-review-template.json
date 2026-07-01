@@ -1,0 +1,318 @@
+{
+  "_instructions": {
+    "source": "World Values Survey - Wave 7 (2017-2022)",
+    "url": "https://www.worldvaluessurvey.org/WVSDocumentationWV7.jsp",
+    "description": "Interpersonal trust question: 'Generally speaking, would you say that most people can be trusted, or that you need to be very careful in dealing with people?' Value = percentage answering 'Most people can be trusted'.",
+    "field_name": "wvs.trust_pct",
+    "value_range": "0 to 100 (percentage)",
+    "status": "PARTIALLY VERIFIED - already in wvs.json, flag for manual review",
+    "notes": [
+      "The existing wvs.json file was partially verified in the data audit.",
+      "This template is for review/update purposes only.",
+      "WVS data does NOT change annually - Wave 7 covers 2017-2022.",
+      "Not all countries participate in every wave."
+    ]
+  },
+  "data": {
+    "DK": {
+      "country": "Denmark",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "NL": {
+      "country": "Netherlands",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "DE": {
+      "country": "Germany",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CH": {
+      "country": "Switzerland",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "SE": {
+      "country": "Sweden",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "FI": {
+      "country": "Finland",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "NO": {
+      "country": "Norway",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "FR": {
+      "country": "France",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "IE": {
+      "country": "Ireland",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "GB": {
+      "country": "United Kingdom",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "PT": {
+      "country": "Portugal",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "ES": {
+      "country": "Spain",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "IT": {
+      "country": "Italy",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "AT": {
+      "country": "Austria",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "LU": {
+      "country": "Luxembourg",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "BE": {
+      "country": "Belgium",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CZ": {
+      "country": "Czech Republic",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "PL": {
+      "country": "Poland",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "HU": {
+      "country": "Hungary",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "GR": {
+      "country": "Greece",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "EE": {
+      "country": "Estonia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "HR": {
+      "country": "Croatia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "RO": {
+      "country": "Romania",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "LT": {
+      "country": "Lithuania",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CA": {
+      "country": "Canada",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "MX": {
+      "country": "Mexico",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CL": {
+      "country": "Chile",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CO": {
+      "country": "Colombia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "AR": {
+      "country": "Argentina",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "UY": {
+      "country": "Uruguay",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "JP": {
+      "country": "Japan",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "KR": {
+      "country": "South Korea",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "SG": {
+      "country": "Singapore",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "TW": {
+      "country": "Taiwan",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "MY": {
+      "country": "Malaysia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "TH": {
+      "country": "Thailand",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "AU": {
+      "country": "Australia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "NZ": {
+      "country": "New Zealand",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "IL": {
+      "country": "Israel",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "AE": {
+      "country": "United Arab Emirates",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "SK": {
+      "country": "Slovakia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "SI": {
+      "country": "Slovenia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "LV": {
+      "country": "Latvia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "IS": {
+      "country": "Iceland",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "BG": {
+      "country": "Bulgaria",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CY": {
+      "country": "Cyprus",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "BR": {
+      "country": "Brazil",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CR": {
+      "country": "Costa Rica",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "PA": {
+      "country": "Panama",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "IN": {
+      "country": "India",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "PH": {
+      "country": "Philippines",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "VN": {
+      "country": "Vietnam",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "ID": {
+      "country": "Indonesia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "CN": {
+      "country": "China",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "TR": {
+      "country": "Turkey",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "SA": {
+      "country": "Saudi Arabia",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "QA": {
+      "country": "Qatar",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "ZA": {
+      "country": "South Africa",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "MA": {
+      "country": "Morocco",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    },
+    "PE": {
+      "country": "Peru",
+      "trust_pct": null,
+      "status": "REVIEW: Check against published WVS Wave 7 data"
+    }
+  }
+}

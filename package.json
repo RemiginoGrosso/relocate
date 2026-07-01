@@ -1,6 +1,6 @@
 {
   "name": "relocator",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -13,6 +13,7 @@
     "compute-normalised": "tsx scripts/compute-normalised.ts"
   },
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.44.4",
     "@base-ui/react": "^1.6.0",
     "@netlify/plugin-nextjs": "^5.15.12",
     "@supabase/ssr": "^0.12.0",

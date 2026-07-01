@@ -7,10 +7,10 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Country ranking — Relocator',
   description:
-    'Rank 40 countries by purchasing power, civic culture, safety, warmth, and 6 more dimensions. Adjust weights to match your priorities.',
+    'Rank 59 countries by purchasing power, civic culture, safety, warmth, and 6 more dimensions. Adjust weights to match your priorities.',
   openGraph: {
     title: 'Country ranking — Relocator',
-    description: 'Rank 40 countries across 10 data-driven dimensions for relocation.',
+    description: 'Rank 59 countries across 10 data-driven dimensions for relocation.',
     type: 'website',
   },
 };

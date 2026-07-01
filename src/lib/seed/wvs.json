@@ -32,5 +32,19 @@
   { "iso_alpha2": "AR", "trust_pct": 18.0 },
   { "iso_alpha2": "TW", "trust_pct": 35.0 },
   { "iso_alpha2": "MY", "trust_pct": 8.0 },
-  { "iso_alpha2": "UY", "trust_pct": 16.0 }
+  { "iso_alpha2": "UY", "trust_pct": 16.0 },
+  { "iso_alpha2": "SK", "trust_pct": 12.0 },
+  { "iso_alpha2": "SI", "trust_pct": 15.0 },
+  { "iso_alpha2": "LV", "trust_pct": 18.0 },
+  { "iso_alpha2": "BG", "trust_pct": 15.0 },
+  { "iso_alpha2": "BR", "trust_pct": 7.0 },
+  { "iso_alpha2": "IN", "trust_pct": 22.0 },
+  { "iso_alpha2": "PH", "trust_pct": 3.0 },
+  { "iso_alpha2": "VN", "trust_pct": 52.0 },
+  { "iso_alpha2": "ID", "trust_pct": 42.0 },
+  { "iso_alpha2": "CN", "trust_pct": 64.0 },
+  { "iso_alpha2": "TR", "trust_pct": 12.0 },
+  { "iso_alpha2": "ZA", "trust_pct": 18.0 },
+  { "iso_alpha2": "MA", "trust_pct": 13.0 },
+  { "iso_alpha2": "PE", "trust_pct": 8.0 }
 ]

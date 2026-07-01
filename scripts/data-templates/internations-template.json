@@ -1,0 +1,379 @@
+{
+  "_instructions": {
+    "source": "InterNations Expat Insider Survey",
+    "url": "https://www.internations.org/expat-insider/",
+    "description": "The 'Ease of Settling In' rank from the annual Expat Insider survey. Rank 1 = easiest to settle in. The 2024 survey covers ~53 destinations. Countries not in the survey should be set to null.",
+    "year": "2024 (or latest available)",
+    "field_name": "internations.ease_rank",
+    "value_range": "1 to ~53 (lower = easier to settle in)",
+    "countries_not_in_2024_survey": "AR, UY, HR, RO, LT, IL, EE, TW - these should remain null",
+    "countries_to_add_note": "CR (Costa Rica, rank 1 in 2024), CY (Cyprus, rank 17 in 2024) were verified in audit",
+    "notes": [
+      "Only ~53 countries are covered each year.",
+      "Countries outside the survey get null (excluded from scoring via NULL handling).",
+      "Verified 2024 ranks from CHANGELOG Iteration 16 are pre-filled below where available."
+    ]
+  },
+  "data": {
+    "DK": {
+      "country": "Denmark",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "NL": {
+      "country": "Netherlands",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "DE": {
+      "country": "Germany",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CH": {
+      "country": "Switzerland",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "SE": {
+      "country": "Sweden",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "FI": {
+      "country": "Finland",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "NO": {
+      "country": "Norway",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "FR": {
+      "country": "France",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "IE": {
+      "country": "Ireland",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "GB": {
+      "country": "United Kingdom",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "PT": {
+      "country": "Portugal",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "ES": {
+      "country": "Spain",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "IT": {
+      "country": "Italy",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "AT": {
+      "country": "Austria",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "LU": {
+      "country": "Luxembourg",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "BE": {
+      "country": "Belgium",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CZ": {
+      "country": "Czech Republic",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "PL": {
+      "country": "Poland",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "HU": {
+      "country": "Hungary",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "GR": {
+      "country": "Greece",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "EE": {
+      "country": "Estonia",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "HR": {
+      "country": "Croatia",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "RO": {
+      "country": "Romania",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "LT": {
+      "country": "Lithuania",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "CA": {
+      "country": "Canada",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "MX": {
+      "country": "Mexico",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CL": {
+      "country": "Chile",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CO": {
+      "country": "Colombia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "AR": {
+      "country": "Argentina",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "UY": {
+      "country": "Uruguay",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "JP": {
+      "country": "Japan",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "KR": {
+      "country": "South Korea",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "SG": {
+      "country": "Singapore",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "TW": {
+      "country": "Taiwan",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "MY": {
+      "country": "Malaysia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "TH": {
+      "country": "Thailand",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "AU": {
+      "country": "Australia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "NZ": {
+      "country": "New Zealand",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "IL": {
+      "country": "Israel",
+      "ease_rank": null,
+      "in_2024_survey": false,
+      "notes": "NOT in InterNations 2024 survey - set to null"
+    },
+    "AE": {
+      "country": "United Arab Emirates",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "SK": {
+      "country": "Slovakia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "SI": {
+      "country": "Slovenia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "LV": {
+      "country": "Latvia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "IS": {
+      "country": "Iceland",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "BG": {
+      "country": "Bulgaria",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CY": {
+      "country": "Cyprus",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "BR": {
+      "country": "Brazil",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CR": {
+      "country": "Costa Rica",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "PA": {
+      "country": "Panama",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "IN": {
+      "country": "India",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "PH": {
+      "country": "Philippines",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "VN": {
+      "country": "Vietnam",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "ID": {
+      "country": "Indonesia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "CN": {
+      "country": "China",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "TR": {
+      "country": "Turkey",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "SA": {
+      "country": "Saudi Arabia",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "QA": {
+      "country": "Qatar",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "ZA": {
+      "country": "South Africa",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "MA": {
+      "country": "Morocco",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    },
+    "PE": {
+      "country": "Peru",
+      "ease_rank": null,
+      "in_2024_survey": true,
+      "notes": ""
+    }
+  }
+}

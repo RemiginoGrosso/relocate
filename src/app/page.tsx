@@ -53,7 +53,7 @@ const STEPS = [
   },
   {
     number: '2',
-    title: 'Get a ranked list of 40 countries',
+    title: 'Get a ranked list of 59 countries',
     description:
       'Your weights drive the ranking. Every score traces to an institutional data source. We have no editorial view on which country is best.',
   },

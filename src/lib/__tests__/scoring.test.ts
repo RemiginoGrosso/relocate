@@ -291,12 +291,12 @@ describe('normalisation functions', () => {
   });
 
   it('gpiNormalise: most peaceful = 100', () => {
-    const result = gpiNormalise(1.07);
+    const result = gpiNormalise(1.00);
     expect(result).toBeCloseTo(100, 0);
   });
 
   it('gpiNormalise: least peaceful = 0', () => {
-    const result = gpiNormalise(2.80);
+    const result = gpiNormalise(3.50);
     expect(result).toBeCloseTo(0, 0);
   });
 

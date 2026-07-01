@@ -1,6 +1,7 @@
 'use client';
 
 import { REGION_FILTER_GROUPS } from '@/lib/constants';
+import { trackEvent } from '@/lib/analytics';
 
 interface RegionFilterProps {
   activeGroup: string;
@@ -13,7 +14,7 @@ export function RegionFilter({ activeGroup, onChange }: RegionFilterProps) {
       {REGION_FILTER_GROUPS.map((group) => (
         <button
           key={group.label}
-          onClick={() => onChange(group.label)}
+          onClick={() => { trackEvent('region_filter', { region: group.label }); onChange(group.label); }}
           className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
             activeGroup === group.label
               ? 'bg-teal-700 text-white'

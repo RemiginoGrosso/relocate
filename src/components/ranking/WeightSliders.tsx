@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { DIMENSIONS } from '@/lib/constants';
+import { trackEvent } from '@/lib/analytics';
 import type { DimensionKey, UserWeights } from '@/lib/types';
 
 interface WeightSlidersProps {
@@ -51,6 +52,10 @@ export function WeightSliders({ weights, onWeightChange, onReset }: WeightSlider
             <Slider
               value={[weights[dim.key]]}
               onValueChange={(val) => onWeightChange(dim.key, Array.isArray(val) ? val[0] : val)}
+              onValueCommitted={(val) => {
+                const v = Array.isArray(val) ? val[0] : val;
+                trackEvent('slider_change', { dimension: dim.key, value: v });
+              }}
               max={100}
               step={1}
               className="w-full"

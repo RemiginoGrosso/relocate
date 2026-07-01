@@ -1,0 +1,318 @@
+{
+  "_instructions": {
+    "source": "EF Education First - English Proficiency Index",
+    "url": "https://www.ef.com/epi/",
+    "report_url": "https://www.ef.com/epi/regions/",
+    "description": "EF EPI score ranges roughly from 300 to 700+. Higher = better English proficiency. English-native countries (GB, IE, AU, NZ, CA) should NOT be in this index (they are hardcoded to 100 in the scoring engine).",
+    "year": "2024 (or latest available)",
+    "field_name": "ef.epi_score",
+    "value_range": "~300 to ~700 (higher = better proficiency)",
+    "notes": [
+      "Not all 60 countries will be in the EF EPI. Set null for countries not covered.",
+      "English-native countries (GB, IE, AU, NZ, CA) are EXCLUDED from EF EPI - they use a hardcoded score.",
+      "EF EPI does not cover some countries in our list (e.g., some Middle East, Africa)."
+    ]
+  },
+  "data": {
+    "DK": {
+      "country": "Denmark",
+      "epi_score": null,
+      "notes": ""
+    },
+    "NL": {
+      "country": "Netherlands",
+      "epi_score": null,
+      "notes": ""
+    },
+    "DE": {
+      "country": "Germany",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CH": {
+      "country": "Switzerland",
+      "epi_score": null,
+      "notes": ""
+    },
+    "SE": {
+      "country": "Sweden",
+      "epi_score": null,
+      "notes": ""
+    },
+    "FI": {
+      "country": "Finland",
+      "epi_score": null,
+      "notes": ""
+    },
+    "NO": {
+      "country": "Norway",
+      "epi_score": null,
+      "notes": ""
+    },
+    "FR": {
+      "country": "France",
+      "epi_score": null,
+      "notes": ""
+    },
+    "IE": {
+      "country": "Ireland",
+      "epi_score": null,
+      "notes": "SKIP: English-native country (hardcoded to 100 in scoring engine)"
+    },
+    "GB": {
+      "country": "United Kingdom",
+      "epi_score": null,
+      "notes": "SKIP: English-native country (hardcoded to 100 in scoring engine)"
+    },
+    "PT": {
+      "country": "Portugal",
+      "epi_score": null,
+      "notes": ""
+    },
+    "ES": {
+      "country": "Spain",
+      "epi_score": null,
+      "notes": ""
+    },
+    "IT": {
+      "country": "Italy",
+      "epi_score": null,
+      "notes": ""
+    },
+    "AT": {
+      "country": "Austria",
+      "epi_score": null,
+      "notes": ""
+    },
+    "LU": {
+      "country": "Luxembourg",
+      "epi_score": null,
+      "notes": ""
+    },
+    "BE": {
+      "country": "Belgium",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CZ": {
+      "country": "Czech Republic",
+      "epi_score": null,
+      "notes": ""
+    },
+    "PL": {
+      "country": "Poland",
+      "epi_score": null,
+      "notes": ""
+    },
+    "HU": {
+      "country": "Hungary",
+      "epi_score": null,
+      "notes": ""
+    },
+    "GR": {
+      "country": "Greece",
+      "epi_score": null,
+      "notes": ""
+    },
+    "EE": {
+      "country": "Estonia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "HR": {
+      "country": "Croatia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "RO": {
+      "country": "Romania",
+      "epi_score": null,
+      "notes": ""
+    },
+    "LT": {
+      "country": "Lithuania",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CA": {
+      "country": "Canada",
+      "epi_score": null,
+      "notes": "SKIP: English-native country (hardcoded to 100 in scoring engine)"
+    },
+    "MX": {
+      "country": "Mexico",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CL": {
+      "country": "Chile",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CO": {
+      "country": "Colombia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "AR": {
+      "country": "Argentina",
+      "epi_score": null,
+      "notes": ""
+    },
+    "UY": {
+      "country": "Uruguay",
+      "epi_score": null,
+      "notes": ""
+    },
+    "JP": {
+      "country": "Japan",
+      "epi_score": null,
+      "notes": ""
+    },
+    "KR": {
+      "country": "South Korea",
+      "epi_score": null,
+      "notes": ""
+    },
+    "SG": {
+      "country": "Singapore",
+      "epi_score": null,
+      "notes": ""
+    },
+    "TW": {
+      "country": "Taiwan",
+      "epi_score": null,
+      "notes": ""
+    },
+    "MY": {
+      "country": "Malaysia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "TH": {
+      "country": "Thailand",
+      "epi_score": null,
+      "notes": ""
+    },
+    "AU": {
+      "country": "Australia",
+      "epi_score": null,
+      "notes": "SKIP: English-native country (hardcoded to 100 in scoring engine)"
+    },
+    "NZ": {
+      "country": "New Zealand",
+      "epi_score": null,
+      "notes": "SKIP: English-native country (hardcoded to 100 in scoring engine)"
+    },
+    "IL": {
+      "country": "Israel",
+      "epi_score": null,
+      "notes": ""
+    },
+    "AE": {
+      "country": "United Arab Emirates",
+      "epi_score": null,
+      "notes": ""
+    },
+    "SK": {
+      "country": "Slovakia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "SI": {
+      "country": "Slovenia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "LV": {
+      "country": "Latvia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "IS": {
+      "country": "Iceland",
+      "epi_score": null,
+      "notes": ""
+    },
+    "BG": {
+      "country": "Bulgaria",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CY": {
+      "country": "Cyprus",
+      "epi_score": null,
+      "notes": ""
+    },
+    "BR": {
+      "country": "Brazil",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CR": {
+      "country": "Costa Rica",
+      "epi_score": null,
+      "notes": ""
+    },
+    "PA": {
+      "country": "Panama",
+      "epi_score": null,
+      "notes": ""
+    },
+    "IN": {
+      "country": "India",
+      "epi_score": null,
+      "notes": ""
+    },
+    "PH": {
+      "country": "Philippines",
+      "epi_score": null,
+      "notes": ""
+    },
+    "VN": {
+      "country": "Vietnam",
+      "epi_score": null,
+      "notes": ""
+    },
+    "ID": {
+      "country": "Indonesia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "CN": {
+      "country": "China",
+      "epi_score": null,
+      "notes": ""
+    },
+    "TR": {
+      "country": "Turkey",
+      "epi_score": null,
+      "notes": ""
+    },
+    "SA": {
+      "country": "Saudi Arabia",
+      "epi_score": null,
+      "notes": ""
+    },
+    "QA": {
+      "country": "Qatar",
+      "epi_score": null,
+      "notes": ""
+    },
+    "ZA": {
+      "country": "South Africa",
+      "epi_score": null,
+      "notes": ""
+    },
+    "MA": {
+      "country": "Morocco",
+      "epi_score": null,
+      "notes": ""
+    },
+    "PE": {
+      "country": "Peru",
+      "epi_score": null,
+      "notes": ""
+    }
+  }
+}

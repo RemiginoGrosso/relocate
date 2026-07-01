@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { CountryDetail } from '@/lib/types';
+import { trackEvent } from '@/lib/analytics';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
 import { DimensionBreakdown } from '@/components/country/DimensionBreakdown';
@@ -26,6 +27,10 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
 
   const normWeights = normaliseWeights(weights);
   const { score } = computeComposite(adjustedCountry, normWeights);
+
+  useEffect(() => {
+    trackEvent('country_detail_view', { country: country.iso, name: country.name });
+  }, [country.iso, country.name]);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 lg:px-8">

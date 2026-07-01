@@ -226,14 +226,17 @@ export const REGIONS: Region[] = [
   'Latin America',
   'East Asia',
   'Southeast Asia',
+  'South Asia',
   'Middle East',
   'Oceania',
+  'Africa',
 ];
 
 export const REGION_FILTER_GROUPS: { label: string; regions: Region[] }[] = [
   { label: 'All', regions: REGIONS },
   { label: 'Europe', regions: ['Western Europe', 'Northern Europe', 'Southern Europe', 'Eastern Europe'] },
-  { label: 'Asia-Pacific', regions: ['East Asia', 'Southeast Asia', 'Oceania'] },
+  { label: 'Asia-Pacific', regions: ['East Asia', 'Southeast Asia', 'South Asia', 'Oceania'] },
   { label: 'Americas', regions: ['North America', 'Latin America'] },
   { label: 'Middle East', regions: ['Middle East'] },
+  { label: 'Africa', regions: ['Africa'] },
 ];

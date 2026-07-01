@@ -1,0 +1,258 @@
+{
+  "_instructions": {
+    "source": "IMD World Competitiveness Yearbook - Infrastructure sub-factor",
+    "url": "https://www.imd.org/centers/wcc/world-competitiveness-center/rankings/world-competitiveness-ranking/",
+    "description": "The Infrastructure sub-factor score from the IMD World Competitiveness Yearbook. Score is 0-100, higher = better infrastructure.",
+    "year": "2024 (or latest available)",
+    "field_name": "imd.infrastructure_score",
+    "value_range": "0 to 100 (higher = better)",
+    "notes": [
+      "IMD covers ~67 economies. Some of our 60 countries may not be included.",
+      "The full ranking is behind a paywall, but summary data is available in press releases.",
+      "Look for 'Infrastructure' as one of the four competitiveness factors.",
+      "Some countries (IS, LV, CY, CR, PA, VN, MA) may not be in the IMD ranking."
+    ]
+  },
+  "data": {
+    "DK": {
+      "country": "Denmark",
+      "infrastructure_score": null
+    },
+    "NL": {
+      "country": "Netherlands",
+      "infrastructure_score": null
+    },
+    "DE": {
+      "country": "Germany",
+      "infrastructure_score": null
+    },
+    "CH": {
+      "country": "Switzerland",
+      "infrastructure_score": null
+    },
+    "SE": {
+      "country": "Sweden",
+      "infrastructure_score": null
+    },
+    "FI": {
+      "country": "Finland",
+      "infrastructure_score": null
+    },
+    "NO": {
+      "country": "Norway",
+      "infrastructure_score": null
+    },
+    "FR": {
+      "country": "France",
+      "infrastructure_score": null
+    },
+    "IE": {
+      "country": "Ireland",
+      "infrastructure_score": null
+    },
+    "GB": {
+      "country": "United Kingdom",
+      "infrastructure_score": null
+    },
+    "PT": {
+      "country": "Portugal",
+      "infrastructure_score": null
+    },
+    "ES": {
+      "country": "Spain",
+      "infrastructure_score": null
+    },
+    "IT": {
+      "country": "Italy",
+      "infrastructure_score": null
+    },
+    "AT": {
+      "country": "Austria",
+      "infrastructure_score": null
+    },
+    "LU": {
+      "country": "Luxembourg",
+      "infrastructure_score": null
+    },
+    "BE": {
+      "country": "Belgium",
+      "infrastructure_score": null
+    },
+    "CZ": {
+      "country": "Czech Republic",
+      "infrastructure_score": null
+    },
+    "PL": {
+      "country": "Poland",
+      "infrastructure_score": null
+    },
+    "HU": {
+      "country": "Hungary",
+      "infrastructure_score": null
+    },
+    "GR": {
+      "country": "Greece",
+      "infrastructure_score": null
+    },
+    "EE": {
+      "country": "Estonia",
+      "infrastructure_score": null
+    },
+    "HR": {
+      "country": "Croatia",
+      "infrastructure_score": null
+    },
+    "RO": {
+      "country": "Romania",
+      "infrastructure_score": null
+    },
+    "LT": {
+      "country": "Lithuania",
+      "infrastructure_score": null
+    },
+    "CA": {
+      "country": "Canada",
+      "infrastructure_score": null
+    },
+    "MX": {
+      "country": "Mexico",
+      "infrastructure_score": null
+    },
+    "CL": {
+      "country": "Chile",
+      "infrastructure_score": null
+    },
+    "CO": {
+      "country": "Colombia",
+      "infrastructure_score": null
+    },
+    "AR": {
+      "country": "Argentina",
+      "infrastructure_score": null
+    },
+    "UY": {
+      "country": "Uruguay",
+      "infrastructure_score": null
+    },
+    "JP": {
+      "country": "Japan",
+      "infrastructure_score": null
+    },
+    "KR": {
+      "country": "South Korea",
+      "infrastructure_score": null
+    },
+    "SG": {
+      "country": "Singapore",
+      "infrastructure_score": null
+    },
+    "TW": {
+      "country": "Taiwan",
+      "infrastructure_score": null
+    },
+    "MY": {
+      "country": "Malaysia",
+      "infrastructure_score": null
+    },
+    "TH": {
+      "country": "Thailand",
+      "infrastructure_score": null
+    },
+    "AU": {
+      "country": "Australia",
+      "infrastructure_score": null
+    },
+    "NZ": {
+      "country": "New Zealand",
+      "infrastructure_score": null
+    },
+    "IL": {
+      "country": "Israel",
+      "infrastructure_score": null
+    },
+    "AE": {
+      "country": "United Arab Emirates",
+      "infrastructure_score": null
+    },
+    "SK": {
+      "country": "Slovakia",
+      "infrastructure_score": null
+    },
+    "SI": {
+      "country": "Slovenia",
+      "infrastructure_score": null
+    },
+    "LV": {
+      "country": "Latvia",
+      "infrastructure_score": null
+    },
+    "IS": {
+      "country": "Iceland",
+      "infrastructure_score": null
+    },
+    "BG": {
+      "country": "Bulgaria",
+      "infrastructure_score": null
+    },
+    "CY": {
+      "country": "Cyprus",
+      "infrastructure_score": null
+    },
+    "BR": {
+      "country": "Brazil",
+      "infrastructure_score": null
+    },
+    "CR": {
+      "country": "Costa Rica",
+      "infrastructure_score": null
+    },
+    "PA": {
+      "country": "Panama",
+      "infrastructure_score": null
+    },
+    "IN": {
+      "country": "India",
+      "infrastructure_score": null
+    },
+    "PH": {
+      "country": "Philippines",
+      "infrastructure_score": null
+    },
+    "VN": {
+      "country": "Vietnam",
+      "infrastructure_score": null
+    },
+    "ID": {
+      "country": "Indonesia",
+      "infrastructure_score": null
+    },
+    "CN": {
+      "country": "China",
+      "infrastructure_score": null
+    },
+    "TR": {
+      "country": "Turkey",
+      "infrastructure_score": null
+    },
+    "SA": {
+      "country": "Saudi Arabia",
+      "infrastructure_score": null
+    },
+    "QA": {
+      "country": "Qatar",
+      "infrastructure_score": null
+    },
+    "ZA": {
+      "country": "South Africa",
+      "infrastructure_score": null
+    },
+    "MA": {
+      "country": "Morocco",
+      "infrastructure_score": null
+    },
+    "PE": {
+      "country": "Peru",
+      "infrastructure_score": null
+    }
+  }
+}

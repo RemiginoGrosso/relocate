@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import type { RankedCountry, UserWeights } from '@/lib/types';
+import { trackEvent } from '@/lib/analytics';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { DimensionBars } from './DimensionBars';
 
@@ -12,6 +13,7 @@ export function CountryRow({ country, weights }: CountryRowProps) {
   return (
     <Link
       href={`/country/${country.iso.toLowerCase()}`}
+      onClick={() => trackEvent('country_click', { country: country.iso, rank: country.rank, score: country.compositeScore })}
       className="block rounded-lg border border-zinc-200 bg-white p-5 transition-colors hover:bg-zinc-50"
     >
       <div className="flex items-start justify-between gap-3">

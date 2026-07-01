@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import type { ClimatePreference, OnboardingAnswers } from '@/lib/types';
 import { computeOnboardingWeights } from '@/lib/weights';
 import { useWeightStore } from '@/stores/useWeightStore';
+import { trackEvent } from '@/lib/analytics';
 import { ProgressBar } from '@/components/onboarding/ProgressBar';
 import { QuestionStep } from '@/components/onboarding/QuestionStep';
 import { WeightSummary } from '@/components/onboarding/WeightSummary';
@@ -93,22 +94,25 @@ export default function OnboardingPage() {
     (value: string) => {
       const q = QUESTIONS[step];
       setAnswers((prev) => ({ ...prev, [q.key]: value }));
+      trackEvent('onboarding_answer', { question: q.key, answer: value, step: step + 1 });
       setTimeout(() => setStep((s) => s + 1), 200);
     },
     [step],
   );
 
   const handleSkip = useCallback(() => {
+    trackEvent('onboarding_skip', { question: QUESTIONS[step].key, step: step + 1 });
     setStep((s) => s + 1);
-  }, []);
+  }, [step]);
 
   const handleContinue = useCallback(() => {
+    trackEvent('onboarding_complete', { answers_count: Object.keys(answers).length });
     setAllWeights(computedWeights, true);
     if (answers.climatePreference) {
       setClimateType(answers.climatePreference as ClimatePreference);
     }
     router.push('/ranking');
-  }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router]);
+  }, [computedWeights, answers, setAllWeights, setClimateType, router]);
 
   const handleAdjust = useCallback(() => {
     setAllWeights(computedWeights, true);

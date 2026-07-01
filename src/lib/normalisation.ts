@@ -35,7 +35,7 @@ export function gpiNormalise(
   gpiScore: number | null | undefined,
 ): number | null {
   if (gpiScore == null) return null;
-  return minMaxNormalise(gpiScore, 1.07, 2.80, true);
+  return minMaxNormalise(gpiScore, 1.00, 3.50, true);
 }
 
 export function pewNormalise(

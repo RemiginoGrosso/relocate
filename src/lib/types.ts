@@ -19,8 +19,10 @@ export type Region =
   | 'Latin America'
   | 'East Asia'
   | 'Southeast Asia'
+  | 'South Asia'
   | 'Middle East'
-  | 'Oceania';
+  | 'Oceania'
+  | 'Africa';
 
 export type Confidence = 'high' | 'medium' | 'low' | 'no_data';
 
