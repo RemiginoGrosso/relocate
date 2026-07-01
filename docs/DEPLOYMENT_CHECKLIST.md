@@ -79,10 +79,10 @@ This schedules annual refreshes in January-February. To test manually:
 
 ```bash
 # Test each function individually
-curl -L -X POST 'https://rvjyhjfjvqaftaxjwzxj.supabase.co/functions/v1/refresh-world-bank' \
+curl -L -X POST 'https://<project-ref>.supabase.co/functions/v1/refresh-world-bank' \
   -H 'Authorization: Bearer <your-anon-key>'
 
-curl -L -X POST 'https://rvjyhjfjvqaftaxjwzxj.supabase.co/functions/v1/recompute-scores' \
+curl -L -X POST 'https://<project-ref>.supabase.co/functions/v1/recompute-scores' \
   -H 'Authorization: Bearer <your-anon-key>'
 ```
 
