@@ -137,9 +137,9 @@ function computePurchasingPower(raw: RawMap): DimensionScore | null {
 
   if (oecdPpp == null && priceLevel == null) return null;
 
-  const pppNorm = oecdPpp != null ? minMaxNormalise(oecdPpp, 15000, 75000) : null;
+  const pppNorm = oecdPpp != null ? minMaxNormalise(oecdPpp, 8000, 160000) : null;
   const affordNorm = priceLevel != null
-    ? minMaxNormalise(priceLevel, 0.25, 1.45, true)
+    ? minMaxNormalise(priceLevel, 0.10, 1.50, true)
     : null;
   const oopNorm = oopPct != null
     ? minMaxNormalise(oopPct, 5, 65, true)
@@ -208,7 +208,7 @@ function computeSafety(raw: RawMap): DimensionScore | null {
   const gpi = safeNum(raw["gpi.gpi_score"]);
   if (gpi == null) return null;
 
-  const gpiNorm = minMaxNormalise(gpi, 1.07, 2.8, true);
+  const gpiNorm = minMaxNormalise(gpi, 1.00, 3.50, true);
   if (gpiNorm == null) return null;
 
   return {

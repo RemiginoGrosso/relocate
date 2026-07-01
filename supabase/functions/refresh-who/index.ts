@@ -24,6 +24,7 @@ interface IndicatorSpec {
   source: string;
   unit: string;
   sourceUrl: string;
+  apiSource?: number;
 }
 
 const INDICATORS: IndicatorSpec[] = [
@@ -33,6 +34,7 @@ const INDICATORS: IndicatorSpec[] = [
     source: "worldbank",
     unit: "index_0_100",
     sourceUrl: "https://api.worldbank.org/v2/indicator/SH.UHC.SRVS.CV.XD",
+    apiSource: 16,
   },
   {
     wbId: "SH.XPD.OOPC.CH.ZS",
@@ -57,9 +59,10 @@ async function fetchIndicator(
   dateRange: string
 ): Promise<Record<string, { value: number; year: number }>> {
   const isoParam = isoCodes.join(";");
-  const url =
+  let url =
     `https://api.worldbank.org/v2/country/${isoParam}/indicator/${indicator.wbId}` +
     `?date=${dateRange}&format=json&per_page=500`;
+  if (indicator.apiSource) url += `&source=${indicator.apiSource}`;
 
   console.log(`Fetching ${indicator.wbId} for ${isoCodes.length} countries...`);
 

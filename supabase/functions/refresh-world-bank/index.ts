@@ -1,10 +1,13 @@
 /**
  * refresh-world-bank
  *
- * Fetches WGI Rule of Law, Control of Corruption, and Price Level Ratio
- * from the World Bank API for all 40 V1 countries.
- *
+ * Fetches governance, economic, and health indicators from the World Bank API.
  * Upserts results into the raw_indices table.
+ *
+ * Indicator IDs updated for the 2025 World Bank API rename:
+ * - WGI indicators now use GOV_WGI_*.SC with source=3
+ * - UHC requires source=16
+ * - Price Level Ratio computed from PA.NUS.PRVT.PP / PA.NUS.FCRF
  *
  * Invoke: POST /functions/v1/refresh-world-bank
  * Auth: Bearer token with service role key
@@ -14,90 +17,76 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { COUNTRIES, WORLD_BANK_EXCLUDED } from "../_shared/countries.ts";
 import { logRefresh, jsonResponse } from "../_shared/logger.ts";
 
-// ---------------------------------------------------------------------------
-// World Bank indicator mapping
-// ---------------------------------------------------------------------------
 interface IndicatorSpec {
-  /** World Bank indicator ID */
   wbId: string;
-  /** Key stored in raw_indices.indicator */
   indicator: string;
-  /** Source name stored in raw_indices.source */
   source: string;
-  /** Unit label */
   unit: string;
-  /** API source URL */
   sourceUrl: string;
+  apiSource?: number;
 }
 
 const INDICATORS: IndicatorSpec[] = [
   {
-    wbId: "RL.PER.RNK",
+    wbId: "GOV_WGI_RL.SC",
     indicator: "wgi_rule_of_law",
     source: "worldbank",
     unit: "percentile_rank_0_100",
-    sourceUrl: "https://api.worldbank.org/v2/indicator/RL.PER.RNK",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/GOV_WGI_RL.SC",
+    apiSource: 3,
   },
   {
-    wbId: "CC.PER.RNK",
+    wbId: "GOV_WGI_CC.SC",
     indicator: "wgi_corruption_control",
     source: "worldbank",
     unit: "percentile_rank_0_100",
-    sourceUrl: "https://api.worldbank.org/v2/indicator/CC.PER.RNK",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/GOV_WGI_CC.SC",
+    apiSource: 3,
   },
   {
-    wbId: "PA.NUS.PPPC.RF",
-    indicator: "price_level_ratio",
+    wbId: "NY.GDP.PCAP.PP.CD",
+    indicator: "oecd_ppp_aic",
     source: "worldbank",
-    unit: "ratio",
-    sourceUrl: "https://api.worldbank.org/v2/indicator/PA.NUS.PPPC.RF",
+    unit: "current_international_dollar",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/NY.GDP.PCAP.PP.CD",
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
+const PLR_INDICATORS = {
+  ppp: "PA.NUS.PRVT.PP",
+  exchRate: "PA.NUS.FCRF",
+};
 
-/**
- * Fetch a single indicator from the World Bank API for a batch of countries.
- * The API accepts semicolon-separated ISO codes and returns paginated JSON.
- *
- * Returns a map of iso2 -> value.
- */
 async function fetchIndicator(
   isoCodes: string[],
-  indicator: IndicatorSpec,
+  spec: IndicatorSpec,
   dateRange: string
-): Promise<Record<string, number>> {
+): Promise<Record<string, { value: number; year: number }>> {
   const isoParam = isoCodes.join(";");
-  const url =
-    `https://api.worldbank.org/v2/country/${isoParam}/indicator/${indicator.wbId}` +
+  let url =
+    `https://api.worldbank.org/v2/country/${isoParam}/indicator/${spec.wbId}` +
     `?date=${dateRange}&format=json&per_page=500`;
+  if (spec.apiSource) url += `&source=${spec.apiSource}`;
 
-  console.log(`Fetching ${indicator.wbId} for ${isoCodes.length} countries...`);
+  console.log(`Fetching ${spec.wbId} for ${isoCodes.length} countries...`);
 
   const resp = await fetch(url);
   if (!resp.ok) {
-    throw new Error(
-      `World Bank API error for ${indicator.wbId}: ${resp.status} ${resp.statusText}`
-    );
+    throw new Error(`World Bank API error for ${spec.wbId}: ${resp.status}`);
   }
 
   const json = await resp.json();
-
-  // World Bank API returns [metadata, data_array].
-  // If no data, json[1] may be null.
   const entries = json[1] ?? [];
-  const result: Record<string, number> = {};
+  const result: Record<string, { value: number; year: number }> = {};
 
   for (const entry of entries) {
     if (entry.value == null) continue;
     const iso = entry.country?.id;
-    if (!iso) continue;
-    // If multiple years returned, keep the most recent (highest date).
+    const year = parseInt(entry.date, 10);
+    if (!iso || isNaN(year)) continue;
     const existing = result[iso];
-    if (existing === undefined) {
-      result[iso] = entry.value;
+    if (!existing || year > existing.year) {
+      result[iso] = { value: entry.value, year };
     }
   }
 
@@ -105,20 +94,65 @@ async function fetchIndicator(
   return result;
 }
 
-/**
- * Determine the best date range to query.
- * WGI data usually lags 1-2 years. Query the last 3 years to find the most recent.
- */
-function getDateRange(): string {
-  const currentYear = new Date().getFullYear();
-  return `${currentYear - 3}:${currentYear}`;
+async function fetchPriceLevelRatio(
+  isoCodes: string[],
+  dateRange: string
+): Promise<Record<string, { value: number; year: number }>> {
+  const isoParam = isoCodes.join(";");
+
+  const [pppResp, fxResp] = await Promise.all([
+    fetch(
+      `https://api.worldbank.org/v2/country/${isoParam}/indicator/${PLR_INDICATORS.ppp}?date=${dateRange}&format=json&per_page=500`
+    ),
+    fetch(
+      `https://api.worldbank.org/v2/country/${isoParam}/indicator/${PLR_INDICATORS.exchRate}?date=${dateRange}&format=json&per_page=500`
+    ),
+  ]);
+
+  if (!pppResp.ok || !fxResp.ok) {
+    throw new Error("Failed to fetch PLR component indicators");
+  }
+
+  const pppJson = await pppResp.json();
+  const fxJson = await fxResp.json();
+
+  const pppByIso: Record<string, { value: number; year: number }> = {};
+  for (const entry of pppJson[1] ?? []) {
+    if (entry.value == null) continue;
+    const iso = entry.country?.id;
+    const year = parseInt(entry.date, 10);
+    if (!iso || isNaN(year)) continue;
+    if (!pppByIso[iso] || year > pppByIso[iso].year) {
+      pppByIso[iso] = { value: entry.value, year };
+    }
+  }
+
+  const fxByIso: Record<string, { value: number; year: number }> = {};
+  for (const entry of fxJson[1] ?? []) {
+    if (entry.value == null) continue;
+    const iso = entry.country?.id;
+    const year = parseInt(entry.date, 10);
+    if (!iso || isNaN(year)) continue;
+    if (!fxByIso[iso] || year > fxByIso[iso].year) {
+      fxByIso[iso] = { value: entry.value, year };
+    }
+  }
+
+  const result: Record<string, { value: number; year: number }> = {};
+  for (const iso of Object.keys(pppByIso)) {
+    if (fxByIso[iso] && fxByIso[iso].value > 0) {
+      result[iso] = {
+        value: pppByIso[iso].value / fxByIso[iso].value,
+        year: Math.min(pppByIso[iso].year, fxByIso[iso].year),
+      };
+    }
+  }
+
+  console.log(`  Computed PLR for ${Object.keys(result).length} countries.`);
+  return result;
 }
 
-// ---------------------------------------------------------------------------
-// Main handler
-// ---------------------------------------------------------------------------
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -127,12 +161,10 @@ Deno.serve(async (req) => {
   const supabase = createServiceClient();
 
   try {
-    // Get country ID map from database
     const countryIds = await getCountryIdMap(supabase);
-    const dateRange = getDateRange();
     const currentYear = new Date().getFullYear();
+    const dateRange = `${currentYear - 5}:${currentYear}`;
 
-    // Filter out countries not in World Bank
     const eligibleCountries = COUNTRIES.filter(
       (c) => !WORLD_BANK_EXCLUDED.has(c.iso2) && countryIds[c.iso2]
     );
@@ -141,14 +173,11 @@ Deno.serve(async (req) => {
     let totalUpserted = 0;
     const errors: string[] = [];
 
-    // Fetch each indicator
     for (const spec of INDICATORS) {
       try {
         const values = await fetchIndicator(isoCodes, spec, dateRange);
-
-        // Build upsert rows
         const rows = [];
-        for (const [iso, value] of Object.entries(values)) {
+        for (const [iso, { value, year }] of Object.entries(values)) {
           const countryId = countryIds[iso];
           if (!countryId) continue;
           rows.push({
@@ -157,7 +186,7 @@ Deno.serve(async (req) => {
             indicator: spec.indicator,
             value,
             unit: spec.unit,
-            year: currentYear,
+            year,
             source_url: spec.sourceUrl,
             fetched_at: new Date().toISOString(),
           });
@@ -166,32 +195,61 @@ Deno.serve(async (req) => {
         if (rows.length > 0) {
           const { error } = await supabase
             .from("raw_indices")
-            .upsert(rows, {
-              onConflict: "country_id,source,indicator,year",
-            });
+            .upsert(rows, { onConflict: "country_id,source,indicator,year" });
 
           if (error) {
             errors.push(`${spec.indicator}: upsert failed - ${error.message}`);
           } else {
             totalUpserted += rows.length;
-            console.log(`  Upserted ${rows.length} rows for ${spec.indicator}`);
           }
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
         errors.push(`${spec.indicator}: ${msg}`);
-        console.error(`Error fetching ${spec.indicator}:`, msg);
       }
     }
 
-    // Determine status
+    // Price Level Ratio (computed from two indicators)
+    try {
+      const plrValues = await fetchPriceLevelRatio(isoCodes, dateRange);
+      const rows = [];
+      for (const [iso, { value, year }] of Object.entries(plrValues)) {
+        const countryId = countryIds[iso];
+        if (!countryId) continue;
+        rows.push({
+          country_id: countryId,
+          source: "worldbank",
+          indicator: "price_level_ratio",
+          value,
+          unit: "ratio",
+          year,
+          source_url: "https://api.worldbank.org/v2/indicator/PA.NUS.PRVT.PP",
+          fetched_at: new Date().toISOString(),
+        });
+      }
+
+      if (rows.length > 0) {
+        const { error } = await supabase
+          .from("raw_indices")
+          .upsert(rows, { onConflict: "country_id,source,indicator,year" });
+
+        if (error) {
+          errors.push(`price_level_ratio: upsert failed - ${error.message}`);
+        } else {
+          totalUpserted += rows.length;
+        }
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`price_level_ratio: ${msg}`);
+    }
+
     const status = errors.length === 0
       ? "success"
       : totalUpserted > 0
         ? "partial"
         : "failed";
 
-    // Log the refresh
     await logRefresh(supabase, {
       source: "world-bank",
       status,
@@ -202,7 +260,7 @@ Deno.serve(async (req) => {
 
     return jsonResponse({
       status,
-      indicators_fetched: INDICATORS.map((i) => i.indicator),
+      indicators_fetched: [...INDICATORS.map((i) => i.indicator), "price_level_ratio"],
       rows_upserted: totalUpserted,
       errors: errors.length > 0 ? errors : undefined,
     });
