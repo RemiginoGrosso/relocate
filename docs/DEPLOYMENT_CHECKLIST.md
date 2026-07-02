@@ -2,15 +2,20 @@
 
 ## Done
 
-- [x] V1 code complete (all 5 phases), 39/39 tests pass, clean build
-- [x] Pushed to GitHub (`2762a3c`)
+- [x] V1 code complete (all 5 phases), 45/45 tests pass, clean build
+- [x] Pushed to GitHub
 - [x] Netlify project "RelocateIndex" created and connected to GitHub
-- [x] Env vars set in Netlify (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`)
+- [x] Env vars set in Netlify (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_AMPLITUDE_API_KEY`)
 - [x] First deploy triggered — site live at `relocateindex.netlify.app`
-- [x] `netlify.toml` configured (Node 20, `.next` publish dir)
+- [x] `netlify.toml` configured (Node 20, `.next` publish dir, `SECRETS_SCAN_OMIT_KEYS`)
 - [x] SEO metadata points to `relocateindex.com`
+- [x] Domain `relocateindex.com` configured on Netlify
 - [x] Tracking plan written (`docs/TRACKING_PLAN.md`)
-- [x] Supabase Edge Functions written (4 functions + pg_cron migration)
+- [x] Supabase Edge Functions deployed (4 functions: refresh-world-bank, refresh-who, refresh-climate, recompute-scores)
+- [x] pg_cron migration applied (monthly schedule on 1st)
+- [x] Supabase Vault configured with service role key
+- [x] Amplitude analytics instrumented (7 events)
+- [x] Netlify secrets scanner false positives resolved (`SECRETS_SCAN_OMIT_KEYS`)
 
 ---
 

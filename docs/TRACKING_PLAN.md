@@ -204,7 +204,7 @@ The onboarding is 6 questions. Each question is identified by a stable `question
 | Property | Type | Example | Notes |
 |---|---|---|---|
 | `previous_region` | string | `"all"` | Previous active filter |
-| `new_region` | string | `"europe"` | One of: `"all"`, `"europe"`, `"asia_pacific"`, `"americas"`, `"middle_east"` |
+| `new_region` | string | `"europe"` | One of: `"all"`, `"europe"`, `"asia_pacific"`, `"americas"`, `"middle_east"`, `"africa"` |
 | `visible_country_count` | number | `15` | Countries visible after applying the new filter |
 
 ---
@@ -557,7 +557,7 @@ export function usePageTracking() {
 NEXT_PUBLIC_AMPLITUDE_API_KEY=your_key_here
 ```
 
-Add to `.env.local` and to Vercel project environment variables.
+Add to `.env.local` and to Netlify project environment variables.
 
 ### What NOT to track
 

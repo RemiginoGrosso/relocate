@@ -1,6 +1,22 @@
 # Changelog
 
-## 0.1.1 — 2026-07-01
+## 0.1.2 — 2026-07-01
+
+### Added
+- Data refresh pipeline: 4 Supabase Edge Functions (refresh-world-bank, refresh-who, refresh-climate, recompute-scores)
+- pg_cron scheduling (monthly on 1st at 06:00–06:45 UTC, staggered)
+- `invoke_edge_function()` SQL helper reads service role key from Supabase Vault
+- Netlify `SECRETS_SCAN_OMIT_KEYS` for NEXT_PUBLIC_* env vars
+- 6 feature context documents in Features/ folder
+
+### Fixed
+- Netlify deploy failure: secrets scanner false-positive on NEXT_PUBLIC_* vars in client bundle
+- Replaced real Supabase URLs with placeholders in .env.example and docs
+- World Bank API 2025 indicator IDs (GOV_WGI_RL.SC, GOV_WGI_CC.SC with source=3)
+- WHO UHC indicator requires source=16
+- Normalisation boundaries widened (GDP/PPP 8k–160k, price level 0.10–1.50, GPI 1.00–3.50)
+
+## 0.1.1 — 2026-06-30
 
 ### Added
 - Amplitude analytics (7 events: onboarding flow, slider changes, country clicks, region filters)
