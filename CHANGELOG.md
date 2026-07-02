@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.3 — 2026-07-01
+
+### Changed
+- Default dimension weights: now equal (10 per dimension) instead of opinionated priors. Aligns with "user weights drive the ranking, not editorial choices" (Vision & Mission).
+- Country detail header: removed capital city display to reduce confusion about score scope. Scores are country-level except climate (uses capital weather as proxy).
+
 ## 0.1.2 — 2026-07-01
 
 ### Added

@@ -49,7 +49,7 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
             {country.name}
           </h1>
           <p className="text-sm text-zinc-500">
-            {country.region} · {country.capitalCity}
+            {country.region}
           </p>
         </div>
         <ScoreBadge score={score} size="lg" />
