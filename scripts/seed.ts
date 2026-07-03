@@ -43,6 +43,11 @@ interface HofstedeEntry {
   ivr: number;
 }
 
+interface GallupMaiEntry {
+  iso_alpha2: string;
+  mai: number;
+}
+
 interface WvsEntry {
   iso_alpha2: string;
   trust_pct: number;
@@ -165,6 +170,26 @@ async function seedHofstede(hofstede: HofstedeEntry[], countryIds: Record<string
     .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
   if (error) throw new Error(`Hofstede seed failed: ${error.message}`);
   console.log(`  Hofstede seeded: ${rows.length} rows.`);
+}
+
+async function seedGallupMai(data: GallupMaiEntry[], countryIds: Record<string, string>) {
+  console.log(`Seeding Gallup MAI data for ${data.length} countries...`);
+  const rows = data
+    .filter((g) => countryIds[g.iso_alpha2])
+    .map((g) => ({
+      country_id: countryIds[g.iso_alpha2],
+      source: 'gallup',
+      indicator: 'mai',
+      value: g.mai,
+      unit: 'index_0_9',
+      year: 2018,
+      source_url: 'https://worldhappiness.report/ed/2018/',
+    }));
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`Gallup MAI seed failed: ${error.message}`);
+  console.log(`  Gallup MAI seeded: ${rows.length} rows.`);
 }
 
 async function seedWvs(wvs: WvsEntry[], countryIds: Record<string, string>) {
@@ -297,6 +322,7 @@ async function main() {
   console.log('Loading seed data files...');
   const countries = loadJson<SeedCountry[]>('countries.json');
   const hofstede = loadJson<HofstedeEntry[]>('hofstede.json');
+  const gallupMai = loadJson<GallupMaiEntry[]>('gallup-mai.json');
   const wvs = loadJson<WvsEntry[]>('wvs.json');
   const pisa = loadJson<PisaEntry[]>('pisa.json');
   const normParams = loadJson<NormParam[]>('normalisation_params.json');
@@ -310,6 +336,7 @@ async function main() {
   console.log(`Found ${Object.keys(countryIds).length} countries in database.`);
 
   await seedHofstede(hofstede, countryIds);
+  await seedGallupMai(gallupMai, countryIds);
   await seedWvs(wvs, countryIds);
   await seedPisa(pisa, countryIds);
   await seedExternalIndices(externalIndices, countryIds);

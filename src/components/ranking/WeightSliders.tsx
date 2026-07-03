@@ -25,7 +25,10 @@ export function WeightSliders({ weights, onWeightChange, onReset }: WeightSlider
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium text-zinc-900">Your priorities</h2>
           <button
-            onClick={onReset}
+            onClick={() => {
+              trackEvent('weights_reset', {});
+              onReset();
+            }}
             className="text-xs text-zinc-500 hover:text-zinc-900 transition-colors"
           >
             Reset
@@ -56,7 +59,7 @@ export function WeightSliders({ weights, onWeightChange, onReset }: WeightSlider
                 const v = Array.isArray(val) ? val[0] : val;
                 trackEvent('slider_change', { dimension: dim.key, value: v });
               }}
-              max={100}
+              max={10}
               step={1}
               className="w-full"
             />

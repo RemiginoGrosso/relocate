@@ -2,7 +2,7 @@
   "_meta": {
     "description": "Annual climate data for capital cities of 60 countries. Source: Open-Meteo ERA5 reanalysis averages.",
     "year": 2023,
-    "total_countries": 59
+    "total_countries": 60
   },
   "DK": {
     "avg_temp_annual": 9.1,
@@ -475,5 +475,13 @@
     "sunshine_hours_annual": 1230,
     "rain_days_annual": 11,
     "avg_humidity_pct": 82
+  },
+  "US": {
+    "avg_temp_annual": 14.5,
+    "avg_temp_winter": 2.0,
+    "avg_temp_summer": 26.0,
+    "sunshine_hours_annual": 2700,
+    "rain_days_annual": 125,
+    "avg_humidity_pct": 65
   }
 }

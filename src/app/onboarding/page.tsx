@@ -5,10 +5,13 @@ import { useRouter } from 'next/navigation';
 import type { ClimatePreference, OnboardingAnswers } from '@/lib/types';
 import { computeOnboardingWeights } from '@/lib/weights';
 import { useWeightStore } from '@/stores/useWeightStore';
+import { useHydrated } from '@/components/shared/StoreHydration';
 import { trackEvent } from '@/lib/analytics';
 import { ProgressBar } from '@/components/onboarding/ProgressBar';
 import { QuestionStep } from '@/components/onboarding/QuestionStep';
 import { WeightSummary } from '@/components/onboarding/WeightSummary';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 
 type AnswerKey = keyof OnboardingAnswers;
 
@@ -83,12 +86,26 @@ const QUESTIONS: Question[] = [
 
 export default function OnboardingPage() {
   const router = useRouter();
-  const { setAllWeights, setClimateType } = useWeightStore();
+  const { setAllWeights, setClimateType, resetToDefaults } = useWeightStore();
+  const hydrated = useHydrated();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({});
 
+  const fromOnboarding = useWeightStore((s) => s.fromOnboarding);
+  const showResumeBanner = hydrated && fromOnboarding;
+
   const showSummary = step >= QUESTIONS.length;
   const computedWeights = computeOnboardingWeights(answers);
+
+  const handleResume = useCallback(() => {
+    trackEvent('onboarding_resume', {});
+    router.push('/ranking');
+  }, [router]);
+
+  const handleStartFresh = useCallback(() => {
+    trackEvent('onboarding_start_fresh', {});
+    resetToDefaults();
+  }, [resetToDefaults]);
 
   const handleSelect = useCallback(
     (value: string) => {
@@ -121,6 +138,29 @@ export default function OnboardingPage() {
     }
     router.push('/ranking');
   }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router]);
+
+  if (showResumeBanner) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">
+        <div className="w-full max-w-lg">
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-sm text-muted-foreground mb-1">You have saved priorities.</p>
+              <h2 className="text-lg font-medium mb-6">Pick up where you left off?</h2>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button className="flex-1" onClick={handleResume}>
+                  Continue with saved priorities
+                </Button>
+                <Button variant="outline" className="flex-1" onClick={handleStartFresh}>
+                  Start fresh
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4 py-8">

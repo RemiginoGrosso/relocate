@@ -1,5 +1,6 @@
 import { DIMENSIONS } from '@/lib/constants';
 import { DownloadCsvButton } from './DownloadCsvButton';
+import { MethodologyTracker } from './MethodologyTracker';
 
 export const metadata = {
   title: 'Methodology — Relocator',
@@ -16,6 +17,7 @@ const NOT_COVERED = [
 export default function MethodologyPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
+      <MethodologyTracker />
       <h1 className="text-3xl font-medium tracking-tight text-zinc-900">
         Methodology
       </h1>
@@ -35,7 +37,9 @@ export default function MethodologyPage() {
           are excluded. If a country is missing data for a dimension, that
           dimension is excluded and the remaining weights re-normalise
           automatically. Countries missing more than 3 dimensions are flagged
-          as &quot;limited data.&quot;
+          as &quot;limited data.&quot; When a dimension has partial data (some
+          but not all sources available), the available sources are reweighted
+          proportionally. These scores are marked as limited data.
         </p>
         <div className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3">
           <code className="text-sm text-zinc-700">

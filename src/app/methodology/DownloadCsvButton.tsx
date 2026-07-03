@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { fetchAllCountryScores } from '@/lib/supabase';
 import { DIMENSION_KEYS } from '@/lib/constants';
+import { trackEvent } from '@/lib/analytics';
 import type { DimensionKey } from '@/lib/types';
 
 const DIMENSION_LABELS: Record<DimensionKey, string> = {
@@ -45,6 +46,7 @@ export function DownloadCsvButton() {
       a.href = url;
       a.download = 'relocator-scores.csv';
       a.click();
+      trackEvent('csv_downloaded', { country_count: countries.length });
       URL.revokeObjectURL(url);
     } finally {
       setLoading(false);

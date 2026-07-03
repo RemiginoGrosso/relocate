@@ -457,5 +457,14 @@
     "belonging_index": 0.24,
     "bullying_index": 0.26,
     "safety_index": 0.14
+  },
+  {
+    "iso_alpha2": "US",
+    "reading": 492,
+    "maths": 477,
+    "science": 493,
+    "belonging_index": 0.20,
+    "bullying_index": 0.17,
+    "safety_index": 0.32
   }
 ]

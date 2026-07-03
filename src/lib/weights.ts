@@ -11,16 +11,16 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
         weights.school_culture = 0;
         break;
       case 'family_young':
-        weights.school_culture += 40;
-        weights.healthcare += 15;
+        weights.school_culture += 4;
+        weights.healthcare += 2;
         break;
       case 'family_teen':
-        weights.school_culture += 25;
+        weights.school_culture += 3;
         break;
       case 'retiring':
-        weights.healthcare += 25;
-        weights.climate += 20;
-        weights.safety += 15;
+        weights.healthcare += 3;
+        weights.climate += 2;
+        weights.safety += 2;
         break;
     }
   }
@@ -28,15 +28,15 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
   if (answers.income) {
     switch (answers.income) {
       case 'remote':
-        weights.purchasing_power += 25;
+        weights.purchasing_power += 3;
         break;
       case 'local_job':
-        weights.purchasing_power += 15;
-        weights.english_proficiency += 20;
+        weights.purchasing_power += 2;
+        weights.english_proficiency += 2;
         break;
       case 'pension':
-        weights.purchasing_power += 10;
-        weights.climate += 15;
+        weights.purchasing_power += 1;
+        weights.climate += 2;
         break;
     }
   }
@@ -44,10 +44,10 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
   if (answers.civicImportance) {
     switch (answers.civicImportance) {
       case 'top_priority':
-        weights.civic_culture += 40;
+        weights.civic_culture += 4;
         break;
       case 'very_important':
-        weights.civic_culture += 20;
+        weights.civic_culture += 2;
         break;
       case 'nice_to_have':
       case 'not_important':
@@ -58,10 +58,10 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
   if (answers.warmthImportance) {
     switch (answers.warmthImportance) {
       case 'essential':
-        weights.warmth += 35;
+        weights.warmth += 4;
         break;
       case 'matters':
-        weights.warmth += 15;
+        weights.warmth += 2;
         break;
       case 'not_priority':
         break;
@@ -72,11 +72,11 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
     switch (answers.climatePreference) {
       case 'warm_sunny':
       case 'hot_tropical':
-        weights.climate += 20;
+        weights.climate += 2;
         break;
       case 'mild_green':
       case 'cold_crisp':
-        weights.climate += 15;
+        weights.climate += 2;
         break;
       case 'no_preference':
         break;
@@ -86,7 +86,7 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
   if (answers.religiousNeeds) {
     switch (answers.religiousNeeds) {
       case 'important':
-        weights.religious_freedom += 25;
+        weights.religious_freedom += 3;
         break;
       case 'not_priority':
         break;

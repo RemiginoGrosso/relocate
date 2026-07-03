@@ -30,9 +30,9 @@ function makeCountry(
 describe('normaliseWeights', () => {
   it('normalises equal weights to equal values', () => {
     const weights: UserWeights = {
-      purchasing_power: 50, civic_culture: 50, safety: 50, warmth: 50,
-      school_culture: 50, healthcare: 50, infrastructure: 50, climate: 50,
-      religious_freedom: 50, english_proficiency: 50,
+      purchasing_power: 5, civic_culture: 5, safety: 5, warmth: 5,
+      school_culture: 5, healthcare: 5, infrastructure: 5, climate: 5,
+      religious_freedom: 5, english_proficiency: 5,
     };
     const result = normaliseWeights(weights);
     for (const v of Object.values(result)) {
@@ -40,11 +40,11 @@ describe('normaliseWeights', () => {
     }
   });
 
-  it('gives ~4x weight to a dimension at 100 vs 25', () => {
+  it('gives ~4x weight to a dimension at 8 vs 2', () => {
     const weights: UserWeights = {
-      purchasing_power: 100, civic_culture: 25, safety: 25, warmth: 25,
-      school_culture: 25, healthcare: 25, infrastructure: 25, climate: 25,
-      religious_freedom: 25, english_proficiency: 25,
+      purchasing_power: 8, civic_culture: 2, safety: 2, warmth: 2,
+      school_culture: 2, healthcare: 2, infrastructure: 2, climate: 2,
+      religious_freedom: 2, english_proficiency: 2,
     };
     const result = normaliseWeights(weights);
     expect(result.purchasing_power / result.civic_culture).toBeCloseTo(4, 5);
@@ -52,9 +52,9 @@ describe('normaliseWeights', () => {
 
   it('excludes zero-weight dimensions', () => {
     const weights: UserWeights = {
-      purchasing_power: 50, civic_culture: 0, safety: 50, warmth: 50,
-      school_culture: 50, healthcare: 50, infrastructure: 50, climate: 50,
-      religious_freedom: 50, english_proficiency: 50,
+      purchasing_power: 5, civic_culture: 0, safety: 5, warmth: 5,
+      school_culture: 5, healthcare: 5, infrastructure: 5, climate: 5,
+      religious_freedom: 5, english_proficiency: 5,
     };
     const result = normaliseWeights(weights);
     expect(result.civic_culture).toBeUndefined();

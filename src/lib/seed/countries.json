@@ -244,9 +244,9 @@
     "iso_alpha2": "CA",
     "iso_alpha3": "CAN",
     "region": "North America",
-    "capital_city": "Ottawa",
-    "capital_lat": 45.4215,
-    "capital_lon": -75.6972,
+    "capital_city": "Toronto",
+    "capital_lat": 43.6532,
+    "capital_lon": -79.3832,
     "flag_emoji": "🇨🇦"
   },
   {
@@ -364,9 +364,9 @@
     "iso_alpha2": "AU",
     "iso_alpha3": "AUS",
     "region": "Oceania",
-    "capital_city": "Canberra",
-    "capital_lat": -35.2809,
-    "capital_lon": 149.13,
+    "capital_city": "Sydney",
+    "capital_lat": -33.8688,
+    "capital_lon": 151.2093,
     "flag_emoji": "🇦🇺"
   },
   {
@@ -454,9 +454,9 @@
     "iso_alpha2": "BR",
     "iso_alpha3": "BRA",
     "region": "Latin America",
-    "capital_city": "Brasília",
-    "capital_lat": -15.7801,
-    "capital_lon": -47.9292,
+    "capital_city": "São Paulo",
+    "capital_lat": -23.5505,
+    "capital_lon": -46.6333,
     "flag_emoji": "🇧🇷"
   },
   {
@@ -484,9 +484,9 @@
     "iso_alpha2": "IN",
     "iso_alpha3": "IND",
     "region": "South Asia",
-    "capital_city": "New Delhi",
-    "capital_lat": 28.6139,
-    "capital_lon": 77.209,
+    "capital_city": "Mumbai",
+    "capital_lat": 19.076,
+    "capital_lon": 72.8777,
     "flag_emoji": "🇮🇳"
   },
   {
@@ -524,9 +524,9 @@
     "iso_alpha2": "CN",
     "iso_alpha3": "CHN",
     "region": "East Asia",
-    "capital_city": "Beijing",
-    "capital_lat": 39.9042,
-    "capital_lon": 116.4074,
+    "capital_city": "Shanghai",
+    "capital_lat": 31.2304,
+    "capital_lon": 121.4737,
     "flag_emoji": "🇨🇳"
   },
   {
@@ -588,5 +588,15 @@
     "capital_lat": -12.0464,
     "capital_lon": -77.0428,
     "flag_emoji": "🇵🇪"
+  },
+  {
+    "name": "United States",
+    "iso_alpha2": "US",
+    "iso_alpha3": "USA",
+    "region": "North America",
+    "capital_city": "Washington, D.C.",
+    "capital_lat": 38.8951,
+    "capital_lon": -77.0369,
+    "flag_emoji": "🇺🇸"
   }
 ]

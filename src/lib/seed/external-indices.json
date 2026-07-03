@@ -9,7 +9,7 @@
     "imd_source": "IMD Infrastructure 2024 via worldpopulationreview.com",
     "internations_source": "InterNations Expat Insider 2024, verified ranks from audit",
     "pew_status": "NOT YET SOURCED — requires manual entry from Pew appendix download",
-    "total_countries": 59
+    "total_countries": 60
   },
   "DK": {
     "worldbank.wgi_rule_of_law": 91.6,
@@ -836,5 +836,19 @@
     "pew.govt_restrictions": 1.9,
     "pew.social_hostility": 0.4,
     "ef.epi_score": 519
+  },
+  "US": {
+    "worldbank.wgi_rule_of_law": 91.0,
+    "worldbank.wgi_corruption_control": 86.0,
+    "gpi.gpi_score": 2.27,
+    "internations.ease_rank": null,
+    "worldbank.who_uhc_coverage": 90,
+    "worldbank.oecd_ppp_aic": 80450.0,
+    "worldbank.price_level_ratio": 1.05,
+    "worldbank.who_oop_pct": 10.9,
+    "imd.infrastructure_score": 83,
+    "pew.govt_restrictions": 0.5,
+    "pew.social_hostility": 2.5,
+    "ef.epi_score": 100
   }
 }

@@ -1,11 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import type { CountryScores } from '@/lib/types';
-import { useWeightStore } from '@/stores/useWeightStore';
+import { useEffect, useState } from 'react';
+import type { CountryScores, DimensionKey } from '@/lib/types';
+import { DIMENSIONS } from '@/lib/constants';
+import { trackEvent } from '@/lib/analytics';
+import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { CountryList } from '@/components/ranking/CountryList';
 import { WeightSliders } from '@/components/ranking/WeightSliders';
 import { ClimateTypeSelector } from '@/components/ranking/ClimateTypeSelector';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Drawer,
   DrawerContent,
@@ -19,8 +28,19 @@ interface RankingViewProps {
 }
 
 export function RankingView({ countries }: RankingViewProps) {
-  const { weights, setWeight, resetToDefaults, climateType, setClimateType } = useWeightStore();
+  const { weights, setWeight, resetToDefaults, climateType, setClimateType, selectedCities, setSelectedCity } = useWeightStore();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [rankedBy, setRankedBy] = useState<DimensionKey | 'overall'>('overall');
+
+  useEffect(() => {
+    hydrateWeightStore();
+  }, []);
+
+  function handleRankedByChange(value: DimensionKey | 'overall' | null) {
+    if (value === null) return;
+    setRankedBy(value);
+    trackEvent('dimension_sort', { dimension: value });
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -50,7 +70,34 @@ export function RankingView({ countries }: RankingViewProps) {
               Adjust your priorities to see how countries rank for you.
             </p>
           </div>
-          <CountryList countries={countries} weights={weights} climateType={climateType} />
+          <div className="mb-4 flex items-center gap-2">
+            <span className="text-sm text-zinc-500">Ranked by</span>
+            <Select value={rankedBy} onValueChange={handleRankedByChange}>
+              <SelectTrigger className="w-52 border-zinc-200 bg-white text-sm text-zinc-900">
+                <span className="flex flex-1 text-left">
+                  {rankedBy === 'overall'
+                    ? 'Overall score'
+                    : DIMENSIONS.find((d) => d.key === rankedBy)?.name}
+                </span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="overall">Overall score</SelectItem>
+                {DIMENSIONS.map((d) => (
+                  <SelectItem key={d.key} value={d.key}>
+                    {d.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <CountryList
+            countries={countries}
+            weights={weights}
+            climateType={climateType}
+            selectedCities={selectedCities}
+            rankedBy={rankedBy}
+            onCityChange={setSelectedCity}
+          />
         </div>
       </main>
 

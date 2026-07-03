@@ -15,14 +15,19 @@ interface DimensionBarsProps {
 }
 
 export function DimensionBars({ dimensionScores, weights, count = 4 }: DimensionBarsProps) {
-  const activeKeys = Object.entries(weights)
+  const allActiveEntries = Object.entries(weights)
     .filter(([, w]) => w > 0)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, count)
-    .map(([k]) => k as DimensionKey);
+    .sort(([, a], [, b]) => b - a);
+
+  const totalActive = allActiveEntries.length;
+  const activeKeys = allActiveEntries.slice(0, count).map(([k]) => k as DimensionKey);
+  const remaining = totalActive - activeKeys.length;
 
   return (
     <div className="flex flex-col gap-1.5">
+      {activeKeys.length > 0 && (
+        <span className="text-xs text-zinc-400">Your top priorities</span>
+      )}
       {activeKeys.map((key, i) => {
         const dim = DIMENSIONS.find((d) => d.key === key);
         const score = dimensionScores[key]?.score;
@@ -44,6 +49,9 @@ export function DimensionBars({ dimensionScores, weights, count = 4 }: Dimension
           </div>
         );
       })}
+      {remaining > 0 && (
+        <span className="text-xs text-zinc-400">+{remaining} more</span>
+      )}
     </div>
   );
 }

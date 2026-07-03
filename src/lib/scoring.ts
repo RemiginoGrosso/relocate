@@ -1,5 +1,6 @@
 import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, RankedCountry, ScoreTier, UserWeights } from './types';
 import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MAX_NULL_DIMENSIONS, SCORE_THRESHOLDS } from './constants';
+import { getCityClimate } from './large-countries';
 
 export function normaliseWeights(
   weights: UserWeights,
@@ -109,23 +110,36 @@ export function computeClimateScore(
 export function applyClimatePreference(
   countries: CountryScores[],
   climateType: ClimatePreference,
+  selectedCities: Record<string, string> = {},
 ): CountryScores[] {
-  if (climateType === 'no_preference') return countries;
-  const profile = CLIMATE_PROFILES[climateType];
+  const hasPreference = climateType !== 'no_preference';
+  const hasCityOverrides = Object.keys(selectedCities).length > 0;
+  if (!hasPreference && !hasCityOverrides) return countries;
+
+  const profile = hasPreference ? CLIMATE_PROFILES[climateType] : undefined;
+
   return countries.map((c) => {
     const climateDim = c.dimensionScores.climate;
     if (!climateDim?.components) return c;
-    const newScore = computeClimateScore(
-      climateDim.components.avg_temp ?? null,
-      climateDim.components.rain_days ?? null,
-      climateDim.components.sunshine_hours ?? null,
-      profile,
-    );
+
+    const cityName = selectedCities[c.iso.toUpperCase()];
+    const cityClimate = cityName ? getCityClimate(c.iso, cityName) : null;
+
+    const avgTemp = cityClimate?.avgTemp ?? climateDim.components.avg_temp ?? null;
+    const rainDays = cityClimate?.rainDays ?? climateDim.components.rain_days ?? null;
+    const sunshineHours = cityClimate?.sunshineHours ?? climateDim.components.sunshine_hours ?? null;
+
+    const newScore = computeClimateScore(avgTemp, rainDays, sunshineHours, profile);
+
+    const newComponents = cityClimate
+      ? { ...climateDim.components, avg_temp: avgTemp as number, rain_days: rainDays as number, sunshine_hours: sunshineHours as number }
+      : climateDim.components;
+
     return {
       ...c,
       dimensionScores: {
         ...c.dimensionScores,
-        climate: { ...climateDim, score: newScore },
+        climate: { ...climateDim, score: newScore, components: newComponents },
       },
     };
   });

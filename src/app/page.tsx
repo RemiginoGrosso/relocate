@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { DIMENSIONS } from '@/lib/constants';
+import { CtaButtons } from '@/components/landing/CtaButtons';
 import {
   Card,
   CardContent,
@@ -75,6 +76,8 @@ const NOT_THIS = [
 ];
 
 export default function Home() {
+  const email = ['info', 'relocateindex.com'].join('@');
+
   return (
     <main className="flex min-h-screen flex-col">
       {/* Minimal nav — Header returns null on "/" so we render our own */}
@@ -101,20 +104,7 @@ export default function Home() {
             surfaces 9 other dimensions — so you rank countries by what actually
             matters to you, not just what is easy to Google.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link
-              href="/onboarding"
-              className="rounded-lg bg-teal-700 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-teal-800"
-            >
-              Find my ideal country
-            </Link>
-            <Link
-              href="/ranking"
-              className="rounded-lg border border-zinc-200 bg-white px-6 py-3 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50"
-            >
-              Skip to ranking
-            </Link>
-          </div>
+          <CtaButtons />
         </div>
 
         {/* Trust bar */}
@@ -269,12 +259,23 @@ export default function Home() {
           <p className="text-xs text-zinc-400">
             Relocator narrows the field. It does not make the decision.
           </p>
-          <Link
-            href="/methodology"
-            className="text-xs text-zinc-400 transition-colors hover:text-zinc-600"
-          >
-            Methodology
-          </Link>
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-zinc-400">v{process.env.NEXT_PUBLIC_APP_VERSION}</span>
+            <span className="text-xs text-zinc-300">·</span>
+            <Link
+              href="/methodology"
+              className="text-xs text-zinc-400 transition-colors hover:text-zinc-600"
+            >
+              Methodology
+            </Link>
+            <span className="text-xs text-zinc-300">·</span>
+            <a
+              href={`mailto:${email}`}
+              className="text-xs text-zinc-400 transition-colors hover:text-zinc-600"
+            >
+              {email}
+            </a>
+          </div>
         </div>
       </footer>
     </main>

@@ -2,6 +2,7 @@
 
 import type { ClimatePreference } from '@/lib/types';
 import { CLIMATE_PROFILES } from '@/lib/constants';
+import { trackEvent } from '@/lib/analytics';
 
 interface ClimateTypeSelectorProps {
   value: ClimatePreference;
@@ -30,7 +31,10 @@ export function ClimateTypeSelector({ value, onChange }: ClimateTypeSelectorProp
           return (
             <button
               key={key}
-              onClick={() => onChange(key)}
+              onClick={() => {
+              trackEvent('climate_type_change', { climate_type: key });
+              onChange(key);
+            }}
               className={`rounded-lg px-3 py-2 text-left text-sm transition-colors ${
                 active
                   ? 'bg-teal-700 text-white'

@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.1.6 — 2026-07-03
+
+### Added
+- Climate city selector on country detail page: header-level dropdown for 8 large countries (CA, AU, BR, AR, CN, IN, MX, US) with "only affects climate score" disclaimer. Updates climate score, radar chart, and composite in real-time
+- USA added as country with 5 cities for climate selection (New York, Los Angeles, Miami, Chicago, San Francisco)
+- Gallup MAI seed data (`gallup-mai.json`): 47 countries with Migrant Acceptance Index scores from WHR 2018
+- Partial data handling: multi-source dimensions now reweight available components when some sources are missing, with confidence: "low" marker
+
+### Changed
+- Warmth dimension formula: replaced Hofstede IVR (cultural indulgence proxy) with Gallup Migrant Acceptance Index (direct migrant acceptance measure). Formula: `MAI_normalised × 0.40 + InterNations × 0.60`
+- Methodology page updated with partial data explanation
+
+### Fixed
+- Warmth scores for Cyprus, Costa Rica, Panama, Qatar: previously NULL due to missing IVR gate, now computed from InterNations data alone (confidence: low)
+- Removed stale `onCityChange` prop from CountryDetailView and unused imports from DimensionBreakdown
+
+## 0.1.5 — 2026-07-02
+
+### Added
+- Missing data visual cue on ranking view: amber AlertTriangle icon (14px) next to score badge for countries missing 1-3 dimensions, with tooltip listing which dimensions are missing. "Limited data" outline badge for >3 missing dimensions
+- Dimension context paragraphs: each dimension now has a `context` field explaining why it matters for relocation, shown in country detail accordion below the description
+- Indicator interpretation labels: qualitative labels (e.g., "Moderate", "Low trust", "Peaceful") shown below raw indicator values in accordion panels. Covers all 20 indicators across 10 dimensions
+- "Your top priorities" label and "+N more" indicator on DimensionBars in ranking view
+- Slider scale changed from 0-100 to 0-10 to eliminate false precision. localStorage migration (v1→v2) auto-converts saved weights
+
+### Changed
+- Civic Culture description rewritten to cover social behaviour (queuing, driving, respecting shared spaces, normalisation of rule-breaking) alongside institutional quality
+- Onboarding weight increments scaled to 0-10 range (e.g., +4 instead of +40)
+- Default weights changed from 10 to 5 per dimension
+
+### Fixed
+- Indicator text overflow in country detail accordion: values and interpretation labels no longer extend past card boundary (items-baseline + justify-between layout)
+- Accordion content padding: added horizontal padding (px-2) so indicator text doesn't collide with card edges
+- WGI interpretation ranges corrected from -2.5/+2.5 to 0-100 scale (matching stored data format per SCORING_ENGINE.md)
+
+## 0.1.4 — 2026-07-02
+
+### Added
+- Persist onboarding state: weights, climate type, and onboarding flag saved to localStorage with versioned schema. Resume banner on onboarding page ("Continue with saved priorities" / "Start fresh")
+- FE version displayed in footer (`v0.1.x` from package.json via NEXT_PUBLIC_APP_VERSION)
+- Contact email in footer (info@relocateindex.com, JS-assembled anti-scrape)
+- "Ranked by" dropdown on ranking page: sort by individual dimension or overall composite score. Hides DimensionBars in single-dimension mode
+- 5 new analytics events: csv_downloaded, methodology_viewed, weights_reset, cta_click, climate_type_change (total: 12 instrumented events)
+
+### Changed
+- CTA buttons on landing page extracted to client component (CtaButtons.tsx) for analytics tracking
+- MethodologyTracker client component added to methodology page for page-view event
+
 ## 0.1.3 — 2026-07-01
 
 ### Changed

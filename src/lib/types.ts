@@ -59,6 +59,7 @@ export interface DimensionDefinition {
   key: DimensionKey;
   name: string;
   description: string;
+  context: string;
   methodology: string;
   category: DimensionCategory;
   sources: string[];

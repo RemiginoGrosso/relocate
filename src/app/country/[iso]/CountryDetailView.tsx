@@ -5,11 +5,12 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import type { CountryDetail } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
+import { isLargeCountry, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
 import { DimensionBreakdown } from '@/components/country/DimensionBreakdown';
 import { DataFreshness } from '@/components/country/DataFreshness';
-import { useWeightStore } from '@/stores/useWeightStore';
+import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { applyClimatePreference, computeComposite, normaliseWeights } from '@/lib/scoring';
 
 interface CountryDetailViewProps {
@@ -18,11 +19,15 @@ interface CountryDetailViewProps {
 
 export function CountryDetailView({ detail }: CountryDetailViewProps) {
   const { country, rawIndices, climate } = detail;
-  const { weights, climateType } = useWeightStore();
+  const { weights, climateType, selectedCities, setSelectedCity } = useWeightStore();
+
+  useEffect(() => {
+    hydrateWeightStore();
+  }, []);
 
   const adjustedCountry = useMemo(
-    () => applyClimatePreference([country], climateType)[0],
-    [country, climateType],
+    () => applyClimatePreference([country], climateType, selectedCities)[0],
+    [country, climateType, selectedCities],
   );
 
   const normWeights = normaliseWeights(weights);
@@ -51,6 +56,26 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
           <p className="text-sm text-zinc-500">
             {country.region}
           </p>
+          {isLargeCountry(country.iso) && (() => {
+            const cities = getCitiesForCountry(country.iso);
+            const currentCity = selectedCities[country.iso.toUpperCase()] ?? getDefaultCity(country.iso) ?? undefined;
+            return cities ? (
+              <div className="mt-1 flex items-center gap-1.5">
+                <span className="text-xs text-zinc-400">Climate city:</span>
+                <select
+                  value={currentCity}
+                  onChange={(e) => setSelectedCity(country.iso.toUpperCase(), e.target.value)}
+                  className="text-xs text-teal-700 bg-transparent border-none cursor-pointer p-0 focus:outline-none focus:ring-0"
+                  aria-label={`Select climate city for ${country.name}`}
+                >
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>{city.name}</option>
+                  ))}
+                </select>
+                <span className="text-xs text-zinc-400">· only affects climate score</span>
+              </div>
+            ) : null;
+          })()}
         </div>
         <ScoreBadge score={score} size="lg" />
       </div>
@@ -72,6 +97,7 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
               country={adjustedCountry}
               rawIndices={rawIndices}
               climate={climate}
+              selectedCity={selectedCities[country.iso.toUpperCase()]}
             />
           </div>
         </div>

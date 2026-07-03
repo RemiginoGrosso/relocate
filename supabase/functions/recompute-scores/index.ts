@@ -221,35 +221,32 @@ function computeSafety(raw: RawMap): DimensionScore | null {
 }
 
 function computeWarmth(raw: RawMap): DimensionScore | null {
-  const ivr = safeNum(raw["hofstede.ivr"]);
+  const maiRaw = safeNum(raw["gallup.mai"]);
+  const maiNorm = maiRaw != null ? round2((maiRaw / 9) * 100) : null;
   const intRank = safeNum(raw["internations.ease_rank"]);
+  const intScore = intRank != null
+    ? round2(((53 - intRank) / (53 - 1)) * 100)
+    : null;
 
-  if (ivr == null) return null;
+  if (maiNorm == null && intScore == null) return null;
 
-  if (intRank != null) {
-    // InterNations conversion: (total - rank) / (total - 1) * 100
-    const intScore = ((53 - intRank) / (53 - 1)) * 100;
-    const warmthScore = ivr * 0.4 + intScore * 0.6;
-
+  if (maiNorm != null && intScore != null) {
     return {
       country_id: "",
       dimension_key: "warmth",
-      score: round2(warmthScore),
+      score: round2(maiNorm * 0.4 + intScore * 0.6),
       confidence: "medium",
-      component_scores: {
-        ivr,
-        internations_score: round2(intScore),
-      },
+      component_scores: { mai: maiNorm, internations_score: intScore },
     };
   }
 
-  // IVR only, no InterNations data
+  // Partial: one source only — reweight to 1.0
   return {
     country_id: "",
     dimension_key: "warmth",
-    score: ivr,
+    score: maiNorm ?? intScore!,
     confidence: "low",
-    component_scores: { ivr, internations_score: null },
+    component_scores: { mai: maiNorm, internations_score: intScore },
   };
 }
 
