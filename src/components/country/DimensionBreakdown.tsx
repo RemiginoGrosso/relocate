@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { AlertTriangle } from 'lucide-react';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { DIMENSIONS, INDICATOR_INTERPRETATIONS, WARMTH_MISMATCH_THRESHOLD } from '@/lib/constants';
 import { isLargeCountry, getCityClimate } from '@/lib/large-countries';
@@ -134,14 +135,29 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
   const ivrRaw = rawIndices.find((r) => r.source === 'hofstede' && r.indicator === 'ivr');
   const interNationsRaw = rawIndices.find((r) => r.source === 'internations' && r.indicator === 'ease_rank');
 
+  const hasIvr = ivrRaw?.value != null;
+  const hasInterNations = interNationsRaw?.value != null;
+  const warmthScore = country.dimensionScores.warmth;
+  const warmthPartial = warmthScore != null && warmthScore.confidence === 'low';
+
   const warmthMismatch =
-    ivrRaw?.value != null &&
-    interNationsRaw?.value != null &&
-    country.dimensionScores.warmth?.components &&
+    hasIvr &&
+    hasInterNations &&
+    warmthScore?.components &&
     Math.abs(
-      (country.dimensionScores.warmth.components['ivr'] ?? 0) -
-      (country.dimensionScores.warmth.components['internations_score'] ?? 0)
+      (warmthScore.components['ivr'] ?? 0) -
+      (warmthScore.components['internations_score'] ?? 0)
     ) > WARMTH_MISMATCH_THRESHOLD;
+
+  const warmthPartialMessage = warmthPartial
+    ? !hasInterNations && hasIvr
+      ? 'Based on cultural indicators only (Hofstede IVR). Expat settling-in data (InterNations) is not available for this country — score may differ from lived experience.'
+      : !hasIvr && hasInterNations
+        ? 'Based on expat survey data only (InterNations). Cultural indicator (Hofstede IVR) is not available for this country.'
+        : !hasIvr && !hasInterNations
+          ? 'Based on Gallup Migrant Acceptance Index (fallback). Neither primary warmth source is available for this country.'
+          : null
+    : null;
 
   return (
     <Accordion>
@@ -155,11 +171,18 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
             <AccordionTrigger className="gap-3">
               <div className="flex flex-1 items-center justify-between pr-2">
                 <span>{dim.name}</span>
-                {dimScore?.score != null ? (
-                  <ScoreBadge score={dimScore.score} />
-                ) : (
-                  <span className="text-xs text-zinc-400">No data</span>
-                )}
+                <span className="flex items-center gap-1.5">
+                  {dim.key === 'warmth' && warmthPartial && (
+                    <span title="Partial data — see details inside">
+                      <AlertTriangle size={14} className="text-amber-500" />
+                    </span>
+                  )}
+                  {dimScore?.score != null ? (
+                    <ScoreBadge score={dimScore.score} />
+                  ) : (
+                    <span className="text-xs text-zinc-400">No data</span>
+                  )}
+                </span>
               </div>
             </AccordionTrigger>
             <AccordionContent>
@@ -202,6 +225,13 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                   <p className="text-xs text-amber-700">
                     Warmth mismatch: cultural permissiveness and expat experience scores differ significantly.
                   </p>
+                )}
+
+                {dim.key === 'warmth' && warmthPartialMessage && (
+                  <div className="flex gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                    <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-600" />
+                    <p className="text-xs text-amber-800">{warmthPartialMessage}</p>
+                  </div>
                 )}
 
                 <div className="flex flex-wrap gap-1.5 pt-1">
