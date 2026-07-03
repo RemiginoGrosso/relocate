@@ -45,7 +45,7 @@ const INDICATOR_LABELS: Record<string, string> = {
 
 const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
   purchasing_power: ['worldbank.oecd_ppp_aic', 'worldbank.price_level_ratio', 'worldbank.who_oop_pct'],
-  civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control', 'wvs.trust_pct'],
+  civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control'],
   safety: ['gpi.gpi_score'],
   warmth: ['hofstede.ivr', 'internations.ease_rank', 'gallup.mai'],
   school_culture: ['pisa.pisa_reading', 'pisa.pisa_maths', 'pisa.pisa_science', 'pisa.pisa_belonging', 'pisa.pisa_bullying', 'pisa.pisa_safety'],

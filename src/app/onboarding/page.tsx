@@ -45,7 +45,7 @@ const QUESTIONS: Question[] = [
   {
     key: 'civicImportance',
     question:
-      'How important is civic culture — rule of law, social trust, respect for public space?',
+      'How important is civic culture — rule of law, corruption control, institutional fairness?',
     options: [
       { label: 'My top priority', value: 'top_priority' },
       { label: 'Very important', value: 'very_important' },

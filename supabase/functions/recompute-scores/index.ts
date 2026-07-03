@@ -172,34 +172,17 @@ function computePurchasingPower(raw: RawMap): DimensionScore | null {
 function computeCivicCulture(raw: RawMap): DimensionScore | null {
   const wgiRol = safeNum(raw["worldbank.wgi_rule_of_law"]);
   const wgiCc = safeNum(raw["worldbank.wgi_corruption_control"]);
-  const wvsTrust = safeNum(raw["wvs.trust_pct"]);
 
-  if (wgiRol == null && wgiCc == null) return null;
-
-  let score: number | null = null;
-  let confidence: "high" | "medium" = "medium";
-
-  if (wgiRol != null && wgiCc != null && wvsTrust != null) {
-    // Full formula: 40/35/25 split
-    score = wgiRol * 0.4 + wgiCc * 0.35 + wvsTrust * 0.25;
-    confidence = "high";
-  } else if (wgiRol != null && wgiCc != null) {
-    // Fallback: 55/45 split (no WVS data)
-    score = wgiRol * 0.55 + wgiCc * 0.45;
-    confidence = "medium";
-  }
-
-  if (score == null) return null;
+  if (wgiRol == null || wgiCc == null) return null;
 
   return {
     country_id: "",
     dimension_key: "civic_culture",
-    score: round2(score),
-    confidence,
+    score: round2(wgiRol * 0.55 + wgiCc * 0.45),
+    confidence: "high",
     component_scores: {
       wgi_rule_of_law: wgiRol,
       wgi_corruption: wgiCc,
-      wvs_trust: wvsTrust,
     },
   };
 }

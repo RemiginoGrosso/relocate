@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.7 — 2026-07-03
+
+### Changed
+- Civic Culture dimension: removed WVS Social Trust from formula. Now WGI-only (Rule of Law × 0.55 + Corruption Control × 0.45). WVS trust measured a different construct (interpersonal social capital) than institutional governance quality, causing countries like Japan to score misleadingly low. Social Trust parked as potential standalone dimension for Phase 2
+- Civic Culture description, context, and methodology copy updated to reflect governance-only scope
+- Onboarding Q3 reworded: "social trust, respect for public space" → "corruption control, institutional fairness"
+
+### Fixed
+- US English proficiency: added US to English-native countries list (was showing 0.0, now 100)
+
 ## 0.1.6 — 2026-07-03
 
 ### Added
