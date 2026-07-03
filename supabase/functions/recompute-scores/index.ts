@@ -299,27 +299,16 @@ function computeSchoolCulture(raw: RawMap): DimensionScore | null {
 
 function computeHealthcare(raw: RawMap): DimensionScore | null {
   const uhc = safeNum(raw["worldbank.who_uhc_coverage"]);
-  const healthOop = safeNum(raw["worldbank.who_oop_pct"]);
-
   if (uhc == null) return null;
 
   const uhcNorm = minMaxNormalise(uhc, 0, 100);
-  const oopNorm =
-    healthOop != null ? minMaxNormalise(healthOop, 5, 65, true) : null;
-
-  let healthScore: number | null;
-  if (uhcNorm != null && oopNorm != null) {
-    healthScore = uhcNorm * 0.55 + oopNorm * 0.45;
-  } else {
-    healthScore = uhcNorm;
-  }
 
   return {
     country_id: "",
     dimension_key: "healthcare",
-    score: healthScore != null ? round2(healthScore) : null,
-    confidence: oopNorm != null ? "high" : "medium",
-    component_scores: { who_uhc: uhcNorm, who_oop: oopNorm },
+    score: uhcNorm != null ? round2(uhcNorm) : null,
+    confidence: "high",
+    component_scores: { who_uhc: uhcNorm },
   };
 }
 

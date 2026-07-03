@@ -1,8 +1,8 @@
 import Link from 'next/link';
-import { AlertTriangle } from 'lucide-react';
-import type { DimensionKey, RankedCountry, UserWeights } from '@/lib/types';
+import { AlertTriangle, Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
+import type { DimensionKey, HealthcareSystemType, RankedCountry, UserWeights } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
-import { DIMENSIONS } from '@/lib/constants';
+import { DIMENSIONS, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
 import { isLargeCountry, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
@@ -11,6 +11,13 @@ import { DimensionBars } from './DimensionBars';
 
 const dimensionName = (key: DimensionKey): string =>
   DIMENSIONS.find((d) => d.key === key)?.name ?? key;
+
+const SYSTEM_TYPE_ICONS: Record<HealthcareSystemType, typeof Shield> = {
+  public: Shield,
+  regulated_buyin: ShieldCheck,
+  employer_provided: Briefcase,
+  budget_private: DollarSign,
+};
 
 interface CountryRowProps {
   country: RankedCountry;
@@ -51,6 +58,28 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
               {country.name}
             </h3>
             <p className="text-xs text-zinc-500">{country.region}</p>
+            {singleDimension === 'healthcare' && (() => {
+              const systemType = HEALTHCARE_SYSTEM_MAP[country.iso.toUpperCase()];
+              if (!systemType) return null;
+              const meta = HEALTHCARE_SYSTEM_LABELS[systemType];
+              const Icon = SYSTEM_TYPE_ICONS[systemType];
+              return (
+                <Tooltip>
+                  <TooltipTrigger
+                    className="relative z-10 cursor-default"
+                    onClick={(e) => e.preventDefault()}
+                  >
+                    <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-xs ${meta.color}`}>
+                      <Icon size={12} />
+                      {meta.short}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-64 text-xs">
+                    {meta.tooltip}
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })()}
             {isLarge && cities && (
               <select
                 value={currentCity}

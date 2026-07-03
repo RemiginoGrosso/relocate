@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.8 — 2026-07-03
+
+### Changed
+- Healthcare badges redesigned with budget-oriented labels: "Covered", "Must buy insurance", "Tied to employer", "Budget for private" (previously used system-architecture terms)
+- Healthcare dimension description and context rewritten to answer "what does this mean for my healthcare budget?" rather than describing system architecture
+- Healthcare score simplified to WHO UHC index only (dropped WHO OOP component); badge now communicates financial implication per country
+- Colombia reclassified from `regulated_buyin` to `budget_private` (EPS auto-enrolls but prepagada is the practical norm for relocating professionals)
+- Tooltips rewritten with practical relocation framing (e.g., "Working legally means you're covered")
+- `HealthcareSystemBadge` component added to country detail accordion (DimensionBreakdown)
+- Healthcare badge with tooltip added to ranking view CountryRow in single-dimension mode
+- `HealthcareSystemType` type added to types.ts; `HEALTHCARE_SYSTEM_LABELS` and `HEALTHCARE_SYSTEM_MAP` added to constants.ts
+- HEALTHCARE_SYSTEM_CLASSIFICATION.md and SCORING_ENGINE.md updated to reflect new category names and Colombia reclassification
+
 ## 0.1.7 — 2026-07-03
 
 ### Changed

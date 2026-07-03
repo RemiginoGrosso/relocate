@@ -8,9 +8,10 @@ import {
 } from '@/components/ui/accordion';
 import { AlertTriangle } from 'lucide-react';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
-import { DIMENSIONS, INDICATOR_INTERPRETATIONS, WARMTH_MISMATCH_THRESHOLD } from '@/lib/constants';
+import { Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
+import { DIMENSIONS, INDICATOR_INTERPRETATIONS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
 import { isLargeCountry, getCityClimate } from '@/lib/large-countries';
-import type { CountryScores, RawIndex, ClimateData, DimensionKey } from '@/lib/types';
+import type { CountryScores, RawIndex, ClimateData, DimensionKey, HealthcareSystemType } from '@/lib/types';
 
 interface DimensionBreakdownProps {
   country: CountryScores;
@@ -49,7 +50,7 @@ const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
   safety: ['gpi.gpi_score'],
   warmth: ['hofstede.ivr', 'internations.ease_rank', 'gallup.mai'],
   school_culture: ['pisa.pisa_reading', 'pisa.pisa_maths', 'pisa.pisa_science', 'pisa.pisa_belonging', 'pisa.pisa_bullying', 'pisa.pisa_safety'],
-  healthcare: ['worldbank.who_uhc_coverage', 'worldbank.who_oop_pct'],
+  healthcare: ['worldbank.who_uhc_coverage'],
   infrastructure: ['imd.infrastructure_score'],
   climate: [],
   religious_freedom: ['pew.govt_restrictions', 'pew.social_hostility'],
@@ -84,6 +85,29 @@ interface ClimateSectionProps {
   selectedCity?: string;
   countryIso: string;
   countryName: string;
+}
+
+const SYSTEM_TYPE_ICONS: Record<HealthcareSystemType, typeof Shield> = {
+  public: Shield,
+  regulated_buyin: ShieldCheck,
+  employer_provided: Briefcase,
+  budget_private: DollarSign,
+};
+
+function HealthcareSystemBadge({ iso }: { iso: string }) {
+  const systemType = HEALTHCARE_SYSTEM_MAP[iso.toUpperCase()];
+  if (!systemType) return null;
+  const meta = HEALTHCARE_SYSTEM_LABELS[systemType];
+  const Icon = SYSTEM_TYPE_ICONS[systemType];
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className={`inline-flex items-center gap-1.5 self-start rounded-md border px-2.5 py-1.5 text-xs font-medium ${meta.color}`}>
+        <Icon size={14} />
+        <span>{meta.label}</span>
+      </div>
+      <p className="text-xs text-zinc-500">{meta.tooltip}</p>
+    </div>
+  );
 }
 
 function ClimateSection({ climate, selectedCity, countryIso, countryName }: ClimateSectionProps) {
@@ -189,6 +213,10 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
               <div className="flex flex-col gap-3 px-2">
                 <p className="text-xs text-zinc-500">{dim.description}</p>
                 <p className="text-xs text-zinc-600 leading-relaxed">{dim.context}</p>
+
+                {dim.key === 'healthcare' && (
+                  <HealthcareSystemBadge iso={country.iso} />
+                )}
 
                 {isClimate ? (
                   <ClimateSection

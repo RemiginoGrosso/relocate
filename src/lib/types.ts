@@ -85,6 +85,8 @@ export interface ClimateProfile {
   sunshineThreshold: number;
   sunshinePenalty: number;
 }
+export type HealthcareSystemType = 'public' | 'regulated_buyin' | 'employer_provided' | 'budget_private';
+
 export type ReligiousNeeds = 'important' | 'not_priority';
 
 export interface OnboardingAnswers {

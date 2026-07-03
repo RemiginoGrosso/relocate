@@ -1,4 +1,4 @@
-import type { ClimatePreference, ClimateProfile, DimensionDefinition, DimensionKey, Region, ScoreTier, UserWeights } from './types';
+import type { ClimatePreference, ClimateProfile, DimensionDefinition, DimensionKey, HealthcareSystemType, Region, ScoreTier, UserWeights } from './types';
 
 export const DIMENSION_KEYS: DimensionKey[] = [
   'purchasing_power',
@@ -82,15 +82,15 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'healthcare',
     name: 'Healthcare',
-    description: 'Health system capability and financial protection — service coverage minus out-of-pocket burden.',
-    context: 'Access to quality healthcare without financial ruin is non-negotiable for long-term residents. This dimension measures both the capability of the health system (can it treat you?) and the financial protection it offers (will treatment bankrupt you?).',
-    methodology: 'healthcare = who_uhc_normalised × 0.55 + (100 − who_oop_normalised) × 0.45',
+    description: 'Health system coverage — how comprehensive the country\'s healthcare services are. The badge shows what it means for your budget.',
+    context: 'The score measures what healthcare services exist. The badge tells you what that means for you financially: are you covered through employment, do you need to buy insurance, does it depend on your employer, or should you budget for private coverage?',
+    methodology: 'healthcare = who_uhc_normalised (0–100, higher = broader service coverage)',
     category: 'economic',
-    sources: ['WHO UHC Service Coverage Index', 'WHO OOP Health Expenditure'],
+    sources: ['WHO UHC Service Coverage Index'],
     defaultWeight: 5,
     sortOrder: 6,
     confidence: 'high',
-    knownLimitation: 'WHO OOP has 1-2 year lag. Measures system-level coverage, not individual experience.',
+    knownLimitation: 'UHC measures service availability, not quality or outcomes. System type classification reviewed annually.',
   },
   {
     key: 'infrastructure',
@@ -420,4 +420,50 @@ export const INDICATOR_INTERPRETATIONS: Record<string, { ranges: { max: number; 
       { max: 10, label: 'Very high' },
     ],
   },
+};
+
+export const HEALTHCARE_SYSTEM_LABELS: Record<HealthcareSystemType, { label: string; short: string; tooltip: string; color: string }> = {
+  public: {
+    label: 'Covered',
+    short: 'Covered',
+    tooltip: 'Working legally means you\'re covered. Healthcare is funded through payroll or taxes — no separate budget needed.',
+    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+  },
+  regulated_buyin: {
+    label: 'Must buy insurance',
+    short: 'Must buy insurance',
+    tooltip: 'You must purchase health insurance yourself from regulated insurers. Everyone does it, costs are predictable.',
+    color: 'text-blue-700 bg-blue-50 border-blue-200',
+  },
+  employer_provided: {
+    label: 'Tied to employer',
+    short: 'Tied to employer',
+    tooltip: 'Your employer provides coverage. Verify it\'s in your offer — no employer means no coverage or very expensive self-purchase.',
+    color: 'text-amber-700 bg-amber-50 border-amber-200',
+  },
+  budget_private: {
+    label: 'Budget for private',
+    short: 'Budget for private',
+    tooltip: 'A public system exists but most relocating professionals use private healthcare.',
+    color: 'text-red-700 bg-red-50 border-red-200',
+  },
+};
+
+export const HEALTHCARE_SYSTEM_MAP: Record<string, HealthcareSystemType> = {
+  AT: 'public', BE: 'public', CA: 'public', CR: 'public', HR: 'public',
+  CY: 'public', CZ: 'public', DK: 'public', EE: 'public', FI: 'public',
+  FR: 'public', DE: 'public', HU: 'public', IS: 'public', IT: 'public',
+  JP: 'public', LT: 'public', LU: 'public', NZ: 'public', NO: 'public',
+  PL: 'public', PT: 'public', SK: 'public', SI: 'public', KR: 'public',
+  ES: 'public', SE: 'public', TW: 'public', TR: 'public', GB: 'public',
+  UY: 'public',
+  CL: 'regulated_buyin', NL: 'regulated_buyin', CH: 'regulated_buyin',
+  MY: 'employer_provided', PE: 'employer_provided', QA: 'employer_provided',
+  SA: 'employer_provided', SG: 'employer_provided', AE: 'employer_provided',
+  US: 'employer_provided',
+  AR: 'budget_private', AU: 'budget_private', BR: 'budget_private', BG: 'budget_private', CO: 'budget_private',
+  CN: 'budget_private', GR: 'budget_private', IN: 'budget_private', ID: 'budget_private',
+  IE: 'budget_private', LV: 'budget_private', MX: 'budget_private', MA: 'budget_private',
+  PA: 'budget_private', PH: 'budget_private', RO: 'budget_private', ZA: 'budget_private',
+  TH: 'budget_private', VN: 'budget_private',
 };
