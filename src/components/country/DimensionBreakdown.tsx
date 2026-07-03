@@ -23,7 +23,8 @@ const INDICATOR_LABELS: Record<string, string> = {
   'worldbank.wgi_corruption_control': 'WGI Corruption Control',
   'wvs.trust_pct': 'WVS Social Trust',
   'gpi.gpi_score': 'GPI Score',
-  'gallup.mai': 'Gallup MAI',
+  'hofstede.ivr': 'Hofstede IVR',
+  'gallup.mai': 'Gallup MAI (fallback)',
   'internations.ease_rank': 'InterNations Ease Rank',
   'pisa.pisa_reading': 'PISA Reading',
   'pisa.pisa_maths': 'PISA Maths',
@@ -45,7 +46,7 @@ const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
   purchasing_power: ['worldbank.oecd_ppp_aic', 'worldbank.price_level_ratio', 'worldbank.who_oop_pct'],
   civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control', 'wvs.trust_pct'],
   safety: ['gpi.gpi_score'],
-  warmth: ['gallup.mai', 'internations.ease_rank'],
+  warmth: ['hofstede.ivr', 'internations.ease_rank', 'gallup.mai'],
   school_culture: ['pisa.pisa_reading', 'pisa.pisa_maths', 'pisa.pisa_science', 'pisa.pisa_belonging', 'pisa.pisa_bullying', 'pisa.pisa_safety'],
   healthcare: ['worldbank.who_uhc_coverage', 'worldbank.who_oop_pct'],
   infrastructure: ['imd.infrastructure_score'],
@@ -130,15 +131,15 @@ function ClimateSection({ climate, selectedCity, countryIso, countryName }: Clim
 }
 
 export function DimensionBreakdown({ country, rawIndices, climate, selectedCity }: DimensionBreakdownProps) {
-  const maiRaw = rawIndices.find((r) => r.source === 'gallup' && r.indicator === 'mai');
+  const ivrRaw = rawIndices.find((r) => r.source === 'hofstede' && r.indicator === 'ivr');
   const interNationsRaw = rawIndices.find((r) => r.source === 'internations' && r.indicator === 'ease_rank');
 
   const warmthMismatch =
-    maiRaw?.value != null &&
+    ivrRaw?.value != null &&
     interNationsRaw?.value != null &&
     country.dimensionScores.warmth?.components &&
     Math.abs(
-      (country.dimensionScores.warmth.components['mai'] ?? 0) -
+      (country.dimensionScores.warmth.components['ivr'] ?? 0) -
       (country.dimensionScores.warmth.components['internations_score'] ?? 0)
     ) > WARMTH_MISMATCH_THRESHOLD;
 

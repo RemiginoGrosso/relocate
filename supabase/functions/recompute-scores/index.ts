@@ -221,33 +221,48 @@ function computeSafety(raw: RawMap): DimensionScore | null {
 }
 
 function computeWarmth(raw: RawMap): DimensionScore | null {
-  const maiRaw = safeNum(raw["gallup.mai"]);
-  const maiNorm = maiRaw != null ? round2((maiRaw / 9) * 100) : null;
+  const ivr = safeNum(raw["hofstede.ivr"]);
   const intRank = safeNum(raw["internations.ease_rank"]);
   const intScore = intRank != null
     ? round2(((53 - intRank) / (53 - 1)) * 100)
     : null;
+  const maiRaw = safeNum(raw["gallup.mai"]);
+  const maiNorm = maiRaw != null ? round2((maiRaw / 9) * 100) : null;
 
-  if (maiNorm == null && intScore == null) return null;
-
-  if (maiNorm != null && intScore != null) {
+  // Primary formula: IVR × 0.4 + InterNations × 0.6
+  if (ivr != null && intScore != null) {
     return {
       country_id: "",
       dimension_key: "warmth",
-      score: round2(maiNorm * 0.4 + intScore * 0.6),
+      score: round2(ivr * 0.4 + intScore * 0.6),
       confidence: "medium",
-      component_scores: { mai: maiNorm, internations_score: intScore },
+      component_scores: { ivr, internations_score: intScore },
     };
   }
 
-  // Partial: one source only — reweight to 1.0
-  return {
-    country_id: "",
-    dimension_key: "warmth",
-    score: maiNorm ?? intScore!,
-    confidence: "low",
-    component_scores: { mai: maiNorm, internations_score: intScore },
-  };
+  // Partial: one primary source available
+  if (ivr != null || intScore != null) {
+    return {
+      country_id: "",
+      dimension_key: "warmth",
+      score: ivr ?? intScore!,
+      confidence: "low",
+      component_scores: { ivr, internations_score: intScore },
+    };
+  }
+
+  // Fallback: MAI when neither IVR nor InterNations is available
+  if (maiNorm != null) {
+    return {
+      country_id: "",
+      dimension_key: "warmth",
+      score: maiNorm,
+      confidence: "low",
+      component_scores: { mai: maiNorm },
+    };
+  }
+
+  return null;
 }
 
 function computeSchoolCulture(raw: RawMap): DimensionScore | null {

@@ -58,13 +58,13 @@ export const DIMENSIONS: DimensionDefinition[] = [
     name: 'Warmth',
     description: 'How welcoming and sociable the culture is — combining cultural permissiveness with expat experience.',
     context: 'Cultural warmth determines how quickly you build a social life. Some cultures are genuinely open to newcomers; others are polite but reserved. This dimension blends academic measures of cultural openness with real expat experiences of settling in.',
-    methodology: 'warmth = mai_normalised × 0.40 + internations_score × 0.60',
+    methodology: 'warmth = IVR × 0.40 + internations_score × 0.60. Fallback: Gallup MAI when neither IVR nor InterNations available.',
     category: 'social',
-    sources: ['Gallup MAI (Migrant Acceptance Index)', 'InterNations Ease of Settling In'],
+    sources: ['Hofstede IVR', 'InterNations Ease of Settling In', 'Gallup MAI (fallback)'],
     defaultWeight: 5,
     sortOrder: 4,
     confidence: 'medium',
-    knownLimitation: 'InterNations has ~260 respondents per country. MAI data from 2018 (latest published). Mismatch flag when abs(MAI − InterNations) > 30.',
+    knownLimitation: 'InterNations has ~260 respondents per country. Hofstede IVR is static (2010). MAI (2018) used as fallback only. Mismatch flag when abs(IVR − InterNations) > 30.',
   },
   {
     key: 'school_culture',
@@ -282,6 +282,14 @@ export const INDICATOR_INTERPRETATIONS: Record<string, { ranges: { max: number; 
       { max: 40, label: 'Moderate' },
       { max: 60, label: 'High trust' },
       { max: 100, label: 'Very high trust' },
+    ],
+  },
+  'hofstede.ivr': {
+    ranges: [
+      { max: 30, label: 'Restrained' },
+      { max: 50, label: 'Moderate' },
+      { max: 70, label: 'Indulgent' },
+      { max: 100, label: 'Very indulgent' },
     ],
   },
   'gallup.mai': {

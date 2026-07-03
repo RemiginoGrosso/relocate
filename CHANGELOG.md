@@ -9,7 +9,7 @@
 - Partial data handling: multi-source dimensions now reweight available components when some sources are missing, with confidence: "low" marker
 
 ### Changed
-- Warmth dimension formula: replaced Hofstede IVR (cultural indulgence proxy) with Gallup Migrant Acceptance Index (direct migrant acceptance measure). Formula: `MAI_normalised × 0.40 + InterNations × 0.60`
+- Warmth dimension: added Gallup MAI as fallback when neither Hofstede IVR nor InterNations is available. Primary formula unchanged: `IVR × 0.40 + InterNations × 0.60`
 - Methodology page updated with partial data explanation
 
 ### Fixed
