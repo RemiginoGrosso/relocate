@@ -222,6 +222,46 @@ describe('computeClimateScore', () => {
     expect(coldScore).toBeGreaterThan(warmScore);
     expect(coldScore - warmScore).toBeGreaterThan(40);
   });
+
+  it('applies winter penalty to Chicago under mild_green profile', () => {
+    // Chicago: avgTemp 10°C, winterTemp -6°C
+    // Base: 100 - |10-13|*3 = 91, no rain/sun penalty
+    // Winter: threshold 5, deficit = 5-(-6) = 11, penalty = 11*3 = 33 → score 58
+    const profile = CLIMATE_PROFILES.mild_green;
+    const score = computeClimateScore(10, 125, 2508, profile, -6)!;
+    expect(score).toBe(58);
+    expect(score).toBeLessThan(70);
+  });
+
+  it('does not apply winter penalty when winterTemp is above threshold (mild_green, Lisbon)', () => {
+    // Lisbon: winterTemp ~11°C, threshold 5 → no deficit → no penalty
+    const profile = CLIMATE_PROFILES.mild_green;
+    const withWinter = computeClimateScore(17, 115, 2806, profile, 11)!;
+    const withoutWinter = computeClimateScore(17, 115, 2806, profile)!;
+    expect(withWinter).toBe(withoutWinter);
+  });
+
+  it('does not apply winter penalty for cold_crisp profile', () => {
+    const profile = CLIMATE_PROFILES.cold_crisp;
+    const withWinter = computeClimateScore(5, 150, 1200, profile, -20)!;
+    const withoutWinter = computeClimateScore(5, 150, 1200, profile)!;
+    expect(withWinter).toBe(withoutWinter);
+  });
+
+  it('does not apply winter penalty for no_preference profile', () => {
+    const profile = CLIMATE_PROFILES.no_preference;
+    const withWinter = computeClimateScore(10, 100, 1500, profile, -10)!;
+    const withoutWinter = computeClimateScore(10, 100, 1500, profile)!;
+    expect(withWinter).toBe(withoutWinter);
+  });
+
+  it('clamps winter-penalised score to 0', () => {
+    // avgTemp=5 under warm_sunny: base = 100 - |5-22|*3 = 49
+    // winterTemp=-20, threshold 15, deficit=35, penalty=35*2=70 → 49-70=-21 → clamped to 0
+    const profile = CLIMATE_PROFILES.warm_sunny;
+    const score = computeClimateScore(5, 90, 2500, profile, -20)!;
+    expect(score).toBe(0);
+  });
 });
 
 describe('applyClimatePreference', () => {

@@ -23,7 +23,7 @@ function sourceLabel(source: string): string {
   const labels: Record<string, string> = {
     worldbank: 'World Bank',
     hofstede: 'Hofstede',
-    wvs: 'WVS',
+    gallup: 'Gallup MAI',
     pisa: 'PISA',
     gpi: 'GPI',
     internations: 'InterNations',

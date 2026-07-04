@@ -84,6 +84,8 @@ export interface ClimateProfile {
   rainPenalty: number;
   sunshineThreshold: number;
   sunshinePenalty: number;
+  winterTempThreshold?: number;
+  winterTempPenalty?: number;
 }
 export type HealthcareSystemType = 'public' | 'regulated_buyin' | 'employer_provided' | 'budget_private';
 

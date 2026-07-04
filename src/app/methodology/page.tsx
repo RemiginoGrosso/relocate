@@ -4,6 +4,11 @@ import { MethodologyTracker } from './MethodologyTracker';
 
 export const metadata = {
   title: 'Methodology — Relocator',
+  description: 'How Relocator scores 59 countries across 10 dimensions — formulas, data sources, and known limitations explained.',
+  openGraph: {
+    title: 'Methodology — Relocator',
+    description: 'How Relocator scores 59 countries across 10 dimensions — formulas, data sources, and known limitations explained.',
+  },
 };
 
 const NOT_COVERED = [
@@ -56,7 +61,7 @@ export default function MethodologyPage() {
           All raw values are normalised to a 0–100 scale where higher is always
           better. For indices where a lower raw value is better (e.g., GPI,
           Pew restrictions), the scale is inverted. Min-max boundaries are set
-          from observed data across the 60-country panel.
+          from observed data across the 59-country panel.
         </p>
       </section>
 

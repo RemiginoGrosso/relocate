@@ -7,7 +7,6 @@ import { trackEvent } from '@/lib/analytics';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { CountryList } from '@/components/ranking/CountryList';
 import { WeightSliders } from '@/components/ranking/WeightSliders';
-import { ClimateTypeSelector } from '@/components/ranking/ClimateTypeSelector';
 import {
   Select,
   SelectContent,
@@ -51,10 +50,8 @@ export function RankingView({ countries }: RankingViewProps) {
             weights={weights}
             onWeightChange={setWeight}
             onReset={resetToDefaults}
-          />
-          <ClimateTypeSelector
-            value={climateType}
-            onChange={setClimateType}
+            climateType={climateType}
+            onClimateTypeChange={setClimateType}
           />
         </div>
       </aside>
@@ -118,10 +115,8 @@ export function RankingView({ countries }: RankingViewProps) {
                 weights={weights}
                 onWeightChange={setWeight}
                 onReset={resetToDefaults}
-              />
-              <ClimateTypeSelector
-                value={climateType}
-                onChange={setClimateType}
+                climateType={climateType}
+                onClimateTypeChange={setClimateType}
               />
             </div>
           </DrawerContent>

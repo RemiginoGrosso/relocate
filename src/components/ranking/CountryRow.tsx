@@ -80,7 +80,7 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
                 </Tooltip>
               );
             })()}
-            {isLarge && cities && (
+            {isLarge && cities && (!singleDimension || singleDimension === 'climate') && (
               <select
                 value={currentCity}
                 onChange={(e) => onCityChange?.(country.iso.toUpperCase(), e.target.value)}
@@ -100,6 +100,20 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
         </div>
         <div className="flex items-center gap-2">
           <ScoreBadge score={displayScore ?? 0} />
+          {singleDimension && displayScore === null && (
+            <Tooltip>
+              <TooltipTrigger
+                className="relative z-10 shrink-0 cursor-default"
+                aria-label="Data unavailable for this dimension"
+                onClick={(e) => e.preventDefault()}
+              >
+                <AlertTriangle size={14} className="text-amber-500" />
+              </TooltipTrigger>
+              <TooltipContent className="max-w-48 text-xs">
+                No data available for this dimension
+              </TooltipContent>
+            </Tooltip>
+          )}
           {missingCount > 0 && missingCount <= 3 && (
             <Tooltip>
               <TooltipTrigger

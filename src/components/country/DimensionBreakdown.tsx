@@ -6,7 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, ArrowLeftRight } from 'lucide-react';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
 import { DIMENSIONS, INDICATOR_INTERPRETATIONS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
@@ -23,7 +23,6 @@ interface DimensionBreakdownProps {
 const INDICATOR_LABELS: Record<string, string> = {
   'worldbank.wgi_rule_of_law': 'WGI Rule of Law',
   'worldbank.wgi_corruption_control': 'WGI Corruption Control',
-  'wvs.trust_pct': 'WVS Social Trust',
   'gpi.gpi_score': 'GPI Score',
   'hofstede.ivr': 'Hofstede IVR',
   'gallup.mai': 'Gallup MAI (fallback)',
@@ -148,7 +147,7 @@ function ClimateSection({ climate, selectedCity, countryIso, countryName }: Clim
 
       {large && (
         <p className="text-xs text-amber-600">
-          Climate varies significantly across {countryName}. Change the city in the header to update this score.
+          Climate varies significantly across {countryName}. Use the city selector at the top of the page to update this score.
         </p>
       )}
     </div>
@@ -249,11 +248,19 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                   </div>
                 )}
 
-                {dim.key === 'warmth' && warmthMismatch && (
-                  <p className="text-xs text-amber-700">
-                    Warmth mismatch: cultural permissiveness and expat experience scores differ significantly.
-                  </p>
-                )}
+                {dim.key === 'warmth' && warmthMismatch && warmthScore?.components && (() => {
+                  const ivr = warmthScore.components['ivr'] ?? 0;
+                  const inter = warmthScore.components['internations_score'] ?? 0;
+                  const msg = ivr > inter
+                    ? 'Cultural values suggest an open, permissive society — but expats report finding it harder to settle in and build connections.'
+                    : 'Expats report settling in easily — but underlying cultural values lean more restrained. Day-to-day warmth may feel different from what surveys capture.';
+                  return (
+                    <div className="flex gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                      <ArrowLeftRight size={14} className="mt-0.5 shrink-0 text-amber-600" />
+                      <p className="text-xs text-amber-800">{msg}</p>
+                    </div>
+                  );
+                })()}
 
                 {dim.key === 'warmth' && warmthPartialMessage && (
                   <div className="flex gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">

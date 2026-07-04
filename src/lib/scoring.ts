@@ -90,6 +90,7 @@ export function computeClimateScore(
   rainDays: number | null,
   sunshineHours: number | null,
   profile?: ClimateProfile,
+  winterTemp?: number | null,
 ): number | null {
   if (avgTemp == null) return null;
 
@@ -103,6 +104,13 @@ export function computeClimateScore(
   let score = 100 - Math.abs(avgTemp - ref) * tempPen;
   if (rainDays != null && rainDays > rainThresh) score -= rainPen;
   if (sunshineHours != null && sunshineHours < sunThresh) score -= sunPen;
+
+  if (profile?.winterTempThreshold != null && winterTemp != null) {
+    const winterDeficit = profile.winterTempThreshold - winterTemp;
+    if (winterDeficit > 0) {
+      score -= winterDeficit * (profile.winterTempPenalty ?? 3);
+    }
+  }
 
   return Math.max(0, Math.min(100, score));
 }
@@ -128,8 +136,9 @@ export function applyClimatePreference(
     const avgTemp = cityClimate?.avgTemp ?? climateDim.components.avg_temp ?? null;
     const rainDays = cityClimate?.rainDays ?? climateDim.components.rain_days ?? null;
     const sunshineHours = cityClimate?.sunshineHours ?? climateDim.components.sunshine_hours ?? null;
+    const winterTemp = cityClimate?.winterTemp ?? climateDim.components.avg_temp_winter ?? null;
 
-    const newScore = computeClimateScore(avgTemp, rainDays, sunshineHours, profile);
+    const newScore = computeClimateScore(avgTemp, rainDays, sunshineHours, profile, winterTemp);
 
     const newComponents = cityClimate
       ? { ...climateDim.components, avg_temp: avgTemp as number, rain_days: rainDays as number, sunshine_hours: sunshineHours as number }

@@ -8,17 +8,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { DIMENSIONS } from '@/lib/constants';
+import { DIMENSIONS, CLIMATE_PROFILES } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
-import type { DimensionKey, UserWeights } from '@/lib/types';
+import type { ClimatePreference, DimensionKey, UserWeights } from '@/lib/types';
+
+const CLIMATE_KEYS: ClimatePreference[] = [
+  'warm_sunny',
+  'hot_tropical',
+  'mild_green',
+  'cold_crisp',
+  'no_preference',
+];
 
 interface WeightSlidersProps {
   weights: UserWeights;
   onWeightChange: (key: DimensionKey, value: number) => void;
   onReset: () => void;
+  climateType: ClimatePreference;
+  onClimateTypeChange: (type: ClimatePreference) => void;
 }
 
-export function WeightSliders({ weights, onWeightChange, onReset }: WeightSlidersProps) {
+export function WeightSliders({ weights, onWeightChange, onReset, climateType, onClimateTypeChange }: WeightSlidersProps) {
   return (
     <TooltipProvider>
       <div className="flex flex-col gap-5">
@@ -63,6 +73,35 @@ export function WeightSliders({ weights, onWeightChange, onReset }: WeightSlider
               step={1}
               className="w-full"
             />
+            {dim.key === 'climate' && weights.climate > 0 && (
+              <div className="ml-4 mt-2 border-l-2 border-zinc-200 pl-4 transition-all duration-150">
+                <p className="mb-1.5 text-xs text-zinc-500">Your climate type</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {CLIMATE_KEYS.map((key) => {
+                    const profile = CLIMATE_PROFILES[key];
+                    const active = climateType === key;
+                    return (
+                      <button
+                        key={key}
+                        onClick={() => {
+                          trackEvent('climate_type_change', { climate_type: key });
+                          onClimateTypeChange(key);
+                        }}
+                        className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                          key === 'no_preference' ? 'col-span-2' : ''
+                        } ${
+                          active
+                            ? 'bg-teal-700 text-white'
+                            : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                        }`}
+                      >
+                        {profile.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         ))}
       </div>

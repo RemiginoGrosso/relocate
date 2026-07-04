@@ -17,7 +17,7 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'purchasing_power',
     name: 'Purchasing Power',
-    description: 'How far money stretches in each country — based on price levels, purchasing parity, and healthcare costs. Uses country-level data, not your personal salary.',
+    description: 'How far money stretches in each country — based on price levels, purchasing power parity (PPP), and out-of-pocket healthcare costs. Uses country-level data, not your personal salary.',
     context: 'When you move abroad, your salary or savings buy different amounts depending on local prices. A country can have high wages but high costs, or moderate wages with remarkable purchasing power. This dimension captures what your money actually buys day-to-day, not just what you earn.',
     methodology: 'purchasing_power = oecd_ppp_normalised × 0.55 + cost_affordability × 0.30 + (100 − oop_burden) × 0.15',
     category: 'economic',
@@ -77,13 +77,13 @@ export const DIMENSIONS: DimensionDefinition[] = [
     defaultWeight: 5,
     sortOrder: 5,
     confidence: 'high',
-    knownLimitation: 'PISA 2022 is the latest edition. Next update expected 2025.',
+    knownLimitation: 'PISA 2022 is the latest scored edition. PISA 2025 results expected late 2026 or early 2027.',
   },
   {
     key: 'healthcare',
     name: 'Healthcare',
     description: 'Health system coverage — how comprehensive the country\'s healthcare services are. The badge shows what it means for your budget.',
-    context: 'The score measures what healthcare services exist. The badge tells you what that means for you financially: are you covered through employment, do you need to buy insurance, does it depend on your employer, or should you budget for private coverage?',
+    context: 'The score measures what healthcare services exist. The badge tells you what that means for you financially: are you covered through the public system, do you need to buy your own insurance, does coverage depend on your employer\'s offer, or should you budget for private care?',
     methodology: 'healthcare = who_uhc_normalised (0–100, higher = broader service coverage)',
     category: 'economic',
     sources: ['WHO UHC Service Coverage Index'],
@@ -109,14 +109,14 @@ export const DIMENSIONS: DimensionDefinition[] = [
     key: 'climate',
     name: 'Climate',
     description: 'Temperature, sunshine, and rainfall scored against your preferred weather type. Select your preference during onboarding or adjust in the ranking view.',
-    context: 'Climate is personal — there is no objectively best weather. Your preference for warmth, seasons, rainfall, and sunshine drives this score. Unlike other dimensions, climate varies dramatically within large countries; this score uses capital city weather as a proxy.',
+    context: 'Climate is personal — there is no objectively best weather. Your preference for warmth, seasons, rainfall, and sunshine drives this score. Unlike other dimensions, climate varies dramatically within large countries; for large countries you can select a specific city — the default is the largest city by population.',
     methodology: 'climate = 100 − (|avg_temp − ref| × penalty) − rain_penalty − sunshine_penalty. Reference temp and thresholds vary by weather type.',
     category: 'lifestyle',
     sources: ['Open-Meteo ERA5'],
     defaultWeight: 5,
     sortOrder: 8,
     confidence: 'high',
-    knownLimitation: 'Uses capital city weather as proxy for the whole country. Heuristic scoring, not a climate model.',
+    knownLimitation: 'For 8 large countries, city-level data is available. For all others, a single representative city is used. Heuristic scoring, not a climate model.',
   },
   {
     key: 'religious_freedom',
@@ -184,6 +184,8 @@ export const CLIMATE_PROFILES: Record<ClimatePreference, ClimateProfile> = {
     rainPenalty: 15,
     sunshineThreshold: 2000,
     sunshinePenalty: 15,
+    winterTempThreshold: 15,
+    winterTempPenalty: 2,
   },
   hot_tropical: {
     label: 'Hot & tropical',
@@ -194,6 +196,8 @@ export const CLIMATE_PROFILES: Record<ClimatePreference, ClimateProfile> = {
     rainPenalty: 5,
     sunshineThreshold: 1800,
     sunshinePenalty: 10,
+    winterTempThreshold: 20,
+    winterTempPenalty: 2,
   },
   mild_green: {
     label: 'Mild & green',
@@ -204,6 +208,8 @@ export const CLIMATE_PROFILES: Record<ClimatePreference, ClimateProfile> = {
     rainPenalty: 5,
     sunshineThreshold: 1200,
     sunshinePenalty: 10,
+    winterTempThreshold: 5,
+    winterTempPenalty: 3,
   },
   cold_crisp: {
     label: 'Cold & crisp',
@@ -274,14 +280,6 @@ export const INDICATOR_INTERPRETATIONS: Record<string, { ranges: { max: number; 
       { max: 50, label: 'Moderate' },
       { max: 75, label: 'Strong control' },
       { max: 100, label: 'Very strong control' },
-    ],
-  },
-  'wvs.trust_pct': {
-    ranges: [
-      { max: 20, label: 'Low trust' },
-      { max: 40, label: 'Moderate' },
-      { max: 60, label: 'High trust' },
-      { max: 100, label: 'Very high trust' },
     ],
   },
   'hofstede.ivr': {

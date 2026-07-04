@@ -14,7 +14,7 @@ const publicSans = Public_Sans({
 export const metadata: Metadata = {
   title: 'Relocator — Find your ideal country',
   description:
-    'Set your priorities. See your ranking. Backed by 10 validated data sources.',
+    'Set your priorities. See your ranking. Built on public institutional data.',
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocateindex.com'),
   openGraph: {
     title: 'Relocator — Find your ideal country',

@@ -21,13 +21,14 @@ const SOURCE_NAMES = [
   'IMD',
   'Pew Research',
   'EF EPI',
+  'Open-Meteo',
 ];
 
 // Sources with descriptions for the trust section
 const SOURCES_DETAIL = [
   { name: 'OECD', note: 'Purchasing power parity, PISA education data' },
   { name: 'World Bank', note: 'Governance indicators, rule of law, price levels' },
-  { name: 'WHO', note: 'Healthcare coverage index, out-of-pocket health costs' },
+  { name: 'WHO', note: 'Healthcare coverage index (UHC). Out-of-pocket data used in purchasing power.' },
   { name: 'Global Peace Index', note: 'Safety, conflict risk, political stability' },
   { name: 'PISA 2022', note: 'Academic quality, belonging, bullying, school safety' },
   { name: 'Hofstede Insights', note: 'Indulgence vs. Restraint (IVR) cultural dimension' },
@@ -35,6 +36,7 @@ const SOURCES_DETAIL = [
   { name: 'IMD', note: 'Physical and digital infrastructure score' },
   { name: 'Pew Research', note: 'Government restrictions and social hostility indexes' },
   { name: 'EF EPI', note: 'Population-level English proficiency, 100+ countries' },
+  { name: 'Open-Meteo ERA5', note: 'Historical climate reanalysis — temperature, sunshine, and rainfall by city' },
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -69,7 +71,7 @@ const STEPS = [
 const NOT_THIS = [
   'Visa advice or immigration guidance',
   'Tax planning or financial advice',
-  'City-level or neighbourhood data — country averages only in V1',
+  'City-level data outside of climate — country averages for all other dimensions',
   'A final decision — a shortlist of candidates worth investigating further',
   'A match score or compatibility percentage',
   'Comprehensive liveability coverage — each of the 10 dimensions covers one angle',

@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.1.9 — 2026-07-04
+
+### Added
+- Winter temperature penalty for climate scoring: profiles with `winterTempThreshold` now penalise cities below threshold (e.g., Chicago "Mild & green" drops from 91 → 58). Winter temp data for all 28 cities across 8 large countries
+- Climate preference selector nested below Climate slider in sidebar (Surface 2): 2-column grid with left-border indentation, only visible when climate weight > 0
+- Missing-data alert icon (`AlertTriangle` + tooltip) on single-dimension ranking when a country has no score for that dimension
+- SEO metadata for methodology page (description + OpenGraph)
+- Open-Meteo added to landing page source list
+
+### Changed
+- Warmth mismatch icon changed from `AlertTriangle` to `ArrowLeftRight` — distinguishes "sources disagree" from "data missing"
+- Warmth mismatch message now interprets the direction of divergence (IVR vs InterNations) instead of generic "mixed signals"
+- City selector on ranking page hidden when viewing non-climate single-dimension rankings
+- Landing page: "Backed by 10 validated data sources" → "Built on public institutional data"
+- Methodology page: "60-country panel" → "59-country panel"
+- Healthcare context copy: "covered through employment" → "covered through the public system"
+- Climate context copy updated for city-level data availability
+- PISA next release date corrected: "expected 2025" → "expected late 2026 or early 2027"
+- "purchasing parity" → "purchasing power parity (PPP)"
+- DataFreshness: removed WVS label, added Gallup MAI label
+
+### Removed
+- `ClimateTypeSelector` standalone component (inlined into `WeightSliders`)
+- Dead WVS indicator label and interpretation ranges from constants
+
 ## 0.1.8 — 2026-07-03
 
 ### Changed
