@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.13 — 2026-07-04
+
+### Changed
+- Favicon replaced with logo-based ICO (32×32 resized from brand logo)
+- Header logo: switched from `next/image` to `<img>` to fix broken logo display — local 24px icon gains nothing from Next.js image optimization
+
 ## 0.1.12 — 2026-07-04
 
 ### Added
