@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.12 — 2026-07-04
+
+### Added
+- `public/logo.png` — brand logo asset
+- `src/app/icon.png` — app icon
+
 ## 0.1.11 — 2026-07-04
 
 ### Added
