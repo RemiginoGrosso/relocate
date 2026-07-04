@@ -1,5 +1,5 @@
 /**
- * V1 country list: 59 countries with ISO codes and capital coordinates.
+ * V1 country list: 60 countries with ISO codes and capital coordinates.
  * Coordinates are needed by the climate refresh function (Open-Meteo API).
  * ISO codes are needed by World Bank API calls.
  *

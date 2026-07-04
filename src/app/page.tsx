@@ -1,5 +1,8 @@
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { DIMENSIONS } from '@/lib/constants';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { CtaButtons } from '@/components/landing/CtaButtons';
 import {
   Card,
@@ -8,6 +11,18 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card';
+
+export const metadata: Metadata = {
+  title: 'Relocate Index — Find your ideal country',
+  description:
+    'Rank 60 countries across 10 data-driven dimensions. Set your priorities, see your ranking. Built on public institutional data from OECD, World Bank, and WHO.',
+  openGraph: {
+    title: 'Relocate Index — Find your ideal country',
+    description: 'Rank 60 countries across 10 data-driven dimensions. Set your priorities. See your ranking.',
+    url: '/',
+  },
+  alternates: { canonical: '/' },
+};
 
 // Source trust bar (hero) — names only, low opacity
 const SOURCE_NAMES = [
@@ -56,7 +71,7 @@ const STEPS = [
   },
   {
     number: '2',
-    title: 'Get a ranked list of 59 countries',
+    title: 'Get a ranked list of 60 countries',
     description:
       'Your weights drive the ranking. Every score traces to an institutional data source. We have no editorial view on which country is best.',
   },
@@ -82,10 +97,20 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://relocateindex.com' },
+        ],
+      }} />
       {/* Minimal nav — Header returns null on "/" so we render our own */}
       <header className="border-b border-zinc-200 px-4 py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <span className="text-sm font-medium text-zinc-900">Relocator</span>
+          <span className="flex items-center gap-2 text-sm font-medium text-zinc-900">
+            <Image src="/logo.png" alt="" width={24} height={24} />
+            Relocate Index
+          </span>
           <Link
             href="/methodology"
             className="text-sm text-zinc-500 transition-colors hover:text-zinc-900"
@@ -102,7 +127,7 @@ export default function Home() {
             Where in the world should you live?
           </h1>
           <p className="mt-5 text-base text-zinc-500 sm:text-lg">
-            Most relocation research starts and ends with cost of living. Relocator
+            Most relocation research starts and ends with cost of living. Relocate Index
             surfaces 9 other dimensions — so you rank countries by what actually
             matters to you, not just what is easy to Google.
           </p>
@@ -217,7 +242,7 @@ export default function Home() {
                 What this tool is not
               </h2>
               <p className="mt-2 text-sm text-zinc-500">
-                Being clear about limits is part of the product. Relocator narrows the
+                Being clear about limits is part of the product. Relocate Index narrows the
                 field. It does not make the decision.
               </p>
               <ul className="mt-6 space-y-3">
@@ -259,7 +284,7 @@ export default function Home() {
       <footer className="mt-auto border-t border-zinc-200 px-4 py-8">
         <div className="mx-auto flex max-w-5xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-zinc-400">
-            Relocator narrows the field. It does not make the decision.
+            Relocate Index narrows the field. It does not make the decision.
           </p>
           <div className="flex items-center gap-3">
             <span className="text-xs text-zinc-400">v{process.env.NEXT_PUBLIC_APP_VERSION}</span>

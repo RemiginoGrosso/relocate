@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "description": "Annual climate data for 59 countries. Source: Open-Meteo ERA5 reanalysis averages.",
+    "description": "Annual climate data for 60 countries. Source: Open-Meteo ERA5 reanalysis averages.",
     "year": 2023,
     "total_countries": 59
   },

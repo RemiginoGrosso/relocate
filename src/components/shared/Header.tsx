@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -16,8 +17,9 @@ export function Header() {
   return (
     <header className="border-b border-zinc-200 px-4 py-3">
       <div className="mx-auto flex max-w-5xl items-center justify-between">
-        <Link href="/" className="text-sm font-medium text-zinc-900">
-          Relocator
+        <Link href="/" className="flex items-center gap-2 text-sm font-medium text-zinc-900">
+          <Image src="/logo.png" alt="" width={24} height={24} />
+          Relocate Index
         </Link>
         <nav className="flex items-center gap-6">
           {NAV_LINKS.map((link) => (

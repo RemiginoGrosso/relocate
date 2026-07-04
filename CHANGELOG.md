@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.1.11 — 2026-07-04
+
+### Added
+- JSON-LD structured data: WebSite, Organization, BreadcrumbList (all pages), Dataset (ranking), FAQPage (methodology) — targets Google rich snippets, AI Overviews, and Perplexity/ChatGPT citation
+- `robots.ts` — crawling directives, sitemap reference, disallows /onboarding
+- `manifest.ts` — PWA metadata with theme color and icon references
+- `opengraph-image.tsx` — dynamic OG image (1200×630 teal gradient with site name and tagline)
+- `apple-touch-icon.png` (180×180) for iOS bookmarks
+- Security headers: X-Content-Type-Options, X-Frame-Options, Referrer-Policy, Permissions-Policy (in both next.config.ts and netlify.toml)
+- Static asset cache headers (`immutable, max-age=31536000`) for `/_next/static/*`
+- `sr-only` text inside CountryRow overlay link for crawler link-text signals
+
+### Changed
+- **Canonical URL fix (CRITICAL)**: removed inherited `alternates: { canonical: '/' }` from root layout — was telling Google every page is a duplicate of the homepage. Each page now sets its own canonical.
+- Title metadata uses `template: '%s — Relocate Index'` in root layout; child pages set only their own segment
+- Twitter card metadata (`summary_large_image`) added globally
+- Ranking + country pages: `force-dynamic` → ISR with `revalidate = 86400` (24h). Country pages pre-rendered at build time via `generateStaticParams` (60 static pages)
+- Sitemap `lastModified` now uses actual data refresh date (2026-07-01) instead of `new Date()` which always reported today
+- Onboarding page refactored: server wrapper exports metadata (`noindex, follow`) + renders client component
+- `poweredByHeader: false` in next.config.ts
+
+### Removed
+- Dead template files from public/ (file.svg, globe.svg, next.svg, vercel.svg, window.svg)
+- `force-dynamic` exports from ranking and country pages
+
 ## 0.1.10 — 2026-07-04
 
 ### Fixed

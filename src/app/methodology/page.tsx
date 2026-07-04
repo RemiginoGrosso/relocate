@@ -1,14 +1,18 @@
+import type { Metadata } from 'next';
 import { DIMENSIONS } from '@/lib/constants';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { DownloadCsvButton } from './DownloadCsvButton';
 import { MethodologyTracker } from './MethodologyTracker';
 
-export const metadata = {
-  title: 'Methodology — Relocator',
-  description: 'How Relocator scores 59 countries across 10 dimensions — formulas, data sources, and known limitations explained.',
+export const metadata: Metadata = {
+  title: 'Methodology',
+  description: 'How Relocate Index scores 60 countries across 10 dimensions — formulas, data sources, and known limitations explained.',
   openGraph: {
-    title: 'Methodology — Relocator',
-    description: 'How Relocator scores 59 countries across 10 dimensions — formulas, data sources, and known limitations explained.',
+    title: 'Methodology — Relocate Index',
+    description: 'How Relocate Index scores 60 countries across 10 dimensions — formulas, data sources, and known limitations explained.',
+    url: '/methodology',
   },
+  alternates: { canonical: '/methodology' },
 };
 
 const NOT_COVERED = [
@@ -22,12 +26,66 @@ const NOT_COVERED = [
 export default function MethodologyPage() {
   return (
     <main className="mx-auto max-w-3xl px-4 py-12">
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: [
+          {
+            '@type': 'Question',
+            name: 'How does Relocate Index score countries?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Each country receives a composite score calculated as a weighted sum of 10 dimension scores. The formula is: composite = Σ (dimension_score × normalised_weight). Users set the weights to match their priorities. Dimensions set to zero are excluded and remaining weights re-normalise automatically.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What are the 10 dimensions used to rank countries for relocation?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'Purchasing Power, Civic Culture, Safety, Warmth, School Culture, Healthcare, Infrastructure, Climate, Religious Freedom, and English Proficiency. Each dimension uses institutional data sources and is scored 0-100.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'What data sources does Relocate Index use?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'OECD (purchasing power parity), World Bank (governance indicators, price levels), WHO (universal health coverage), Global Peace Index (safety), PISA 2022 (education quality), Hofstede Insights (cultural dimensions), InterNations (expat friendliness), IMD (infrastructure), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo ERA5 (climate data).',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'How many countries does Relocate Index cover?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: '60 countries across all major world regions: Western Europe, Northern Europe, Southern Europe, Eastern Europe, North America, Latin America, East Asia, Southeast Asia, South Asia, Middle East, Oceania, and Africa.',
+            },
+          },
+          {
+            '@type': 'Question',
+            name: 'How are country scores normalised?',
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: 'All raw values are normalised to a 0-100 scale where higher is always better. For indices where a lower raw value is better (e.g., Global Peace Index, Pew restrictions), the scale is inverted at normalisation time. Min-max boundaries are set from observed data across the 60-country panel.',
+            },
+          },
+        ],
+      }} />
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://relocateindex.com' },
+          { '@type': 'ListItem', position: 2, name: 'Methodology', item: 'https://relocateindex.com/methodology' },
+        ],
+      }} />
       <MethodologyTracker />
       <h1 className="text-3xl font-medium tracking-tight text-zinc-900">
         Methodology
       </h1>
       <p className="mt-4 text-zinc-500">
-        Relocator ranks 59 countries across 10 data-driven dimensions. It
+        Relocate Index ranks 60 countries across 10 data-driven dimensions. It
         narrows the field to a shortlist — it does not make the decision for
         you.
       </p>
@@ -61,7 +119,7 @@ export default function MethodologyPage() {
           All raw values are normalised to a 0–100 scale where higher is always
           better. For indices where a lower raw value is better (e.g., GPI,
           Pew restrictions), the scale is inverted. Min-max boundaries are set
-          from observed data across the 59-country panel.
+          from observed data across the 60-country panel.
         </p>
       </section>
 
@@ -131,7 +189,7 @@ export default function MethodologyPage() {
           Download raw data
         </h2>
         <p className="mt-2 text-sm text-zinc-500">
-          CSV of all normalised scores for all 59 countries. Use it for your
+          CSV of all normalised scores for all 60 countries. Use it for your
           own analysis.
         </p>
         <div className="mt-4">
@@ -141,7 +199,7 @@ export default function MethodologyPage() {
 
       <footer className="mt-16 border-t border-zinc-200 pt-6 pb-8 text-center">
         <p className="text-xs text-zinc-400">
-          Relocator narrows the field. It does not make the decision.
+          Relocate Index narrows the field. It does not make the decision.
         </p>
       </footer>
     </main>

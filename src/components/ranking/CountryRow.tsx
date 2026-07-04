@@ -44,7 +44,9 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
         onClick={() => trackEvent('country_click', { country: country.iso, rank: country.rank, score: country.compositeScore })}
         className="absolute inset-0 z-0"
         aria-label={`View ${country.name}`}
-      />
+      >
+        <span className="sr-only">{country.name} — view country profile</span>
+      </Link>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <span className="text-xs text-zinc-400 tabular-nums w-5">

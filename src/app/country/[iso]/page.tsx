@@ -1,27 +1,35 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { fetchCountryDetail } from '@/lib/supabase';
+import { fetchAllCountryScores, fetchCountryDetail } from '@/lib/supabase';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { CountryDetailView } from './CountryDetailView';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
+export const dynamicParams = false;
 
 interface PageProps {
   params: Promise<{ iso: string }>;
 }
 
+export async function generateStaticParams() {
+  const countries = await fetchAllCountryScores();
+  return countries.map((c) => ({ iso: c.iso.toLowerCase() }));
+}
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { iso } = await params;
   const detail = await fetchCountryDetail(iso);
-  if (!detail) return { title: 'Country not found — Relocator' };
+  if (!detail) return { title: 'Country not found' };
   const name = detail.country.name;
   return {
-    title: `${name} — Relocator`,
+    title: name,
     description: `Relocation profile for ${name}: purchasing power, civic culture, safety, warmth, and 6 more dimensions scored on data from OECD, World Bank, and WHO.`,
     openGraph: {
-      title: `${name} — Relocator`,
+      title: `${name} — Relocate Index`,
       description: `See how ${name} scores across 10 relocation dimensions.`,
-      type: 'website',
+      url: `/country/${iso}`,
     },
+    alternates: { canonical: `/country/${iso}` },
   };
 }
 
@@ -31,5 +39,18 @@ export default async function CountryPage({ params }: PageProps) {
 
   if (!detail) notFound();
 
-  return <CountryDetailView detail={detail} />;
+  return (
+    <>
+      <JsonLd data={{
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://relocateindex.com' },
+          { '@type': 'ListItem', position: 2, name: 'Ranking', item: 'https://relocateindex.com/ranking' },
+          { '@type': 'ListItem', position: 3, name: detail.country.name, item: `https://relocateindex.com/country/${iso}` },
+        ],
+      }} />
+      <CountryDetailView detail={detail} />
+    </>
+  );
 }

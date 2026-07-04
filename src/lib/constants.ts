@@ -134,7 +134,7 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'english_proficiency',
     name: 'English Proficiency',
-    description: 'Population-level English ability. English-native countries are scored at 100.',
+    description: 'Population-level English ability. English-native countries are scored at 10.',
     context: 'For non-native English speakers relocating abroad, the population\'s English ability determines how easily you can navigate daily life, work, and social connections without learning the local language. A high score means English gets you far; a low score means significant language investment.',
     methodology: 'english_proficiency = ef_epi_normalised (min-max across 300–700). Native countries hardcoded to 100.',
     category: 'lifestyle',
