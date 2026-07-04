@@ -130,23 +130,17 @@ async function main() {
       });
     }
 
-    // Civic Culture
+    // Civic Culture (WGI only — WVS removed in v0.1.7)
     const wgiRol = safeNum(raw['worldbank.wgi_rule_of_law']);
     const wgiCc = safeNum(raw['worldbank.wgi_corruption_control']);
-    const wvsTrust = safeNum(raw['wvs.trust_pct']);
-    if (wgiRol != null || wgiCc != null) {
-      let civicScore: number | null = null;
-      if (wgiRol != null && wgiCc != null && wvsTrust != null) {
-        civicScore = wgiRol * 0.40 + wgiCc * 0.35 + wvsTrust * 0.25;
-      } else if (wgiRol != null && wgiCc != null) {
-        civicScore = wgiRol * 0.55 + wgiCc * 0.45;
-      }
+    if (wgiRol != null && wgiCc != null) {
+      const civicScore = wgiRol * 0.55 + wgiCc * 0.45;
       scores.push({
         country_id: country.id,
         dimension_key: 'civic_culture',
-        score: civicScore != null ? Math.round(civicScore * 100) / 100 : null,
-        confidence: wvsTrust != null ? 'high' : 'medium',
-        component_scores: { wgi_rule_of_law: wgiRol, wgi_corruption: wgiCc, wvs_trust: wvsTrust },
+        score: Math.round(civicScore * 100) / 100,
+        confidence: 'high',
+        component_scores: { wgi_rule_of_law: wgiRol, wgi_corruption: wgiCc },
       });
     }
 
@@ -163,30 +157,42 @@ async function main() {
       });
     }
 
-    // Warmth
+    // Warmth (IVR × 0.40 + InterNations × 0.60, fallback to Gallup MAI)
     const ivr = safeNum(raw['hofstede.ivr']);
     const internations = safeNum(raw['internations.ease_rank']);
-    if (ivr != null) {
-      let warmthScore: number;
-      if (internations != null) {
-        const intScore = ((53 - internations) / (53 - 1)) * 100;
-        warmthScore = ivr * 0.40 + intScore * 0.60;
-        scores.push({
-          country_id: country.id,
-          dimension_key: 'warmth',
-          score: Math.round(warmthScore * 100) / 100,
-          confidence: 'medium',
-          component_scores: { ivr, internations_score: Math.round(intScore * 100) / 100 },
-        });
-      } else {
-        scores.push({
-          country_id: country.id,
-          dimension_key: 'warmth',
-          score: ivr,
-          confidence: 'low',
-          component_scores: { ivr, internations_score: null },
-        });
-      }
+    const gallupMai = safeNum(raw['gallup.mai']);
+    if (ivr != null && internations != null) {
+      const intScore = ((53 - internations) / (53 - 1)) * 100;
+      const warmthScore = ivr * 0.40 + intScore * 0.60;
+      scores.push({
+        country_id: country.id,
+        dimension_key: 'warmth',
+        score: Math.round(warmthScore * 100) / 100,
+        confidence: 'high',
+        component_scores: { ivr, internations_score: Math.round(intScore * 100) / 100 },
+      });
+    } else if (ivr != null || internations != null) {
+      const intScore = internations != null ? ((53 - internations) / (53 - 1)) * 100 : null;
+      const available: number[] = [];
+      if (ivr != null) available.push(ivr);
+      if (intScore != null) available.push(intScore);
+      const warmthScore = available.reduce((a, b) => a + b, 0) / available.length;
+      scores.push({
+        country_id: country.id,
+        dimension_key: 'warmth',
+        score: Math.round(warmthScore * 100) / 100,
+        confidence: 'low',
+        component_scores: { ivr, internations_score: intScore != null ? Math.round(intScore * 100) / 100 : null },
+      });
+    } else if (gallupMai != null) {
+      const maiNorm = minMaxNormalise(gallupMai, 1.0, 9.0, false);
+      scores.push({
+        country_id: country.id,
+        dimension_key: 'warmth',
+        score: Math.round(maiNorm * 100) / 100,
+        confidence: 'low',
+        component_scores: { gallup_mai: Math.round(maiNorm * 100) / 100 },
+      });
     }
 
     // School Culture
