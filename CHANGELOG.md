@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.10 — 2026-07-04
+
+### Fixed
+- `compute-normalised.ts`: civic culture formula updated to WGI-only (was still using 3-factor formula with WVS despite v0.1.7 removal)
+- `compute-normalised.ts`: warmth scoring now includes Gallup MAI as fallback when both IVR and InterNations are missing
+- Luxembourg warmth: confidence upgraded from 'low' to 'high' (raw data was present, normalised score was stale). Score: 39.71
+- Deleted stale WVS rows from `raw_indices` table in Supabase
+
 ## 0.1.9 — 2026-07-04
 
 ### Added
