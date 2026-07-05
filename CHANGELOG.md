@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.1.14 — 2026-07-05
+
+### Added
+- Healthcare V2: three-pillar scoring (UHC 35% + HAQ 35% + capacity 30%) replaces UHC-only formula
+- HAQ Index seed data (IHME GBD) and health capacity seed data (OECD/WHO: physicians, beds, nurses)
+- Country comparison view (`/compare`) with overlaid radar chart and delta scoring table
+- Compare checkboxes on ranking page with floating compare bar (up to 3 countries)
+- Weight sliders sidebar on compare view for real-time dimension adjustment
+- City selector dropdowns on compare view for large countries (US, AU, CA, BR, AR, CN, IN, MX)
+- Healthcare system type badges on ranking page when filtering by healthcare dimension
+
+### Changed
+- Healthcare scores reflect outcomes and capacity, not just coverage — US drops from ~90 to ~74
+- Radar chart fill opacity increased to 0.12 for better visibility
+- Cross-page state persistence: city selections and weights sync between ranking and compare views
+
 ## 0.1.13 — 2026-07-04
 
 ### Changed

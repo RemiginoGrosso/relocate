@@ -6,7 +6,9 @@ import { DIMENSIONS } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { CountryList } from '@/components/ranking/CountryList';
+import { CompareBar } from '@/components/ranking/CompareBar';
 import { WeightSliders } from '@/components/ranking/WeightSliders';
+import { useCompareStore } from '@/stores/useCompareStore';
 import {
   Select,
   SelectContent,
@@ -28,6 +30,7 @@ interface RankingViewProps {
 
 export function RankingView({ countries }: RankingViewProps) {
   const { weights, setWeight, resetToDefaults, climateType, setClimateType, selectedCities, setSelectedCity } = useWeightStore();
+  const compareCount = useCompareStore((s) => s.compareIsos.length);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [rankedBy, setRankedBy] = useState<DimensionKey | 'overall'>('overall');
 
@@ -98,8 +101,11 @@ export function RankingView({ countries }: RankingViewProps) {
         </div>
       </main>
 
+      {/* Compare bar */}
+      <CompareBar countries={countries} />
+
       {/* Mobile bottom bar + drawer */}
-      <div className="fixed bottom-0 left-0 right-0 lg:hidden">
+      <div className={`fixed left-0 right-0 lg:hidden ${compareCount > 0 ? 'bottom-[52px]' : 'bottom-0'}`}>
         <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
           <DrawerTrigger asChild>
             <button className="w-full border-t border-zinc-200 bg-white px-4 py-3 text-sm font-medium text-teal-700">

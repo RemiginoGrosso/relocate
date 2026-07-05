@@ -25,9 +25,12 @@ interface CountryRowProps {
   singleDimension?: DimensionKey;
   selectedCity?: string;
   onCityChange?: (iso: string, city: string) => void;
+  isComparing?: boolean;
+  onToggleCompare?: (iso: string) => void;
+  canAddMore?: boolean;
 }
 
-export function CountryRow({ country, weights, singleDimension, selectedCity, onCityChange }: CountryRowProps) {
+export function CountryRow({ country, weights, singleDimension, selectedCity, onCityChange, isComparing, onToggleCompare, canAddMore }: CountryRowProps) {
   const displayScore = singleDimension
     ? (country.dimensionScores[singleDimension]?.score ?? null)
     : country.compositeScore;
@@ -49,6 +52,26 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
       </Link>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
+          {onToggleCompare && (
+            <div
+              className="relative z-10"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (isComparing || canAddMore) onToggleCompare(country.iso);
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={isComparing ?? false}
+                disabled={!isComparing && !canAddMore}
+                readOnly
+                className="h-4 w-4 shrink-0 cursor-pointer rounded border-zinc-300 text-teal-700 focus:ring-teal-700 disabled:cursor-not-allowed disabled:opacity-40 pointer-events-none"
+                aria-label={`Compare ${country.name}`}
+                tabIndex={-1}
+              />
+            </div>
+          )}
           <span className="text-xs text-zinc-400 tabular-nums w-5">
             {country.rank}
           </span>

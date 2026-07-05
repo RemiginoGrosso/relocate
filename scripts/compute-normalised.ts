@@ -130,17 +130,33 @@ async function main() {
       });
     }
 
-    // Civic Culture (WGI only — WVS removed in v0.1.7)
+    // Civic Culture (WGI governance × 0.60 + Numbeo street safety × 0.40)
     const wgiRol = safeNum(raw['worldbank.wgi_rule_of_law']);
     const wgiCc = safeNum(raw['worldbank.wgi_corruption_control']);
+    const numbeoCrime = safeNum(raw['numbeo.crime_index']);
     if (wgiRol != null && wgiCc != null) {
-      const civicScore = wgiRol * 0.55 + wgiCc * 0.45;
+      const governance = wgiRol * 0.55 + wgiCc * 0.45;
+      const streetSafety = numbeoCrime != null ? 100 - numbeoCrime : null;
+      let civicScore: number;
+      let confidence: string;
+      if (streetSafety != null) {
+        civicScore = governance * 0.60 + streetSafety * 0.40;
+        confidence = 'medium';
+      } else {
+        civicScore = governance;
+        confidence = 'high';
+      }
       scores.push({
         country_id: country.id,
         dimension_key: 'civic_culture',
         score: Math.round(civicScore * 100) / 100,
-        confidence: 'high',
-        component_scores: { wgi_rule_of_law: wgiRol, wgi_corruption: wgiCc },
+        confidence,
+        component_scores: {
+          wgi_rule_of_law: wgiRol,
+          wgi_corruption: wgiCc,
+          governance: Math.round(governance * 100) / 100,
+          street_safety: streetSafety != null ? Math.round(streetSafety * 100) / 100 : null,
+        },
       });
     }
 
@@ -228,24 +244,51 @@ async function main() {
       }
     }
 
-    // Healthcare
+    // Healthcare V2: UHC × 0.35 + HAQ × 0.35 + capacity × 0.30
     const uhc = safeNum(raw['worldbank.who_uhc_coverage']);
-    const healthOop = safeNum(raw['worldbank.who_oop_pct']);
+    const haq = safeNum(raw['ihme.haq_index']);
+    const physicians = safeNum(raw['oecd.physicians_per_1000']);
+    const beds = safeNum(raw['oecd.beds_per_1000']);
+    const nurses = safeNum(raw['oecd.nurses_per_1000']);
     if (uhc != null) {
       const uhcNorm = minMaxNormalise(uhc, 0, 100);
-      const oopNormH = healthOop != null ? minMaxNormalise(healthOop, 5, 65, true) : null;
-      let healthScore: number | null;
-      if (uhcNorm != null && oopNormH != null) {
-        healthScore = uhcNorm * 0.55 + oopNormH * 0.45;
-      } else {
-        healthScore = uhcNorm;
+
+      let capacityScore: number | null = null;
+      if (physicians != null && beds != null && nurses != null) {
+        const physNorm = minMaxNormalise(physicians, 0, 6);
+        const bedsNorm = minMaxNormalise(beds, 0, 13);
+        const nursesNorm = minMaxNormalise(nurses, 0, 18);
+        if (physNorm != null && bedsNorm != null && nursesNorm != null) {
+          capacityScore = Math.round((physNorm * 0.40 + bedsNorm * 0.35 + nursesNorm * 0.25) * 100) / 100;
+        }
       }
+
+      let healthScore: number;
+      let confidence: string;
+      if (haq != null && capacityScore != null) {
+        healthScore = uhcNorm! * 0.35 + haq * 0.35 + capacityScore * 0.30;
+        confidence = 'high';
+      } else if (haq != null) {
+        healthScore = uhcNorm! * 0.50 + haq * 0.50;
+        confidence = 'medium';
+      } else {
+        healthScore = uhcNorm!;
+        confidence = 'medium';
+      }
+
       scores.push({
         country_id: country.id,
         dimension_key: 'healthcare',
-        score: healthScore != null ? Math.round(healthScore * 100) / 100 : null,
-        confidence: oopNormH != null ? 'high' : 'medium',
-        component_scores: { who_uhc: uhcNorm, who_oop: oopNormH },
+        score: Math.round(healthScore * 100) / 100,
+        confidence,
+        component_scores: {
+          who_uhc: uhcNorm,
+          haq_index: haq,
+          capacity: capacityScore,
+          physicians: physicians != null ? minMaxNormalise(physicians, 0, 6) : null,
+          beds: beds != null ? minMaxNormalise(beds, 0, 13) : null,
+          nurses: nurses != null ? minMaxNormalise(nurses, 0, 18) : null,
+        },
       });
     }
 

@@ -30,15 +30,15 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'civic_culture',
     name: 'Civic Culture',
-    description: 'Whether institutions work, laws are enforced fairly, and corruption is controlled. Measures governance quality, not social behaviour.',
-    context: 'Civic culture captures institutional quality: do courts enforce contracts, do police respond, is corruption tolerated in government? Countries with strong rule of law and low corruption are dramatically easier to live in long-term. Note: this measures governance, not everyday citizen behaviour — a country can have excellent institutions but reserved social norms, or weak institutions but warm interpersonal culture.',
-    methodology: 'civic_culture = wgi_rule_of_law × 0.55 + wgi_corruption_control × 0.45',
+    description: 'How well institutions work and how safe the streets actually feel — combining governance quality with street-level crime perception.',
+    context: 'Civic culture captures two things: institutional quality (do courts work, is corruption controlled?) and street-level reality (do people feel safe walking around?). Some countries have great institutions but rough streets; others have modest governance but feel very safe day-to-day. This dimension measures both, so your ranking reflects the full picture.',
+    methodology: 'civic_culture = governance × 0.60 + street_safety × 0.40. governance = wgi_rule_of_law × 0.55 + wgi_corruption_control × 0.45. street_safety = 100 − numbeo_crime_index.',
     category: 'social',
-    sources: ['World Bank WGI Rule of Law', 'World Bank WGI Control of Corruption'],
+    sources: ['World Bank WGI Rule of Law', 'World Bank WGI Control of Corruption', 'Numbeo Crime Index'],
     defaultWeight: 5,
     sortOrder: 2,
-    confidence: 'high',
-    knownLimitation: 'Measures institutional governance quality only. Does not capture behavioural civicness (queuing, cleanliness, social norms) or interpersonal trust.',
+    confidence: 'medium',
+    knownLimitation: 'Governance data is institutional (WGI). Street safety is crowdsourced perception (Numbeo). Neither captures behavioural civicness (queuing, littering, social norms) directly.',
   },
   {
     key: 'safety',
@@ -51,7 +51,7 @@ export const DIMENSIONS: DimensionDefinition[] = [
     defaultWeight: 5,
     sortOrder: 3,
     confidence: 'high',
-    knownLimitation: 'Single-source in V1 — less robust than a blend. Numbeo crime perception planned for V2.',
+    knownLimitation: 'Single-source — measures country-level peace/conflict (GPI). Street-level crime perception is captured in Civic Culture via Numbeo.',
   },
   {
     key: 'warmth',
@@ -82,15 +82,15 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'healthcare',
     name: 'Healthcare',
-    description: 'Health system coverage — how comprehensive the country\'s healthcare services are. The badge shows what it means for your budget.',
-    context: 'The score measures what healthcare services exist. The badge tells you what that means for you financially: are you covered through the public system, do you need to buy your own insurance, does coverage depend on your employer\'s offer, or should you budget for private care?',
-    methodology: 'healthcare = who_uhc_normalised (0–100, higher = broader service coverage)',
+    description: 'Three-pillar health system score: coverage breadth (UHC), care quality and outcomes (HAQ), and workforce capacity (physicians, beds, nurses). The badge shows what it means for your budget.',
+    context: 'The score combines what healthcare services exist (UHC), how good outcomes are (HAQ — amenable mortality across 32 causes), and whether the system has enough doctors, beds, and nurses. The badge tells you what that means financially: public coverage, mandatory insurance, employer-dependent, or budget for private.',
+    methodology: 'healthcare = UHC × 0.35 + HAQ × 0.35 + capacity × 0.30. capacity = physicians_norm × 0.40 + beds_norm × 0.35 + nurses_norm × 0.25.',
     category: 'economic',
-    sources: ['WHO UHC Service Coverage Index'],
+    sources: ['WHO UHC Service Coverage Index', 'IHME GBD Healthcare Access & Quality', 'OECD Health Statistics'],
     defaultWeight: 5,
     sortOrder: 6,
     confidence: 'high',
-    knownLimitation: 'UHC measures service availability, not quality or outcomes. System type classification reviewed annually.',
+    knownLimitation: 'HAQ is from GBD 2019 — next update pending. Capacity data is OECD 2022 for member countries, WHO GHO for others.',
   },
   {
     key: 'infrastructure',
@@ -282,6 +282,15 @@ export const INDICATOR_INTERPRETATIONS: Record<string, { ranges: { max: number; 
       { max: 100, label: 'Very strong control' },
     ],
   },
+  'numbeo.crime_index': {
+    ranges: [
+      { max: 20, label: 'Very low crime' },
+      { max: 35, label: 'Low crime' },
+      { max: 50, label: 'Moderate' },
+      { max: 65, label: 'High crime' },
+      { max: 100, label: 'Very high crime' },
+    ],
+  },
   'hofstede.ivr': {
     ranges: [
       { max: 30, label: 'Restrained' },
@@ -416,6 +425,38 @@ export const INDICATOR_INTERPRETATIONS: Record<string, { ranges: { max: number; 
       { max: 4.5, label: 'Moderate' },
       { max: 6.6, label: 'High hostility' },
       { max: 10, label: 'Very high' },
+    ],
+  },
+  'ihme.haq_index': {
+    ranges: [
+      { max: 50, label: 'Low quality' },
+      { max: 70, label: 'Moderate' },
+      { max: 85, label: 'High quality' },
+      { max: 100, label: 'Excellent' },
+    ],
+  },
+  'oecd.physicians_per_1000': {
+    ranges: [
+      { max: 1.5, label: 'Shortage' },
+      { max: 3.0, label: 'Moderate' },
+      { max: 4.5, label: 'Well staffed' },
+      { max: 7.0, label: 'Very well staffed' },
+    ],
+  },
+  'oecd.beds_per_1000': {
+    ranges: [
+      { max: 2.0, label: 'Limited' },
+      { max: 4.0, label: 'Moderate' },
+      { max: 7.0, label: 'Well resourced' },
+      { max: 14.0, label: 'Very high' },
+    ],
+  },
+  'oecd.nurses_per_1000': {
+    ranges: [
+      { max: 3.0, label: 'Shortage' },
+      { max: 8.0, label: 'Moderate' },
+      { max: 12.0, label: 'Well staffed' },
+      { max: 20.0, label: 'Very well staffed' },
     ],
   },
 };

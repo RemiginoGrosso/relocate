@@ -23,6 +23,7 @@ interface DimensionBreakdownProps {
 const INDICATOR_LABELS: Record<string, string> = {
   'worldbank.wgi_rule_of_law': 'WGI Rule of Law',
   'worldbank.wgi_corruption_control': 'WGI Corruption Control',
+  'numbeo.crime_index': 'Numbeo Crime Index',
   'gpi.gpi_score': 'GPI Score',
   'hofstede.ivr': 'Hofstede IVR',
   'gallup.mai': 'Gallup MAI (fallback)',
@@ -35,6 +36,10 @@ const INDICATOR_LABELS: Record<string, string> = {
   'pisa.pisa_safety': 'PISA Safety Index',
   'worldbank.who_uhc_coverage': 'WHO UHC Coverage',
   'worldbank.who_oop_pct': 'WHO Out-of-Pocket %',
+  'ihme.haq_index': 'HAQ Index (GBD 2019)',
+  'oecd.physicians_per_1000': 'Physicians per 1,000',
+  'oecd.beds_per_1000': 'Hospital beds per 1,000',
+  'oecd.nurses_per_1000': 'Nurses per 1,000',
   'worldbank.oecd_ppp_aic': 'OECD PPP (AIC)',
   'worldbank.price_level_ratio': 'Price Level Ratio',
   'imd.infrastructure_score': 'IMD Infrastructure Score',
@@ -45,11 +50,11 @@ const INDICATOR_LABELS: Record<string, string> = {
 
 const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
   purchasing_power: ['worldbank.oecd_ppp_aic', 'worldbank.price_level_ratio', 'worldbank.who_oop_pct'],
-  civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control'],
+  civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control', 'numbeo.crime_index'],
   safety: ['gpi.gpi_score'],
   warmth: ['hofstede.ivr', 'internations.ease_rank', 'gallup.mai'],
   school_culture: ['pisa.pisa_reading', 'pisa.pisa_maths', 'pisa.pisa_science', 'pisa.pisa_belonging', 'pisa.pisa_bullying', 'pisa.pisa_safety'],
-  healthcare: ['worldbank.who_uhc_coverage'],
+  healthcare: ['worldbank.who_uhc_coverage', 'ihme.haq_index', 'oecd.physicians_per_1000', 'oecd.beds_per_1000', 'oecd.nurses_per_1000'],
   infrastructure: ['imd.infrastructure_score'],
   climate: [],
   religious_freedom: ['pew.govt_restrictions', 'pew.social_hostility'],

@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import type { ClimatePreference, CountryScores, DimensionKey, RankedCountry, UserWeights } from '@/lib/types';
 import { applyClimatePreference, rankCountries } from '@/lib/scoring';
 import { REGION_FILTER_GROUPS } from '@/lib/constants';
+import { useCompareStore } from '@/stores/useCompareStore';
 import { CountryRow } from './CountryRow';
 import { RegionFilter } from './RegionFilter';
 
@@ -18,6 +19,7 @@ interface CountryListProps {
 
 export function CountryList({ countries, weights, climateType, selectedCities, rankedBy, onCityChange }: CountryListProps) {
   const [regionGroup, setRegionGroup] = useState('All');
+  const { compareIsos, toggleCompare, canAddMore } = useCompareStore();
 
   const adjusted = useMemo(
     () => applyClimatePreference(countries, climateType, selectedCities),
@@ -78,6 +80,9 @@ export function CountryList({ countries, weights, climateType, selectedCities, r
             singleDimension={rankedBy !== 'overall' ? rankedBy : undefined}
             selectedCity={selectedCities[country.iso.toUpperCase()]}
             onCityChange={onCityChange}
+            isComparing={compareIsos.includes(country.iso.toUpperCase())}
+            onToggleCompare={toggleCompare}
+            canAddMore={canAddMore()}
           />
         ))}
       </div>

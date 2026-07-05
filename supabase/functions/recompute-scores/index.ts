@@ -302,13 +302,47 @@ function computeHealthcare(raw: RawMap): DimensionScore | null {
   if (uhc == null) return null;
 
   const uhcNorm = minMaxNormalise(uhc, 0, 100);
+  const haq = safeNum(raw["ihme.haq_index"]);
+  const physicians = safeNum(raw["oecd.physicians_per_1000"]);
+  const beds = safeNum(raw["oecd.beds_per_1000"]);
+  const nurses = safeNum(raw["oecd.nurses_per_1000"]);
+
+  let capacityScore: number | null = null;
+  if (physicians != null && beds != null && nurses != null) {
+    const physNorm = minMaxNormalise(physicians, 0, 6);
+    const bedsNorm = minMaxNormalise(beds, 0, 13);
+    const nursesNorm = minMaxNormalise(nurses, 0, 18);
+    if (physNorm != null && bedsNorm != null && nursesNorm != null) {
+      capacityScore = round2(physNorm * 0.40 + bedsNorm * 0.35 + nursesNorm * 0.25);
+    }
+  }
+
+  let score: number;
+  let confidence: "high" | "medium";
+  if (haq != null && capacityScore != null) {
+    score = uhcNorm! * 0.35 + haq * 0.35 + capacityScore * 0.30;
+    confidence = "high";
+  } else if (haq != null) {
+    score = uhcNorm! * 0.50 + haq * 0.50;
+    confidence = "medium";
+  } else {
+    score = uhcNorm!;
+    confidence = "medium";
+  }
 
   return {
     country_id: "",
     dimension_key: "healthcare",
-    score: uhcNorm != null ? round2(uhcNorm) : null,
-    confidence: "high",
-    component_scores: { who_uhc: uhcNorm },
+    score: round2(score),
+    confidence,
+    component_scores: {
+      who_uhc: uhcNorm,
+      haq_index: haq,
+      capacity: capacityScore,
+      physicians: physicians != null ? minMaxNormalise(physicians, 0, 6) : null,
+      beds: beds != null ? minMaxNormalise(beds, 0, 13) : null,
+      nurses: nurses != null ? minMaxNormalise(nurses, 0, 18) : null,
+    },
   };
 }
 

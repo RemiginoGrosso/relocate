@@ -30,6 +30,9 @@ function sourceLabel(source: string): string {
     imd: 'IMD',
     pew: 'Pew Research',
     ef: 'EF EPI',
+    numbeo: 'Numbeo',
+    ihme: 'IHME GBD',
+    oecd: 'OECD Health',
   };
   return labels[source] ?? source;
 }

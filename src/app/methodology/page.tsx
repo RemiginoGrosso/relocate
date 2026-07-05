@@ -51,7 +51,7 @@ export default function MethodologyPage() {
             name: 'What data sources does Relocate Index use?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'OECD (purchasing power parity), World Bank (governance indicators, price levels), WHO (universal health coverage), Global Peace Index (safety), PISA 2022 (education quality), Hofstede Insights (cultural dimensions), InterNations (expat friendliness), IMD (infrastructure), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo ERA5 (climate data).',
+              text: 'OECD (purchasing power parity, health capacity), World Bank (governance indicators, price levels), WHO (universal health coverage), IHME GBD (healthcare access and quality), Global Peace Index (safety), Numbeo (street-level crime perception), PISA 2022 (education quality), Hofstede Insights (cultural dimensions), InterNations (expat friendliness), IMD (infrastructure), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo ERA5 (climate data).',
             },
           },
           {
