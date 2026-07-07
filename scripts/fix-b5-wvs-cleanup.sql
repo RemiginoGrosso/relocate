@@ -1,4 +1,7 @@
--- B5: Luxembourg warmth fix + WVS cleanup
+-- HISTORICAL: Run once on 2026-07-04 to remove WVS data and patch Luxembourg warmth.
+-- Superseded by seed.ts changes (WVS removed) and scoring formula updates. Do not re-run.
+--
+-- Original: B5: Luxembourg warmth fix + WVS cleanup
 -- Run in Supabase SQL Editor (https://supabase.com/dashboard/project/rvjyhjfjvqaftaxjwzxj/sql)
 -- Run each step separately (select the block, then Run)
 

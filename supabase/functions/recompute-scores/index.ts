@@ -160,7 +160,7 @@ function computePurchasingPower(raw: RawMap): DimensionScore | null {
     country_id: "",
     dimension_key: "purchasing_power",
     score: round2(score),
-    confidence: parts.length === 3 ? "high" : "medium",
+    confidence: "high",
     component_scores: {
       oecd_ppp: pppNorm,
       cost_affordability: affordNorm,
@@ -172,17 +172,33 @@ function computePurchasingPower(raw: RawMap): DimensionScore | null {
 function computeCivicCulture(raw: RawMap): DimensionScore | null {
   const wgiRol = safeNum(raw["worldbank.wgi_rule_of_law"]);
   const wgiCc = safeNum(raw["worldbank.wgi_corruption_control"]);
+  const numbeoCrime = safeNum(raw["numbeo.crime_index"]);
 
   if (wgiRol == null || wgiCc == null) return null;
+
+  const governance = wgiRol * 0.55 + wgiCc * 0.45;
+  const streetSafety = numbeoCrime != null ? 100 - numbeoCrime : null;
+
+  let civicScore: number;
+  let confidence: "high" | "medium";
+  if (streetSafety != null) {
+    civicScore = governance * 0.60 + streetSafety * 0.40;
+    confidence = "medium";
+  } else {
+    civicScore = governance;
+    confidence = "high";
+  }
 
   return {
     country_id: "",
     dimension_key: "civic_culture",
-    score: round2(wgiRol * 0.55 + wgiCc * 0.45),
-    confidence: "high",
+    score: round2(civicScore),
+    confidence,
     component_scores: {
       wgi_rule_of_law: wgiRol,
       wgi_corruption: wgiCc,
+      governance: round2(governance),
+      street_safety: streetSafety != null ? round2(streetSafety) : null,
     },
   };
 }
@@ -210,7 +226,7 @@ function computeWarmth(raw: RawMap): DimensionScore | null {
     ? round2(((53 - intRank) / (53 - 1)) * 100)
     : null;
   const maiRaw = safeNum(raw["gallup.mai"]);
-  const maiNorm = maiRaw != null ? round2((maiRaw / 9) * 100) : null;
+  const maiNorm = maiRaw != null ? minMaxNormalise(maiRaw, 1.0, 9.0, false) : null;
 
   // Primary formula: IVR × 0.4 + InterNations × 0.6
   if (ivr != null && intScore != null) {
@@ -218,19 +234,26 @@ function computeWarmth(raw: RawMap): DimensionScore | null {
       country_id: "",
       dimension_key: "warmth",
       score: round2(ivr * 0.4 + intScore * 0.6),
-      confidence: "medium",
+      confidence: "high",
       component_scores: { ivr, internations_score: intScore },
     };
   }
 
   // Partial: one primary source available
   if (ivr != null || intScore != null) {
+    const available: number[] = [];
+    if (ivr != null) available.push(ivr);
+    if (intScore != null) available.push(intScore);
+    const warmthScore = available.reduce((a, b) => a + b, 0) / available.length;
     return {
       country_id: "",
       dimension_key: "warmth",
-      score: ivr ?? intScore!,
+      score: round2(warmthScore),
       confidence: "low",
-      component_scores: { ivr, internations_score: intScore },
+      component_scores: {
+        ivr,
+        internations_score: intScore != null ? round2(intScore) : null,
+      },
     };
   }
 
@@ -239,9 +262,9 @@ function computeWarmth(raw: RawMap): DimensionScore | null {
     return {
       country_id: "",
       dimension_key: "warmth",
-      score: maiNorm,
+      score: round2(maiNorm),
       confidence: "low",
-      component_scores: { mai: maiNorm },
+      component_scores: { gallup_mai: round2(maiNorm) },
     };
   }
 
@@ -429,6 +452,44 @@ Deno.serve(async (req) => {
   const supabase = createServiceClient();
 
   try {
+    // Gate: check today's refresh outcomes before recomputing
+    const todayStart = new Date();
+    todayStart.setUTCHours(0, 0, 0, 0);
+    const { data: refreshLogs } = await supabase
+      .from("data_refresh_log")
+      .select("source, status")
+      .gte("started_at", todayStart.toISOString())
+      .in("source", ["world-bank", "who-health", "open-meteo-climate"]);
+
+    const loggedSources = new Set((refreshLogs ?? []).map((r: { source: string }) => r.source));
+    const failedSources = (refreshLogs ?? [])
+      .filter((r: { source: string; status: string }) => r.status === "failed")
+      .map((r: { source: string }) => r.source);
+
+    const expectedSources = ["world-bank", "who-health", "open-meteo-climate"];
+    const missingSources = expectedSources.filter((s) => !loggedSources.has(s));
+
+    if (missingSources.length > 0 || failedSources.length > 0) {
+      const warnings: string[] = [];
+      if (missingSources.length > 0) {
+        warnings.push(`Missing refresh runs today: ${missingSources.join(", ")}`);
+      }
+      if (failedSources.length > 0) {
+        warnings.push(`Failed refresh runs today: ${failedSources.join(", ")}`);
+      }
+      const warningMsg = warnings.join("; ");
+      console.warn(`Refresh gate warning: ${warningMsg}. Proceeding with existing data.`);
+
+      // Log the warning but don't abort -- the data isn't going anywhere
+      await logRefresh(supabase, {
+        source: "recompute-scores",
+        status: "partial",
+        countries_updated: 0,
+        error_message: `Pre-run warning: ${warningMsg}`,
+        started_at: startedAt,
+      });
+    }
+
     console.log("Fetching raw data and climate data...");
 
     // Fetch all data in parallel

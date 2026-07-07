@@ -1,6 +1,6 @@
 {
   "name": "relocator",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,7 +10,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seed": "tsx scripts/seed.ts",
-    "compute-normalised": "tsx scripts/compute-normalised.ts"
+    "compute-normalised": "tsx scripts/compute-normalised.ts",
+    "typecheck:scripts": "tsc -p scripts/tsconfig.json --noEmit"
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.44.4",

@@ -192,7 +192,9 @@ Deno.serve(async (req) => {
           });
         }
 
-        if (rows.length > 0) {
+        if (rows.length === 0) {
+          errors.push(`${spec.indicator}: fetch succeeded but returned 0 rows`);
+        } else {
           const { error } = await supabase
             .from("raw_indices")
             .upsert(rows, { onConflict: "country_id,source,indicator,year" });
@@ -228,7 +230,9 @@ Deno.serve(async (req) => {
         });
       }
 
-      if (rows.length > 0) {
+      if (rows.length === 0) {
+        errors.push(`price_level_ratio: fetch succeeded but returned 0 rows`);
+      } else {
         const { error } = await supabase
           .from("raw_indices")
           .upsert(rows, { onConflict: "country_id,source,indicator,year" });

@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Relocator
 
-## Getting Started
+A transparent, user-weighted country ranking tool for people considering international relocation. Ranks 60 countries across 10 data dimensions (purchasing power, civic culture, safety, warmth, school culture, healthcare, infrastructure, climate, religious freedom, English proficiency).
 
-First, run the development server:
+**Live:** [relocateindex.com](https://relocateindex.com)
+
+## Stack
+
+- **Frontend:** Next.js (App Router), Tailwind CSS, shadcn/ui, Zustand, Recharts
+- **Backend:** Supabase (PostgreSQL, read-only from frontend)
+- **Data pipeline:** Supabase Edge Functions (4 functions) + pg_cron (monthly refresh)
+- **Hosting:** Netlify (frontend) + Supabase cloud (backend)
+- **Data sources:** World Bank, OECD, WHO, IHME GBD, Open-Meteo, Pew Research, PISA, Hofstede, InterNations, EF EPI, GPI, IMD, Numbeo Crime Index (scraped). All free.
+
+## Development
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Seed data: `npx tsx scripts/seed.ts`
+Tests: `npm run test`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- 6-question onboarding that auto-sets dimension weights
+- Real-time weight sliders with instant re-ranking (client-side, < 100ms)
+- Country detail with radar chart, dimension breakdown, data freshness
+- Country comparison view (up to 3 countries, overlaid radar + delta table)
+- 5 climate profiles (warm & sunny, hot & tropical, mild & green, cold & crisp, no preference)
+- Healthcare system type badges (covered / must buy insurance / tied to employer / budget for private)
+- Methodology page with full formula transparency and CSV download
+- Amplitude analytics (7 events)
 
-## Learn More
+## Documentation
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Project documentation lives in `KNOWLEDGE/` (one level up from this directory). See the root `CLAUDE.md` for the full documentation index including scoring formulas, data sources, database schema, and decision history.

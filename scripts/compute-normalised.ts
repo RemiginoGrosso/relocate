@@ -202,13 +202,15 @@ async function main() {
       });
     } else if (gallupMai != null) {
       const maiNorm = minMaxNormalise(gallupMai, 1.0, 9.0, false);
-      scores.push({
-        country_id: country.id,
-        dimension_key: 'warmth',
-        score: Math.round(maiNorm * 100) / 100,
-        confidence: 'low',
-        component_scores: { gallup_mai: Math.round(maiNorm * 100) / 100 },
-      });
+      if (maiNorm != null) {
+        scores.push({
+          country_id: country.id,
+          dimension_key: 'warmth',
+          score: Math.round(maiNorm * 100) / 100,
+          confidence: 'low',
+          component_scores: { gallup_mai: Math.round(maiNorm * 100) / 100 },
+        });
+      }
     }
 
     // School Culture

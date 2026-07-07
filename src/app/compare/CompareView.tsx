@@ -19,6 +19,7 @@ import {
 import type { CountryScores } from '@/lib/types';
 import { applyClimatePreference } from '@/lib/scoring';
 import { isLargeCountry, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
+import { trackEvent } from '@/lib/analytics';
 
 interface CompareViewProps {
   allCountries: CountryScores[];
@@ -59,6 +60,17 @@ export function CompareView({ allCountries }: CompareViewProps) {
       isos.forEach((iso) => store.toggleCompare(iso));
     }
   }, [isos]);
+
+  useEffect(() => {
+    if (countries.length >= 2) {
+      trackEvent('comparison_started', {
+        countries: countries.map((c) => c.iso).join(','),
+        count: countries.length,
+      });
+    }
+  // Fire once on mount with resolved countries
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countries.length]);
 
   if (countries.length < 2) {
     return (

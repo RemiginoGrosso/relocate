@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.1.15 — 2026-07-07
+
+### Fixed
+- **Critical:** Edge function `recompute-scores` now matches `compute-normalised.ts` — civic culture (added Numbeo street safety), warmth MAI fallback (minMax 1-9), purchasing power confidence logic
+- Zero-row API responses now recorded as failures in `refresh-world-bank`
+- Seed freshness timestamps: seeded data now carries real vintage dates instead of `NOW()`
+
+### Added
+- Refresh gate: `recompute-scores` checks `data_refresh_log` before running; logs warning if refreshers failed/missing
+- `comparison_started` analytics event on compare view
+- Store migration tests (9 tests: v1→v3, v2→v3, corrupted JSON, round-trip)
+- `scripts/tsconfig.json` + `typecheck:scripts` command for script type-checking
+- Country count decision: `decisions/2026-07-06-country-count-59.md`
+
+### Removed
+- `seedWvs` and `wvs.json` (WVS removed in v0.1.7, seed was reintroducing deleted data)
+- `normalisation_params.json` and `seedNormalisationParams` (dead layer — never read by any compute path)
+- Debug scripts `check_missing_data.mjs`, `test-usa.mjs`
+- `external-indices-fabricated-backup.json` (fabricated data artifact)
+
+### Changed
+- README rewritten: correct stack (Netlify, Edge Functions), 60 countries, comparison view shipped
+- `.gitignore`: added `.claude/`
+- `fix-b5-wvs-cleanup.sql` archived with "do not re-run" header
+- `pew_appendix_e.txt` moved from `_TEMP/` to `scripts/data/`
+
 ## 0.1.14 — 2026-07-05
 
 ### Added
@@ -75,7 +101,7 @@
 - Warmth mismatch message now interprets the direction of divergence (IVR vs InterNations) instead of generic "mixed signals"
 - City selector on ranking page hidden when viewing non-climate single-dimension rankings
 - Landing page: "Backed by 10 validated data sources" → "Built on public institutional data"
-- Methodology page: "60-country panel" → "59-country panel"
+- Methodology page: "60-country panel" → "60-country panel"
 - Healthcare context copy: "covered through employment" → "covered through the public system"
 - Climate context copy updated for city-level data availability
 - PISA next release date corrected: "expected 2025" → "expected late 2026 or early 2027"

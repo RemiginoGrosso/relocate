@@ -46,7 +46,7 @@ export function DownloadCsvButton() {
       a.href = url;
       a.download = 'relocator-scores.csv';
       a.click();
-      trackEvent('csv_downloaded', { country_count: countries.length });
+      trackEvent('csv_downloaded', { file_name: 'relocator-scores.csv', country_count: countries.length });
       URL.revokeObjectURL(url);
     } finally {
       setLoading(false);

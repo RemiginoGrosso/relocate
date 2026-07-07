@@ -50,14 +50,17 @@ interface CountryData {
   "ef.epi_score": number | null;
 }
 
-type OutputData = {
-  _meta: {
-    description: string;
-    generated: string;
-    world_bank_fetched: string;
-    manual_sources_status: string;
-  };
-} & Record<string, CountryData>;
+interface OutputMeta {
+  description: string;
+  generated: string;
+  world_bank_fetched: string;
+  manual_sources_status: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type OutputData = Record<string, any> & {
+  _meta: OutputMeta;
+};
 
 // ---------------------------------------------------------------------------
 // World Bank API configuration
@@ -308,7 +311,7 @@ async function main(): Promise<void> {
         if (entry) {
           // Round to 1 decimal
           const rounded = Math.round(entry.value * 10) / 10;
-          (output[c.iso_alpha2] as Record<string, number | null>)[
+          output[c.iso_alpha2][
             indicator.fieldName
           ] = rounded;
           yearUsed.set(c.iso_alpha2, entry.year);
@@ -374,7 +377,7 @@ async function main(): Promise<void> {
       const fx = fxData.get(c.iso_alpha3);
       if (ppp && fx && fx.value !== 0) {
         const plr = Math.round((ppp.value / fx.value) * 100) / 100;
-        (output[c.iso_alpha2] as Record<string, number | null>)[
+        output[c.iso_alpha2][
           "worldbank.price_level_ratio"
         ] = plr;
         plrMatched++;

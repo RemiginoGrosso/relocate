@@ -48,11 +48,6 @@ interface GallupMaiEntry {
   mai: number;
 }
 
-interface WvsEntry {
-  iso_alpha2: string;
-  trust_pct: number;
-}
-
 interface NumbeoCrimeEntry {
   iso_alpha2: string;
   crime_index: number;
@@ -78,13 +73,6 @@ interface PisaEntry {
   belonging_index: number;
   bullying_index: number;
   safety_index: number;
-}
-
-interface NormParam {
-  indicator: string;
-  min_value: number;
-  max_value: number;
-  direction: string;
 }
 
 type ExternalIndices = Record<string, Record<string, number>>;
@@ -179,6 +167,7 @@ async function seedHofstede(hofstede: HofstedeEntry[], countryIds: Record<string
         unit: 'index_0_100',
         year: 2010,
         source_url: 'https://hofstede-insights.com',
+        fetched_at: '2010-01-01T00:00:00Z',
       });
     }
   }
@@ -201,6 +190,7 @@ async function seedGallupMai(data: GallupMaiEntry[], countryIds: Record<string, 
       unit: 'index_0_9',
       year: 2018,
       source_url: 'https://worldhappiness.report/ed/2018/',
+      fetched_at: '2018-01-01T00:00:00Z',
     }));
   const { error } = await supabase
     .from('raw_indices')
@@ -221,32 +211,13 @@ async function seedNumbeoCrime(data: NumbeoCrimeEntry[], countryIds: Record<stri
       unit: 'index_0_100',
       year: 2026,
       source_url: 'https://www.numbeo.com/crime/rankings_by_country.jsp',
+      fetched_at: '2026-01-01T00:00:00Z',
     }));
   const { error } = await supabase
     .from('raw_indices')
     .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
   if (error) throw new Error(`Numbeo Crime seed failed: ${error.message}`);
   console.log(`  Numbeo Crime seeded: ${rows.length} rows.`);
-}
-
-async function seedWvs(wvs: WvsEntry[], countryIds: Record<string, string>) {
-  console.log(`Seeding WVS data for ${wvs.length} countries...`);
-  const rows = wvs
-    .filter((w) => countryIds[w.iso_alpha2])
-    .map((w) => ({
-      country_id: countryIds[w.iso_alpha2],
-      source: 'wvs',
-      indicator: 'trust_pct',
-      value: w.trust_pct,
-      unit: 'percentage',
-      year: 2022,
-      source_url: 'https://worldvaluessurvey.org',
-    }));
-  const { error } = await supabase
-    .from('raw_indices')
-    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
-  if (error) throw new Error(`WVS seed failed: ${error.message}`);
-  console.log(`  WVS seeded: ${rows.length} rows.`);
 }
 
 async function seedHaq(data: HaqEntry[], countryIds: Record<string, string>) {
@@ -261,6 +232,7 @@ async function seedHaq(data: HaqEntry[], countryIds: Record<string, string>) {
       unit: 'index_0_100',
       year: 2019,
       source_url: 'https://ghdx.healthdata.org/record/ihme-data/gbd-2019-healthcare-access-and-quality-1990-2019',
+      fetched_at: '2019-01-01T00:00:00Z',
     }));
   const { error } = await supabase
     .from('raw_indices')
@@ -290,6 +262,7 @@ async function seedHealthCapacity(data: HealthCapacityEntry[], countryIds: Recor
         unit: 'per_1000_population',
         year: 2022,
         source_url: 'https://www.oecd.org/health/health-data.htm',
+        fetched_at: '2022-01-01T00:00:00Z',
       });
     }
   }
@@ -323,6 +296,7 @@ async function seedPisa(pisa: PisaEntry[], countryIds: Record<string, string>) {
         unit: ind.unit,
         year: 2022,
         source_url: 'https://oecd.org/pisa/data/',
+        fetched_at: '2022-01-01T00:00:00Z',
       });
     }
   }
@@ -331,23 +305,6 @@ async function seedPisa(pisa: PisaEntry[], countryIds: Record<string, string>) {
     .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
   if (error) throw new Error(`PISA seed failed: ${error.message}`);
   console.log(`  PISA seeded: ${rows.length} rows.`);
-}
-
-async function seedNormalisationParams(params: NormParam[]) {
-  console.log(`Seeding ${params.length} normalisation params...`);
-  const { error } = await supabase
-    .from('normalisation_params')
-    .upsert(
-      params.map((p) => ({
-        indicator: p.indicator,
-        min_value: p.min_value,
-        max_value: p.max_value,
-        direction: p.direction,
-      })),
-      { onConflict: 'indicator' },
-    );
-  if (error) throw new Error(`Normalisation params seed failed: ${error.message}`);
-  console.log('  Normalisation params seeded.');
 }
 
 async function seedExternalIndices(data: ExternalIndices, countryIds: Record<string, string>) {
@@ -366,6 +323,7 @@ async function seedExternalIndices(data: ExternalIndices, countryIds: Record<str
         unit: 'various',
         year: 2023,
         source_url: null,
+        fetched_at: '2023-01-01T00:00:00Z',
       });
     }
   }
@@ -411,12 +369,10 @@ async function main() {
   const countries = loadJson<SeedCountry[]>('countries.json');
   const hofstede = loadJson<HofstedeEntry[]>('hofstede.json');
   const gallupMai = loadJson<GallupMaiEntry[]>('gallup-mai.json');
-  const wvs = loadJson<WvsEntry[]>('wvs.json');
   const numbeoCrime = loadJson<NumbeoCrimeEntry[]>('numbeo-crime.json');
   const haqIndex = loadJson<HaqEntry[]>('haq-index.json');
   const healthCapacity = loadJson<HealthCapacityEntry[]>('health-capacity.json');
   const pisa = loadJson<PisaEntry[]>('pisa.json');
-  const normParams = loadJson<NormParam[]>('normalisation_params.json');
   const externalIndices = loadJson<ExternalIndices>('external-indices.json');
   const climateData = loadJson<ClimateData>('climate.json');
 
@@ -428,14 +384,12 @@ async function main() {
 
   await seedHofstede(hofstede, countryIds);
   await seedGallupMai(gallupMai, countryIds);
-  await seedWvs(wvs, countryIds);
   await seedNumbeoCrime(numbeoCrime, countryIds);
   await seedHaq(haqIndex, countryIds);
   await seedHealthCapacity(healthCapacity, countryIds);
   await seedPisa(pisa, countryIds);
   await seedExternalIndices(externalIndices, countryIds);
   await seedClimate(climateData, countryIds);
-  await seedNormalisationParams(normParams);
 
   console.log('\nSeed complete. Run compute-normalised.ts next to populate normalised_scores.');
 }
