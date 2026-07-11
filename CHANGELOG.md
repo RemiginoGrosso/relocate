@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.1.16 — 2026-07-11
+
+### Fixed
+- **Confidence inversion** — civic_culture and religious_freedom had swapped confidence labels (complete case was `medium`, partial was `high`). Fixed in both `compute-normalised.ts` and `recompute-scores` Edge Function
+- **CountryRow score display** — null dimension scores now show "—" placeholder instead of rendering ScoreBadge with 0
+
+### Added
+- **Weight-aware "Limited data" badges** on ranking rows — amber when any missing dimension has weight >= 6, zinc otherwise. Tooltip bolds high-weight gaps
+- **Back-to-top button** on ranking view — appears after 600px scroll (ArrowUp icon, fixed bottom-right)
+- **Unranked section** in single-dimension sort — countries without data for the selected dimension are separated below with "Not ranked for [dimension]" header. Count shown as teal scroll-link
+- **"No data" bars** in DimensionBars — null dimension scores show empty bar track + "no data" text instead of hiding the row
+- **Source provenance** in country detail — dimension accordions now show per-source availability badges (solid for present, dashed outline for missing). Key vs directional source tiers
+- **Indicator tooltips** — 27 plain-language tooltips on indicator labels in dimension breakdowns (dotted underline, hover for explanation)
+- **Partial data warnings** in dimension breakdown — "(partial)" label and amber callout when a dimension has a score but is missing key sources
+- **Seed data gap fills** — Luxembourg GPI (1.38), IMD Infrastructure for CO/CR/UY/VN/TH, Taiwan WGI Rule of Law + Corruption Control
+- `src/lib/source-provenance.ts` — source status utility for per-dimension data availability
+- `src/lib/seed/numbeo-crime.json` — Numbeo crime index data for seed pipeline
+- `src/lib/seed/external-indices-real.json` — World Bank API-sourced data for merge pipeline
+
+### Changed
+- **Warmth formula** — removed single-source fallback and Gallup MAI fallback branches from `compute-normalised.ts` and `recompute-scores` Edge Function. Both IVR + InterNations now required (decided in Iteration 22)
+- `compute-normalised.ts` — delete-before-insert on normalised_scores to clean stale rows from removed formula branches
+- PISA seed types updated to allow null wellbeing fields + optional `data_year`
+- Warmth dimension metadata: sources list no longer includes "Gallup MAI (fallback)", methodology text updated
+
+### Removed
+- `decisions/2026-07-06-country-count-59.md` — superseded
+
 ## 0.1.15 — 2026-07-07
 
 ### Fixed

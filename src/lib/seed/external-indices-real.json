@@ -7,9 +7,11 @@
     "gpi_source": "Global Peace Index 2025 via worldpopulationreview.com",
     "ef_epi_source": "EF EPI 2025 via Wikipedia (EF Education First)",
     "imd_source": "IMD Infrastructure 2024 via worldpopulationreview.com",
+    "imd_lpi_fallback": "CZ, VN, PA, UY, CR: World Bank LPI Infrastructure sub-score 2023 via data360api.worldbank.org (normalized: (raw-1)/4*100). See INFRASTRUCTURE_GAP_RESEARCH.md",
+    "gpi_lu_proxy": "LU: GPI proxy 1.38, internally derived. Bounded by Belgium 1.492 / Czechia 1.435 (GPI 2025 primary PDF). See INFRASTRUCTURE_GAP_RESEARCH.md §4",
+    "wgi_tw_source": "TW: World Bank WGI via data360api.worldbank.org (DATABASE_ID=WB_WGI, REF_AREA=TWN). Percentile scores, 2023",
     "internations_source": "InterNations Expat Insider 2024, verified ranks from audit",
-    "pew_status": "NOT YET SOURCED — requires manual entry from Pew appendix download",
-    "total_countries": 60
+    "pew_status": "NOT YET SOURCED — requires manual entry from Pew appendix download"
   },
   "DK": {
     "worldbank.wgi_rule_of_law": 91.6,
@@ -543,6 +545,20 @@
     "pew.social_hostility": 2.5,
     "ef.epi_score": null
   },
+  "IL": {
+    "worldbank.wgi_rule_of_law": 68.4,
+    "worldbank.wgi_corruption_control": 65.5,
+    "gpi.gpi_score": 3.108,
+    "internations.ease_rank": null,
+    "worldbank.who_uhc_coverage": 85,
+    "worldbank.oecd_ppp_aic": 55171.2,
+    "worldbank.price_level_ratio": 0.97,
+    "worldbank.who_oop_pct": 17.5,
+    "imd.infrastructure_score": null,
+    "pew.govt_restrictions": 7.5,
+    "pew.social_hostility": 8.4,
+    "ef.epi_score": 524
+  },
   "AE": {
     "worldbank.wgi_rule_of_law": 64.7,
     "worldbank.wgi_corruption_control": 67.9,
@@ -836,19 +852,5 @@
     "pew.govt_restrictions": 1.9,
     "pew.social_hostility": 0.4,
     "ef.epi_score": 519
-  },
-  "US": {
-    "worldbank.wgi_rule_of_law": 91.0,
-    "worldbank.wgi_corruption_control": 86.0,
-    "gpi.gpi_score": 2.27,
-    "internations.ease_rank": null,
-    "worldbank.who_uhc_coverage": 90,
-    "worldbank.oecd_ppp_aic": 80450.0,
-    "worldbank.price_level_ratio": 1.05,
-    "worldbank.who_oop_pct": 10.9,
-    "imd.infrastructure_score": 83,
-    "pew.govt_restrictions": 0.5,
-    "pew.social_hostility": 2.5,
-    "ef.epi_score": 100
   }
 }

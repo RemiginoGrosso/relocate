@@ -141,10 +141,10 @@ async function main() {
       let confidence: string;
       if (streetSafety != null) {
         civicScore = governance * 0.60 + streetSafety * 0.40;
-        confidence = 'medium';
+        confidence = 'high';
       } else {
         civicScore = governance;
-        confidence = 'high';
+        confidence = 'medium';
       }
       scores.push({
         country_id: country.id,
@@ -173,10 +173,9 @@ async function main() {
       });
     }
 
-    // Warmth (IVR × 0.40 + InterNations × 0.60, fallback to Gallup MAI)
+    // Warmth (IVR × 0.40 + InterNations × 0.60) — both sources required
     const ivr = safeNum(raw['hofstede.ivr']);
     const internations = safeNum(raw['internations.ease_rank']);
-    const gallupMai = safeNum(raw['gallup.mai']);
     if (ivr != null && internations != null) {
       const intScore = ((53 - internations) / (53 - 1)) * 100;
       const warmthScore = ivr * 0.40 + intScore * 0.60;
@@ -187,30 +186,6 @@ async function main() {
         confidence: 'high',
         component_scores: { ivr, internations_score: Math.round(intScore * 100) / 100 },
       });
-    } else if (ivr != null || internations != null) {
-      const intScore = internations != null ? ((53 - internations) / (53 - 1)) * 100 : null;
-      const available: number[] = [];
-      if (ivr != null) available.push(ivr);
-      if (intScore != null) available.push(intScore);
-      const warmthScore = available.reduce((a, b) => a + b, 0) / available.length;
-      scores.push({
-        country_id: country.id,
-        dimension_key: 'warmth',
-        score: Math.round(warmthScore * 100) / 100,
-        confidence: 'low',
-        component_scores: { ivr, internations_score: intScore != null ? Math.round(intScore * 100) / 100 : null },
-      });
-    } else if (gallupMai != null) {
-      const maiNorm = minMaxNormalise(gallupMai, 1.0, 9.0, false);
-      if (maiNorm != null) {
-        scores.push({
-          country_id: country.id,
-          dimension_key: 'warmth',
-          score: Math.round(maiNorm * 100) / 100,
-          confidence: 'low',
-          component_scores: { gallup_mai: Math.round(maiNorm * 100) / 100 },
-        });
-      }
     }
 
     // School Culture
@@ -345,7 +320,7 @@ async function main() {
         country_id: country.id,
         dimension_key: 'religious_freedom',
         score: rfScore != null ? Math.round(rfScore * 100) / 100 : null,
-        confidence: govtNorm != null && socialNorm != null ? 'medium' : 'low',
+        confidence: govtNorm != null && socialNorm != null ? 'high' : 'medium',
         component_scores: { pew_govt: govtNorm, pew_social: socialNorm },
       });
     }
@@ -374,6 +349,11 @@ async function main() {
   }
 
   console.log(`Computed ${scores.length} dimension scores for ${(countries as CountryRow[]).length} countries.`);
+
+  // Delete all existing scores before writing — ensures stale rows from removed formula branches are cleaned
+  const { error: deleteError } = await supabase.from('normalised_scores').delete().neq('country_id', '00000000-0000-0000-0000-000000000000');
+  if (deleteError) throw new Error(`Failed to clear normalised_scores: ${deleteError.message}`);
+  console.log('Cleared existing normalised scores.');
 
   // Upsert in batches
   const batchSize = 50;

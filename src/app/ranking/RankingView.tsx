@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { ArrowUp } from 'lucide-react';
 import type { CountryScores, DimensionKey } from '@/lib/types';
 import { DIMENSIONS } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
@@ -33,9 +34,22 @@ export function RankingView({ countries }: RankingViewProps) {
   const compareCount = useCompareStore((s) => s.compareIsos.length);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [rankedBy, setRankedBy] = useState<DimensionKey | 'overall'>('overall');
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
     hydrateWeightStore();
+  }, []);
+
+  useEffect(() => {
+    function onScroll() {
+      setShowBackToTop(window.scrollY > 600);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const scrollToTop = useCallback(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   function handleRankedByChange(value: DimensionKey | 'overall' | null) {
@@ -128,6 +142,18 @@ export function RankingView({ countries }: RankingViewProps) {
           </DrawerContent>
         </Drawer>
       </div>
+
+      {/* Back to top */}
+      {showBackToTop && (
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className="fixed bottom-20 right-6 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 shadow-sm transition-opacity hover:text-teal-700 lg:bottom-8"
+          aria-label="Back to top"
+        >
+          <ArrowUp size={18} />
+        </button>
+      )}
     </div>
   );
 }

@@ -9,8 +9,10 @@ import {
 import { AlertTriangle, ArrowLeftRight } from 'lucide-react';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
-import { DIMENSIONS, INDICATOR_INTERPRETATIONS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { DIMENSIONS, INDICATOR_INTERPRETATIONS, INDICATOR_TOOLTIPS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
 import { isLargeCountry, getCityClimate } from '@/lib/large-countries';
+import { getSourceStatuses } from '@/lib/source-provenance';
 import type { CountryScores, RawIndex, ClimateData, DimensionKey, HealthcareSystemType } from '@/lib/types';
 
 interface DimensionBreakdownProps {
@@ -26,7 +28,7 @@ const INDICATOR_LABELS: Record<string, string> = {
   'numbeo.crime_index': 'Numbeo Crime Index',
   'gpi.gpi_score': 'GPI Score',
   'hofstede.ivr': 'Hofstede IVR',
-  'gallup.mai': 'Gallup MAI (fallback)',
+  'gallup.mai': 'Gallup MAI',
   'internations.ease_rank': 'InterNations Ease Rank',
   'pisa.pisa_reading': 'PISA Reading',
   'pisa.pisa_maths': 'PISA Maths',
@@ -160,32 +162,16 @@ function ClimateSection({ climate, selectedCity, countryIso, countryName }: Clim
 }
 
 export function DimensionBreakdown({ country, rawIndices, climate, selectedCity }: DimensionBreakdownProps) {
-  const ivrRaw = rawIndices.find((r) => r.source === 'hofstede' && r.indicator === 'ivr');
-  const interNationsRaw = rawIndices.find((r) => r.source === 'internations' && r.indicator === 'ease_rank');
-
-  const hasIvr = ivrRaw?.value != null;
-  const hasInterNations = interNationsRaw?.value != null;
   const warmthScore = country.dimensionScores.warmth;
-  const warmthPartial = warmthScore != null && warmthScore.confidence === 'low';
-
-  const warmthMismatch =
-    hasIvr &&
-    hasInterNations &&
-    warmthScore?.components &&
-    Math.abs(
+  const warmthMismatch = (() => {
+    const ivrRaw = rawIndices.find((r) => r.source === 'hofstede' && r.indicator === 'ivr');
+    const interNationsRaw = rawIndices.find((r) => r.source === 'internations' && r.indicator === 'ease_rank');
+    if (!ivrRaw?.value || !interNationsRaw?.value || !warmthScore?.components) return false;
+    return Math.abs(
       (warmthScore.components['ivr'] ?? 0) -
       (warmthScore.components['internations_score'] ?? 0)
     ) > WARMTH_MISMATCH_THRESHOLD;
-
-  const warmthPartialMessage = warmthPartial
-    ? !hasInterNations && hasIvr
-      ? 'Based on cultural indicators only (Hofstede IVR). Expat settling-in data (InterNations) is not available for this country — score may differ from lived experience.'
-      : !hasIvr && hasInterNations
-        ? 'Based on expat survey data only (InterNations). Cultural indicator (Hofstede IVR) is not available for this country.'
-        : !hasIvr && !hasInterNations
-          ? 'Based on Gallup Migrant Acceptance Index (fallback). Neither primary warmth source is available for this country.'
-          : null
-    : null;
+  })();
 
   return (
     <Accordion>
@@ -193,6 +179,15 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
         const dimScore = country.dimensionScores[dim.key];
         const indicators = DIMENSION_INDICATORS[dim.key];
         const isClimate = dim.key === 'climate';
+        const statuses = getSourceStatuses(dim.key, rawIndices);
+        const hasScore = dimScore?.score != null;
+        const missingKeySources = statuses.filter((s) => !s.present && s.tier === 'key');
+        const isPartial = hasScore && missingKeySources.length > 0;
+        const hasAnyRawData = !isClimate && indicators.some((indKey) => {
+          const [source, indicator] = indKey.split('.');
+          return getRawValue(rawIndices, source, indicator)?.value != null;
+        });
+        const isNullWithRawData = !hasScore && hasAnyRawData;
 
         return (
           <AccordionItem key={dim.key} value={dim.key}>
@@ -200,15 +195,20 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
               <div className="flex flex-1 items-center justify-between pr-2">
                 <span>{dim.name}</span>
                 <span className="flex items-center gap-1.5">
-                  {dim.key === 'warmth' && warmthPartial && (
-                    <span title="Partial data — see details inside">
+                  {isNullWithRawData && (
+                    <span title="Limited data — see available indicators inside">
                       <AlertTriangle size={14} className="text-amber-500" />
                     </span>
                   )}
-                  {dimScore?.score != null ? (
-                    <ScoreBadge score={dimScore.score} />
+                  {hasScore ? (
+                    <>
+                      <ScoreBadge score={dimScore!.score!} />
+                      {isPartial && (
+                        <span className="text-xs text-amber-500">(partial)</span>
+                      )}
+                    </>
                   ) : (
-                    <span className="text-xs text-zinc-400">No data</span>
+                    <span className="text-xs text-zinc-400">{isNullWithRawData ? 'Limited data' : 'No data'}</span>
                   )}
                 </span>
               </div>
@@ -235,11 +235,23 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                       const [source, indicator] = indKey.split('.');
                       const raw = getRawValue(rawIndices, source, indicator);
                       const interpretation = getInterpretation(indKey, raw?.value ?? null);
+                      const tooltipText = INDICATOR_TOOLTIPS[indKey];
                       return (
                         <div key={indKey} className="flex items-baseline justify-between gap-4 text-xs">
-                          <span className="min-w-0 text-zinc-500">
-                            {INDICATOR_LABELS[indKey] ?? indKey}
-                          </span>
+                          {tooltipText ? (
+                            <Tooltip>
+                              <TooltipTrigger className="min-w-0 text-left text-zinc-500 cursor-default border-b border-dotted border-zinc-300">
+                                {INDICATOR_LABELS[indKey] ?? indKey}
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-64 text-xs">
+                                {tooltipText}
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <span className="min-w-0 text-zinc-500">
+                              {INDICATOR_LABELS[indKey] ?? indKey}
+                            </span>
+                          )}
                           <span className="shrink-0 text-right text-zinc-700 tabular-nums">
                             {raw ? formatValue(raw) : 'N/A'}
                             {raw?.year ? ` (${raw.year})` : ''}
@@ -267,23 +279,49 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                   );
                 })()}
 
-                {dim.key === 'warmth' && warmthPartialMessage && (
+                {isNullWithRawData && (
                   <div className="flex gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
                     <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-600" />
-                    <p className="text-xs text-amber-800">{warmthPartialMessage}</p>
+                    <p className="text-xs text-amber-800">
+                      All key sources ({missingKeySources.map((s) => s.label).join(', ')}) are required to produce a comparable score. Available indicators are shown above for reference.
+                    </p>
                   </div>
                 )}
 
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {dim.sources.map((src) => (
-                    <span
-                      key={src}
-                      className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600"
-                    >
-                      {src}
-                    </span>
-                  ))}
-                </div>
+                {isPartial && (
+                  <div className="flex gap-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                    <AlertTriangle size={14} className="mt-0.5 shrink-0 text-amber-600" />
+                    <p className="text-xs text-amber-800">
+                      Partial data — missing {missingKeySources.map((s) => s.label).join(', ')}. Score based on available sources only.
+                    </p>
+                  </div>
+                )}
+
+                {(() => {
+                  if (!statuses.length) return (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {dim.sources.map((src) => (
+                        <span key={src} className="rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">{src}</span>
+                      ))}
+                    </div>
+                  );
+                  return (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {statuses.map((s) => (
+                        <span
+                          key={s.label}
+                          className={`rounded-full px-2 py-0.5 text-xs ${
+                            s.present
+                              ? 'bg-zinc-100 text-zinc-600'
+                              : 'border border-dashed border-zinc-300 text-zinc-400'
+                          }`}
+                        >
+                          {s.label}
+                        </span>
+                      ))}
+                    </div>
+                  );
+                })()}
 
                 <details className="text-xs">
                   <summary className="cursor-pointer text-teal-700 hover:text-teal-800">

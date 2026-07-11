@@ -28,9 +28,10 @@ interface CountryRowProps {
   isComparing?: boolean;
   onToggleCompare?: (iso: string) => void;
   canAddMore?: boolean;
+  unranked?: boolean;
 }
 
-export function CountryRow({ country, weights, singleDimension, selectedCity, onCityChange, isComparing, onToggleCompare, canAddMore }: CountryRowProps) {
+export function CountryRow({ country, weights, singleDimension, selectedCity, onCityChange, isComparing, onToggleCompare, canAddMore, unranked }: CountryRowProps) {
   const displayScore = singleDimension
     ? (country.dimensionScores[singleDimension]?.score ?? null)
     : country.compositeScore;
@@ -72,9 +73,11 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
               />
             </div>
           )}
-          <span className="text-xs text-zinc-400 tabular-nums w-5">
-            {country.rank}
-          </span>
+          {!unranked && (
+            <span className="text-xs text-zinc-400 tabular-nums w-5">
+              {country.rank}
+            </span>
+          )}
           <span className="text-2xl" aria-hidden>
             {country.flagEmoji}
           </span>
@@ -124,8 +127,12 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <ScoreBadge score={displayScore ?? 0} />
-          {singleDimension && displayScore === null && (
+          {displayScore !== null ? (
+            <ScoreBadge score={displayScore} />
+          ) : (
+            <span className="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-medium tabular-nums bg-zinc-100 text-zinc-400">—</span>
+          )}
+          {singleDimension && displayScore === null && !unranked && (
             <Tooltip>
               <TooltipTrigger
                 className="relative z-10 shrink-0 cursor-default"
@@ -139,25 +146,32 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
               </TooltipContent>
             </Tooltip>
           )}
-          {missingCount > 0 && missingCount <= 3 && (
-            <Tooltip>
-              <TooltipTrigger
-                className="relative z-10 shrink-0 cursor-default"
-                aria-label={`Missing data: ${country.nullDimensions.map(dimensionName).join(', ')}`}
-                onClick={(e) => e.preventDefault()}
-              >
-                <AlertTriangle size={14} className="text-amber-500" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-48 text-xs">
-                Missing data: {country.nullDimensions.map(dimensionName).join(', ')}
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {missingCount > 3 && (
-            <Badge className="border-amber-500 text-amber-700 bg-amber-50 text-xs" variant="outline">
-              Limited data
-            </Badge>
-          )}
+          {!singleDimension && missingCount > 0 && (() => {
+            const hasHighWeightGap = country.nullDimensions.some((d) => weights[d] >= 6);
+            return (
+              <Tooltip>
+                <TooltipTrigger
+                  className="relative z-10 shrink-0 cursor-default"
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <Badge className={`text-xs ${hasHighWeightGap ? 'border-amber-500 text-amber-700 bg-amber-50' : 'border-zinc-300 text-zinc-500'}`} variant="outline">
+                    Limited data
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-64 text-xs">
+                  <span>Missing: {country.nullDimensions.map((d, i) => {
+                    const isHigh = weights[d] >= 6;
+                    return (
+                      <span key={d}>
+                        {i > 0 && ', '}
+                        {isHigh ? <strong>{dimensionName(d)}</strong> : dimensionName(d)}
+                      </span>
+                    );
+                  })}</span>
+                </TooltipContent>
+              </Tooltip>
+            );
+          })()}
         </div>
       </div>
       {!singleDimension && (

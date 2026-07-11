@@ -466,5 +466,51 @@
     "belonging_index": 0.20,
     "bullying_index": 0.17,
     "safety_index": 0.32
+  },
+  {
+    "iso_alpha2": "AE",
+    "reading": 417,
+    "maths": 431,
+    "science": 432,
+    "belonging_index": null,
+    "bullying_index": null,
+    "safety_index": null
+  },
+  {
+    "iso_alpha2": "CY",
+    "reading": 381,
+    "maths": 418,
+    "science": 411,
+    "belonging_index": null,
+    "bullying_index": null,
+    "safety_index": null
+  },
+  {
+    "iso_alpha2": "PA",
+    "reading": 392,
+    "maths": 357,
+    "science": 388,
+    "belonging_index": null,
+    "bullying_index": null,
+    "safety_index": null
+  },
+  {
+    "iso_alpha2": "PH",
+    "reading": 347,
+    "maths": 355,
+    "science": 356,
+    "belonging_index": null,
+    "bullying_index": null,
+    "safety_index": null
+  },
+  {
+    "iso_alpha2": "LU",
+    "reading": 470,
+    "maths": 483,
+    "science": 477,
+    "belonging_index": null,
+    "bullying_index": null,
+    "safety_index": null,
+    "data_year": 2018
   }
 ]

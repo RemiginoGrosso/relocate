@@ -70,9 +70,10 @@ interface PisaEntry {
   reading: number;
   maths: number;
   science: number;
-  belonging_index: number;
-  bullying_index: number;
-  safety_index: number;
+  belonging_index: number | null;
+  bullying_index: number | null;
+  safety_index: number | null;
+  data_year?: number;
 }
 
 type ExternalIndices = Record<string, Record<string, number>>;
@@ -288,13 +289,14 @@ async function seedPisa(pisa: PisaEntry[], countryIds: Record<string, string>) {
       { indicator: 'pisa_safety', value: p.safety_index, unit: 'index' },
     ];
     for (const ind of indicators) {
+      if (ind.value == null) continue;
       rows.push({
         country_id: countryId,
         source: 'pisa',
         indicator: ind.indicator,
         value: ind.value,
         unit: ind.unit,
-        year: 2022,
+        year: p.data_year ?? 2022,
         source_url: 'https://oecd.org/pisa/data/',
         fetched_at: '2022-01-01T00:00:00Z',
       });

@@ -30,22 +30,33 @@ export function DimensionBars({ dimensionScores, weights, count = 4 }: Dimension
       )}
       {activeKeys.map((key, i) => {
         const dim = DIMENSIONS.find((d) => d.key === key);
+        if (!dim) return null;
         const score = dimensionScores[key]?.score;
-        if (score == null || !dim) return null;
         return (
           <div key={key} className="flex items-center gap-2">
             <span className="w-16 truncate text-xs text-zinc-500">
               {dim.name.split(' ')[0]}
             </span>
-            <div className="h-2 flex-1 rounded-full bg-zinc-100">
-              <div
-                className={`h-2 rounded-full ${BAR_COLORS[i] ?? BAR_COLORS[3]}`}
-                style={{ width: `${Math.max(score, 2)}%` }}
-              />
-            </div>
-            <span className="w-6 text-right text-xs tabular-nums text-zinc-500">
-              {Math.round(score)}
-            </span>
+            {score != null ? (
+              <>
+                <div className="h-2 flex-1 rounded-full bg-zinc-100">
+                  <div
+                    className={`h-2 rounded-full ${BAR_COLORS[i] ?? BAR_COLORS[3]}`}
+                    style={{ width: `${Math.max(score, 2)}%` }}
+                  />
+                </div>
+                <span className="w-6 text-right text-xs tabular-nums text-zinc-500">
+                  {Math.round(score)}
+                </span>
+              </>
+            ) : (
+              <>
+                <div className="h-2 flex-1 rounded-full bg-zinc-100" />
+                <span className="whitespace-nowrap text-xs text-zinc-400">
+                  no data
+                </span>
+              </>
+            )}
           </div>
         );
       })}

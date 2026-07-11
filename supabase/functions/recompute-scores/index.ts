@@ -183,10 +183,10 @@ function computeCivicCulture(raw: RawMap): DimensionScore | null {
   let confidence: "high" | "medium";
   if (streetSafety != null) {
     civicScore = governance * 0.60 + streetSafety * 0.40;
-    confidence = "medium";
+    confidence = "high";
   } else {
     civicScore = governance;
-    confidence = "high";
+    confidence = "medium";
   }
 
   return {
@@ -225,10 +225,8 @@ function computeWarmth(raw: RawMap): DimensionScore | null {
   const intScore = intRank != null
     ? round2(((53 - intRank) / (53 - 1)) * 100)
     : null;
-  const maiRaw = safeNum(raw["gallup.mai"]);
-  const maiNorm = maiRaw != null ? minMaxNormalise(maiRaw, 1.0, 9.0, false) : null;
 
-  // Primary formula: IVR × 0.4 + InterNations × 0.6
+  // Both sources required — no single-source or MAI fallback
   if (ivr != null && intScore != null) {
     return {
       country_id: "",
@@ -236,35 +234,6 @@ function computeWarmth(raw: RawMap): DimensionScore | null {
       score: round2(ivr * 0.4 + intScore * 0.6),
       confidence: "high",
       component_scores: { ivr, internations_score: intScore },
-    };
-  }
-
-  // Partial: one primary source available
-  if (ivr != null || intScore != null) {
-    const available: number[] = [];
-    if (ivr != null) available.push(ivr);
-    if (intScore != null) available.push(intScore);
-    const warmthScore = available.reduce((a, b) => a + b, 0) / available.length;
-    return {
-      country_id: "",
-      dimension_key: "warmth",
-      score: round2(warmthScore),
-      confidence: "low",
-      component_scores: {
-        ivr,
-        internations_score: intScore != null ? round2(intScore) : null,
-      },
-    };
-  }
-
-  // Fallback: MAI when neither IVR nor InterNations is available
-  if (maiNorm != null) {
-    return {
-      country_id: "",
-      dimension_key: "warmth",
-      score: round2(maiNorm),
-      confidence: "low",
-      component_scores: { gallup_mai: round2(maiNorm) },
     };
   }
 
@@ -407,7 +376,7 @@ function computeReligiousFreedom(raw: RawMap): DimensionScore | null {
     country_id: "",
     dimension_key: "religious_freedom",
     score: rfScore != null ? round2(rfScore) : null,
-    confidence: govtNorm != null && socialNorm != null ? "medium" : "low",
+    confidence: govtNorm != null && socialNorm != null ? "high" : "medium",
     component_scores: { pew_govt: govtNorm, pew_social: socialNorm },
   };
 }
