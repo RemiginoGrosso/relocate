@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/drawer';
 import type { CountryScores } from '@/lib/types';
 import { applyClimatePreference } from '@/lib/scoring';
-import { isLargeCountry, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
+import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { trackEvent } from '@/lib/analytics';
 
 interface CompareViewProps {
@@ -119,7 +119,7 @@ export function CompareView({ allCountries }: CompareViewProps) {
           <div className="mt-2 flex flex-wrap items-start gap-4">
             {countries.map((c) => {
               const iso = c.iso.toUpperCase();
-              const large = isLargeCountry(iso);
+              const large = hasCityData(iso);
               const cities = large ? getCitiesForCountry(iso) : null;
               const currentCity = selectedCities[iso] ?? getDefaultCity(iso) ?? undefined;
               return (

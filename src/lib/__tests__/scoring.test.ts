@@ -195,56 +195,55 @@ describe('computeClimateScore', () => {
     expect(computeClimateScore(null, 100, 2000)).toBeNull();
   });
 
-  it('scores high for warm_sunny profile with Mediterranean climate', () => {
-    const profile = CLIMATE_PROFILES.warm_sunny;
-    const score = computeClimateScore(22, 90, 2500, profile);
+  it('scores high for sunny_warm profile with Mediterranean climate', () => {
+    const profile = CLIMATE_PROFILES.sunny_warm;
+    const score = computeClimateScore(22, 60, 2800, profile);
     expect(score).toBe(100);
   });
 
-  it('scores high for cold_crisp profile with Nordic climate', () => {
-    const profile = CLIMATE_PROFILES.cold_crisp;
-    const score = computeClimateScore(5, 150, 1200, profile);
+  it('scores high for freezing_cold profile with Nordic climate', () => {
+    const profile = CLIMATE_PROFILES.freezing_cold;
+    const score = computeClimateScore(3, 150, 1200, profile);
     expect(score).toBe(100);
   });
 
-  it('penalises cold climate under warm_sunny profile', () => {
-    const profile = CLIMATE_PROFILES.warm_sunny;
-    const warmScore = computeClimateScore(22, 90, 2200, profile)!;
-    const coldScore = computeClimateScore(5, 90, 2200, profile)!;
+  it('penalises cold climate under sunny_warm profile', () => {
+    const profile = CLIMATE_PROFILES.sunny_warm;
+    const warmScore = computeClimateScore(22, 60, 2800, profile)!;
+    const coldScore = computeClimateScore(5, 60, 2800, profile)!;
     expect(warmScore).toBeGreaterThan(coldScore);
     expect(warmScore - coldScore).toBeGreaterThan(40);
   });
 
-  it('penalises warm climate under cold_crisp profile', () => {
-    const profile = CLIMATE_PROFILES.cold_crisp;
-    const coldScore = computeClimateScore(5, 150, 1200, profile)!;
+  it('penalises warm climate under freezing_cold profile', () => {
+    const profile = CLIMATE_PROFILES.freezing_cold;
+    const coldScore = computeClimateScore(3, 150, 1200, profile)!;
     const warmScore = computeClimateScore(25, 150, 1200, profile)!;
     expect(coldScore).toBeGreaterThan(warmScore);
     expect(coldScore - warmScore).toBeGreaterThan(40);
   });
 
-  it('applies winter penalty to Chicago under mild_green profile', () => {
+  it('applies winter penalty to Chicago under green_rainy profile', () => {
     // Chicago: avgTemp 10°C, winterTemp -6°C
-    // Base: 100 - |10-13|*3 = 91, no rain/sun penalty
-    // Winter: threshold 5, deficit = 5-(-6) = 11, penalty = 11*3 = 33 → score 58
-    const profile = CLIMATE_PROFILES.mild_green;
+    // Base: 100 - |10-12|*3 = 94, rain 125 < 220 → no penalty, sun 2508 > 1200 → no penalty
+    // Winter: threshold 3, deficit = 3-(-6) = 9, penalty = 9*3 = 27 → score 67
+    const profile = CLIMATE_PROFILES.green_rainy;
     const score = computeClimateScore(10, 125, 2508, profile, -6)!;
-    expect(score).toBe(58);
-    expect(score).toBeLessThan(70);
+    expect(score).toBe(67);
+    expect(score).toBeLessThan(80);
   });
 
-  it('does not apply winter penalty when winterTemp is above threshold (mild_green, Lisbon)', () => {
-    // Lisbon: winterTemp ~11°C, threshold 5 → no deficit → no penalty
-    const profile = CLIMATE_PROFILES.mild_green;
+  it('does not apply winter penalty when winterTemp is above threshold (green_rainy, Lisbon)', () => {
+    const profile = CLIMATE_PROFILES.green_rainy;
     const withWinter = computeClimateScore(17, 115, 2806, profile, 11)!;
     const withoutWinter = computeClimateScore(17, 115, 2806, profile)!;
     expect(withWinter).toBe(withoutWinter);
   });
 
-  it('does not apply winter penalty for cold_crisp profile', () => {
-    const profile = CLIMATE_PROFILES.cold_crisp;
-    const withWinter = computeClimateScore(5, 150, 1200, profile, -20)!;
-    const withoutWinter = computeClimateScore(5, 150, 1200, profile)!;
+  it('does not apply winter penalty for freezing_cold profile', () => {
+    const profile = CLIMATE_PROFILES.freezing_cold;
+    const withWinter = computeClimateScore(3, 150, 1200, profile, -20)!;
+    const withoutWinter = computeClimateScore(3, 150, 1200, profile)!;
     expect(withWinter).toBe(withoutWinter);
   });
 
@@ -256,11 +255,49 @@ describe('computeClimateScore', () => {
   });
 
   it('clamps winter-penalised score to 0', () => {
-    // avgTemp=5 under warm_sunny: base = 100 - |5-22|*3 = 49
-    // winterTemp=-20, threshold 15, deficit=35, penalty=35*2=70 → 49-70=-21 → clamped to 0
-    const profile = CLIMATE_PROFILES.warm_sunny;
-    const score = computeClimateScore(5, 90, 2500, profile, -20)!;
+    // avgTemp=5 under sunny_warm: base = 100 - |5-22|*3 = 49
+    // winterTemp=-20, threshold 12, deficit=32, penalty=32*2=64 → 49-64=-15 → clamped to 0
+    const profile = CLIMATE_PROFILES.sunny_warm;
+    const score = computeClimateScore(5, 60, 2800, profile, -20)!;
     expect(score).toBe(0);
+  });
+
+  it('scores high for desert_dry profile with arid climate', () => {
+    const profile = CLIMATE_PROFILES.desert_dry;
+    const score = computeClimateScore(30, 14, 3500, profile);
+    expect(score).toBe(100);
+  });
+
+  it('penalises rain under desert_dry profile', () => {
+    const profile = CLIMATE_PROFILES.desert_dry;
+    const dryScore = computeClimateScore(30, 14, 3500, profile)!;
+    const wetScore = computeClimateScore(30, 150, 3500, profile)!;
+    expect(dryScore).toBeGreaterThan(wetScore);
+    expect(dryScore - wetScore).toBe(20);
+  });
+
+  it('scores high for tropical_heat profile with tropical climate', () => {
+    const profile = CLIMATE_PROFILES.tropical_heat;
+    const score = computeClimateScore(27, 167, 2020, profile);
+    expect(score).toBe(100);
+  });
+
+  it('scores high for four_seasons profile with continental climate', () => {
+    const profile = CLIMATE_PROFILES.four_seasons;
+    const score = computeClimateScore(11, 130, 1800, profile);
+    expect(score).toBe(100);
+  });
+
+  it('mild_scenic rewards dry-summer mild climates', () => {
+    const profile = CLIMATE_PROFILES.mild_scenic;
+    const score = computeClimateScore(15, 100, 2200, profile);
+    expect(score).toBe(100);
+  });
+
+  it('green_rainy tolerates high rain and low sunshine', () => {
+    const profile = CLIMATE_PROFILES.green_rainy;
+    const score = computeClimateScore(12, 200, 1400, profile);
+    expect(score).toBe(100);
   });
 });
 
@@ -278,8 +315,8 @@ describe('applyClimatePreference', () => {
     country.dimensionScores.climate!.components = {
       avg_temp: 5, rain_days: 150, sunshine_hours: 1200,
     };
-    const warmResult = applyClimatePreference([country], 'warm_sunny');
-    const coldResult = applyClimatePreference([country], 'cold_crisp');
+    const warmResult = applyClimatePreference([country], 'sunny_warm');
+    const coldResult = applyClimatePreference([country], 'freezing_cold');
     expect(coldResult[0].dimensionScores.climate!.score)
       .toBeGreaterThan(warmResult[0].dimensionScores.climate!.score!);
   });

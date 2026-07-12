@@ -11,7 +11,7 @@ import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { DIMENSIONS, INDICATOR_INTERPRETATIONS, INDICATOR_TOOLTIPS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
-import { isLargeCountry, getCityClimate } from '@/lib/large-countries';
+import { hasCityData, getCityClimate } from '@/lib/large-countries';
 import { getSourceStatuses } from '@/lib/source-provenance';
 import type { CountryScores, RawIndex, ClimateData, DimensionKey, HealthcareSystemType } from '@/lib/types';
 
@@ -117,7 +117,7 @@ function HealthcareSystemBadge({ iso }: { iso: string }) {
 }
 
 function ClimateSection({ climate, selectedCity, countryIso, countryName }: ClimateSectionProps) {
-  const large = isLargeCountry(countryIso);
+  const large = hasCityData(countryIso);
 
   if (!climate && !selectedCity) return <p className="text-xs text-zinc-500">No climate data available.</p>;
 

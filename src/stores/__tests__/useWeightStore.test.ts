@@ -38,7 +38,7 @@ describe('useWeightStore persistence & migrations', () => {
   });
 
   // --- v1 migration ---
-  it('migrates v1 blob: divides weights by 10 and rounds, adds selectedCities', () => {
+  it('migrates v1 blob: divides weights by 10 and rounds, adds selectedCities, migrates climate type', () => {
     const v1Blob = {
       state: {
         weights: {
@@ -58,17 +58,17 @@ describe('useWeightStore persistence & migrations', () => {
     expect(state._hydrated).toBe(true);
     expect(state.weights.purchasing_power).toBe(5);
     expect(state.weights.civic_culture).toBe(8);
-    expect(state.weights.safety).toBe(4); // 35/10 = 3.5, rounded to 4
+    expect(state.weights.safety).toBe(4);
     expect(state.weights.school_culture).toBe(10);
-    expect(state.weights.infrastructure).toBe(5); // 45/10 = 4.5, rounded to 5
-    expect(state.weights.english_proficiency).toBe(2); // 15/10 = 1.5, rounded to 2
-    expect(state.climateType).toBe('warm_sunny');
+    expect(state.weights.infrastructure).toBe(5);
+    expect(state.weights.english_proficiency).toBe(2);
+    expect(state.climateType).toBe('sunny_warm');
     expect(state.fromOnboarding).toBe(true);
     expect(state.selectedCities).toEqual({});
   });
 
   // --- v2 migration ---
-  it('migrates v2 blob: preserves weights and adds empty selectedCities', () => {
+  it('migrates v2 blob: preserves weights, adds empty selectedCities, migrates climate type', () => {
     const v2Blob = {
       state: {
         weights: {
@@ -88,9 +88,45 @@ describe('useWeightStore persistence & migrations', () => {
     expect(state._hydrated).toBe(true);
     expect(state.weights.purchasing_power).toBe(8);
     expect(state.weights.civic_culture).toBe(3);
-    expect(state.climateType).toBe('mild_green');
+    expect(state.climateType).toBe('green_rainy');
     expect(state.fromOnboarding).toBe(false);
     expect(state.selectedCities).toEqual({});
+  });
+
+  // --- v3 migration ---
+  it('migrates v3 blob: maps old climate preference keys to new ones', () => {
+    const v3Blob = {
+      state: {
+        weights: { ...DEFAULT_WEIGHTS },
+        climateType: 'cold_crisp',
+        fromOnboarding: true,
+        selectedCities: { US: 'Chicago' },
+      },
+      version: 3,
+    };
+    storage.set(STORAGE_KEY, JSON.stringify(v3Blob));
+    hydrateWeightStore();
+
+    const state = useWeightStore.getState();
+    expect(state._hydrated).toBe(true);
+    expect(state.climateType).toBe('four_seasons');
+    expect(state.selectedCities).toEqual({ US: 'Chicago' });
+  });
+
+  it('migrates v3 hot_tropical to tropical_heat', () => {
+    const v3Blob = {
+      state: {
+        weights: { ...DEFAULT_WEIGHTS },
+        climateType: 'hot_tropical',
+        fromOnboarding: false,
+        selectedCities: {},
+      },
+      version: 3,
+    };
+    storage.set(STORAGE_KEY, JSON.stringify(v3Blob));
+    hydrateWeightStore();
+
+    expect(useWeightStore.getState().climateType).toBe('tropical_heat');
   });
 
   // --- corrupted JSON ---
@@ -146,7 +182,7 @@ describe('useWeightStore persistence & migrations', () => {
     // Modify state through store actions
     useWeightStore.getState().setWeight('safety', 9);
     useWeightStore.getState().setWeight('warmth', 2);
-    useWeightStore.getState().setClimateType('cold_crisp');
+    useWeightStore.getState().setClimateType('four_seasons');
     useWeightStore.getState().setSelectedCity('us', 'Chicago');
     useWeightStore.getState().setAllWeights(
       { ...DEFAULT_WEIGHTS, purchasing_power: 10, healthcare: 1 },
@@ -166,7 +202,7 @@ describe('useWeightStore persistence & migrations', () => {
     expect(state.weights.healthcare).toBe(1);
     // setAllWeights was called last, so safety/warmth revert to default
     expect(state.weights.safety).toBe(DEFAULT_WEIGHTS.safety);
-    expect(state.climateType).toBe('cold_crisp');
+    expect(state.climateType).toBe('four_seasons');
     expect(state.fromOnboarding).toBe(true);
     expect(state.selectedCities).toEqual({ US: 'Chicago' });
   });
@@ -197,7 +233,7 @@ describe('useWeightStore persistence & migrations', () => {
         fromOnboarding: false,
         selectedCities: {},
       },
-      version: 3,
+      version: 4,
     };
     storage.set(STORAGE_KEY, JSON.stringify(blob));
     hydrateWeightStore();

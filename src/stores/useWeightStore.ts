@@ -3,7 +3,7 @@ import type { ClimatePreference, DimensionKey, UserWeights } from '@/lib/types';
 import { DEFAULT_WEIGHTS } from '@/lib/constants';
 
 const STORAGE_KEY = 'relocator-weights';
-const STORAGE_VERSION = 3;
+const STORAGE_VERSION = 4;
 
 interface PersistedState {
   weights: UserWeights;
@@ -38,16 +38,30 @@ function migrateV1Weights(weights: UserWeights): UserWeights {
   ) as UserWeights;
 }
 
+const CLIMATE_V3_TO_V4: Record<string, ClimatePreference> = {
+  warm_sunny: 'sunny_warm',
+  hot_tropical: 'tropical_heat',
+  mild_green: 'green_rainy',
+  cold_crisp: 'four_seasons',
+};
+
+function migrateClimatePreference(pref: string): ClimatePreference {
+  return (CLIMATE_V3_TO_V4[pref] ?? pref) as ClimatePreference;
+}
+
 function loadFromStorage(): PersistedState | null {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw) as { state: PersistedState; version: number };
     if (parsed.version === 1) {
-      return { ...parsed.state, weights: migrateV1Weights(parsed.state.weights), selectedCities: {} };
+      return { ...parsed.state, weights: migrateV1Weights(parsed.state.weights), selectedCities: {}, climateType: migrateClimatePreference(parsed.state.climateType) };
     }
     if (parsed.version === 2) {
-      return { ...parsed.state, selectedCities: {} };
+      return { ...parsed.state, selectedCities: {}, climateType: migrateClimatePreference(parsed.state.climateType) };
+    }
+    if (parsed.version === 3) {
+      return { ...parsed.state, climateType: migrateClimatePreference(parsed.state.climateType) };
     }
     if (parsed.version !== STORAGE_VERSION) return null;
     return parsed.state;

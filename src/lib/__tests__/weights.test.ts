@@ -63,7 +63,7 @@ describe('computeOnboardingWeights', () => {
       income: 'remote',
       civicImportance: 'top_priority',
       warmthImportance: 'essential',
-      climatePreference: 'warm_sunny',
+      climatePreference: 'sunny_warm',
       religiousNeeds: 'important',
     });
     expect(weights.school_culture).toBe(9);

@@ -3,7 +3,7 @@ import { AlertTriangle, Shield, ShieldCheck, Briefcase, DollarSign } from 'lucid
 import type { DimensionKey, HealthcareSystemType, RankedCountry, UserWeights } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
 import { DIMENSIONS, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
-import { isLargeCountry, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
+import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
@@ -37,8 +37,8 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
     : country.compositeScore;
 
   const missingCount = country.nullDimensions.length;
-  const isLarge = isLargeCountry(country.iso);
-  const cities = isLarge ? getCitiesForCountry(country.iso) : null;
+  const hasCity = hasCityData(country.iso);
+  const cities = hasCity ? getCitiesForCountry(country.iso) : null;
   const currentCity = selectedCity ?? getDefaultCity(country.iso) ?? undefined;
 
   return (
@@ -108,7 +108,7 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
                 </Tooltip>
               );
             })()}
-            {isLarge && cities && (!singleDimension || singleDimension === 'climate') && (
+            {hasCity && cities && (!singleDimension || singleDimension === 'climate') && (
               <select
                 value={currentCity}
                 onChange={(e) => onCityChange?.(country.iso.toUpperCase(), e.target.value)}

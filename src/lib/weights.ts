@@ -68,19 +68,8 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
     }
   }
 
-  if (answers.climatePreference) {
-    switch (answers.climatePreference) {
-      case 'warm_sunny':
-      case 'hot_tropical':
-        weights.climate += 2;
-        break;
-      case 'mild_green':
-      case 'cold_crisp':
-        weights.climate += 2;
-        break;
-      case 'no_preference':
-        break;
-    }
+  if (answers.climatePreference && answers.climatePreference !== 'no_preference') {
+    weights.climate += 2;
   }
 
   if (answers.religiousNeeds) {

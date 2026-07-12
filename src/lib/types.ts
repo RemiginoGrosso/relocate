@@ -73,7 +73,15 @@ export type HouseholdSituation = 'solo' | 'couple' | 'family_young' | 'family_te
 export type IncomeSource = 'remote' | 'local_job' | 'pension';
 export type CivicImportance = 'top_priority' | 'very_important' | 'nice_to_have' | 'not_important';
 export type WarmthImportance = 'essential' | 'matters' | 'not_priority';
-export type ClimatePreference = 'warm_sunny' | 'hot_tropical' | 'mild_green' | 'cold_crisp' | 'no_preference';
+export type ClimatePreference =
+  | 'tropical_heat'
+  | 'desert_dry'
+  | 'sunny_warm'
+  | 'mild_scenic'
+  | 'green_rainy'
+  | 'four_seasons'
+  | 'freezing_cold'
+  | 'no_preference';
 
 export interface ClimateProfile {
   label: string;

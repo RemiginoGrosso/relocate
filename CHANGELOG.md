@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.17 — 2026-07-11
+
+### Added
+- **Climate V2** — expanded climate preferences from 4 to 7+1 categories: Tropical Heat, Desert Dry, Sunny & Warm, Mild & Scenic, Green & Rainy, 4 Clear Seasons, Freezing Cold, I don't mind
+- **City data expansion** — city-level climate data for ~35 countries (up from 8), covering all countries with non-uniform climate zones
+- **Winter temperature scoring** — new `winterTempThreshold` and `winterTempPenalty` parameters on climate profiles that penalize frost/cold where relevant
+- **Climate tooltip taglines** — hover tooltips on all 8 climate type buttons explaining what each profile means
+- **"I don't mind" visual differentiator** — dashed border + muted styling distinguishes the opt-out option from active preferences
+
+### Changed
+- Climate type buttons use 2-column grid layout (4 rows of 2) with equal-width buttons
+- `isLargeCountry()` renamed to `hasCityData()` throughout codebase
+- Climate boost simplified to flat +2 for any non-`no_preference` selection
+- localStorage version bumped to v4 with auto-migration (warm_sunny→sunny_warm, hot_tropical→tropical_heat, mild_green→green_rainy, cold_crisp→four_seasons)
+
 ## 0.1.16 — 2026-07-11
 
 ### Fixed

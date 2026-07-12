@@ -5,7 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import type { CountryDetail } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
-import { isLargeCountry, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
+import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
 import { DimensionBreakdown } from '@/components/country/DimensionBreakdown';
@@ -56,7 +56,7 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
           <p className="text-sm text-zinc-500">
             {country.region}
           </p>
-          {isLargeCountry(country.iso) && (() => {
+          {hasCityData(country.iso) && (() => {
             const cities = getCitiesForCountry(country.iso);
             const currentCity = selectedCities[country.iso.toUpperCase()] ?? getDefaultCity(country.iso) ?? undefined;
             return cities ? (

@@ -12,11 +12,25 @@ import { DIMENSIONS, CLIMATE_PROFILES } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
 import type { ClimatePreference, DimensionKey, UserWeights } from '@/lib/types';
 
+const CLIMATE_TAGLINES: Record<ClimatePreference, string> = {
+  tropical_heat: 'Warm and humid weather all year round, perfect for beach and jungle climates.',
+  desert_dry: 'Hot, arid days with maximum sunshine and virtually zero humidity or rain.',
+  sunny_warm: 'Long, hot summers and pleasant, mild winters that rarely see frost or snow.',
+  mild_scenic: 'Lush, green nature and comfortable temperatures, featuring gorgeous, dry, and sunny summers.',
+  green_rainy: 'Cozy, overcast weather with consistent rainfall and misty landscapes throughout the year.',
+  four_seasons: 'A predictable yearly cycle of hot summers, crisp autumn leaves, spring blooms, and snowy winters.',
+  freezing_cold: 'Long, snowy winters and brief, cool summers tailored for winter sports and glacial landscapes.',
+  no_preference: 'No climate scoring adjustment — all climates weighted equally.',
+};
+
 const CLIMATE_KEYS: ClimatePreference[] = [
-  'warm_sunny',
-  'hot_tropical',
-  'mild_green',
-  'cold_crisp',
+  'tropical_heat',
+  'desert_dry',
+  'sunny_warm',
+  'mild_scenic',
+  'green_rainy',
+  'four_seasons',
+  'freezing_cold',
   'no_preference',
 ];
 
@@ -81,22 +95,28 @@ export function WeightSliders({ weights, onWeightChange, onReset, climateType, o
                     const profile = CLIMATE_PROFILES[key];
                     const active = climateType === key;
                     return (
-                      <button
-                        key={key}
-                        onClick={() => {
-                          trackEvent('climate_type_change', { climate_type: key });
-                          onClimateTypeChange(key);
-                        }}
-                        className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                          key === 'no_preference' ? 'col-span-2' : ''
-                        } ${
-                          active
-                            ? 'bg-teal-700 text-white'
-                            : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
-                        }`}
-                      >
-                        {profile.label}
-                      </button>
+                      <Tooltip key={key}>
+                        <TooltipTrigger asChild>
+                          <button
+                            onClick={() => {
+                              trackEvent('climate_type_change', { climate_type: key });
+                              onClimateTypeChange(key);
+                            }}
+                            className={`w-full rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                              active
+                                ? 'bg-teal-700 text-white'
+                                : key === 'no_preference'
+                                  ? 'border border-dashed border-zinc-200 bg-zinc-50 text-zinc-500 hover:bg-zinc-100'
+                                  : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                            }`}
+                          >
+                            {profile.label}
+                          </button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="max-w-56">
+                          {CLIMATE_TAGLINES[key]}
+                        </TooltipContent>
+                      </Tooltip>
                     );
                   })}
                 </div>
