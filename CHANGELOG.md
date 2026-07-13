@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.22 — 2026-07-13
+
+### Added
+- **Climate onboarding tooltips** — each of the 8 climate-preference buttons in onboarding (`QuestionStep.tsx`) now has an info icon showing a 1-sentence description of that climate type, sourced from the existing `CLIMATE_PROFILES[key].description` in `src/lib/constants.ts` (no new duplicate strings). The icon is a separate tap target from the button itself — tapping it opens the tooltip without selecting the option or advancing the flow, which matters on mobile where the whole-button-as-trigger approach would select-and-advance before the tooltip could be read. Matches the existing info-icon tooltip pattern used for dimension sliders in `WeightSliders.tsx`.
+
 ## 0.1.21 — 2026-07-13
 
 ### Fixed

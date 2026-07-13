@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ClimatePreference, OnboardingAnswers } from '@/lib/types';
 import { computeOnboardingWeights } from '@/lib/weights';
+import { CLIMATE_PROFILES } from '@/lib/constants';
 import { useWeightStore } from '@/stores/useWeightStore';
 import { useHydrated } from '@/components/shared/StoreHydration';
 import { trackEvent } from '@/lib/analytics';
@@ -18,8 +19,19 @@ type AnswerKey = keyof OnboardingAnswers;
 interface Question {
   key: AnswerKey;
   question: string;
-  options: { label: string; value: string }[];
+  options: { label: string; value: string; description?: string }[];
 }
+
+const CLIMATE_KEYS: ClimatePreference[] = [
+  'tropical_heat',
+  'desert_dry',
+  'sunny_warm',
+  'mild_scenic',
+  'green_rainy',
+  'four_seasons',
+  'freezing_cold',
+  'no_preference',
+];
 
 const QUESTIONS: Question[] = [
   {
@@ -66,16 +78,11 @@ const QUESTIONS: Question[] = [
   {
     key: 'climatePreference',
     question: 'What kind of weather do you enjoy?',
-    options: [
-      { label: 'Tropical Heat', value: 'tropical_heat' },
-      { label: 'Desert Dry', value: 'desert_dry' },
-      { label: 'Sunny & Warm', value: 'sunny_warm' },
-      { label: 'Mild & Scenic', value: 'mild_scenic' },
-      { label: 'Green & Rainy', value: 'green_rainy' },
-      { label: '4 Clear Seasons', value: 'four_seasons' },
-      { label: 'Freezing Cold', value: 'freezing_cold' },
-      { label: "I don't mind", value: 'no_preference' },
-    ],
+    options: CLIMATE_KEYS.map((value) => ({
+      value,
+      label: CLIMATE_PROFILES[value].label,
+      description: CLIMATE_PROFILES[value].description,
+    })),
   },
   {
     key: 'religiousNeeds',
