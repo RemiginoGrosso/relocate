@@ -102,7 +102,7 @@ export function CompareView({ allCountries }: CompareViewProps) {
         </div>
       </aside>
 
-      <main className="flex-1 px-4 py-6 lg:px-8">
+      <main className="min-w-0 flex-1 px-4 py-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
           <Link
             href="/ranking"

@@ -25,7 +25,7 @@ export function CompareBar({ countries }: CompareBarProps) {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-30 border-t border-zinc-200 bg-white px-4 py-3 shadow-lg lg:bottom-0 lg:left-80">
+    <div className="fixed bottom-0 left-0 right-0 z-30 hidden border-t border-zinc-200 bg-white px-4 py-3 shadow-lg lg:block lg:left-80">
       <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
         <div className="flex items-center gap-2 overflow-x-auto">
           {selected.map((c) => (

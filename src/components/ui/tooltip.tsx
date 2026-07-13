@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
 
 import { cn } from "@/lib/utils"
@@ -17,12 +18,63 @@ function TooltipProvider({
   )
 }
 
-function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
-  return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
+// Base UI's hover/focus interactions don't open on touch taps (no hover state,
+// and plain buttons don't reliably receive focus on tap in iOS Safari). Track
+// open state ourselves so TooltipTrigger can toggle it on click, which works
+// on every input type in addition to the built-in hover/focus behavior.
+const TooltipOpenContext = React.createContext<{
+  open: boolean
+  toggle: () => void
+} | null>(null)
+
+function Tooltip({
+  open: openProp,
+  defaultOpen,
+  onOpenChange,
+  ...props
+}: TooltipPrimitive.Root.Props) {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen ?? false)
+  const open = openProp ?? uncontrolledOpen
+
+  const setOpen = React.useCallback(
+    (next: boolean) => {
+      if (openProp === undefined) setUncontrolledOpen(next)
+    },
+    [openProp]
+  )
+
+  const contextValue = React.useMemo(
+    () => ({ open, toggle: () => setOpen(!open) }),
+    [open, setOpen]
+  )
+
+  return (
+    <TooltipOpenContext.Provider value={contextValue}>
+      <TooltipPrimitive.Root
+        data-slot="tooltip"
+        open={open}
+        onOpenChange={(next, eventDetails) => {
+          setOpen(next)
+          onOpenChange?.(next, eventDetails)
+        }}
+        {...props}
+      />
+    </TooltipOpenContext.Provider>
+  )
 }
 
-function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+function TooltipTrigger({ onClick, ...props }: TooltipPrimitive.Trigger.Props) {
+  const ctx = React.useContext(TooltipOpenContext)
+  return (
+    <TooltipPrimitive.Trigger
+      data-slot="tooltip-trigger"
+      onClick={(event) => {
+        onClick?.(event)
+        ctx?.toggle()
+      }}
+      {...props}
+    />
+  )
 }
 
 function TooltipContent({

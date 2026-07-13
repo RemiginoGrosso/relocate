@@ -96,22 +96,20 @@ export function WeightSliders({ weights, onWeightChange, onReset, climateType, o
                     const active = climateType === key;
                     return (
                       <Tooltip key={key}>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => {
-                              trackEvent('climate_type_change', { climate_type: key });
-                              onClimateTypeChange(key);
-                            }}
-                            className={`w-full rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                              active
-                                ? 'bg-teal-700 text-white'
-                                : key === 'no_preference'
-                                  ? 'border border-dashed border-zinc-200 bg-zinc-50 text-zinc-500 hover:bg-zinc-100'
-                                  : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
-                            }`}
-                          >
-                            {profile.label}
-                          </button>
+                        <TooltipTrigger
+                          onClick={() => {
+                            trackEvent('climate_type_change', { climate_type: key });
+                            onClimateTypeChange(key);
+                          }}
+                          className={`w-full rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                            active
+                              ? 'bg-teal-700 text-white'
+                              : key === 'no_preference'
+                                ? 'border border-dashed border-zinc-200 bg-zinc-50 text-zinc-500 hover:bg-zinc-100'
+                                : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                          }`}
+                        >
+                          {profile.label}
                         </TooltipTrigger>
                         <TooltipContent side="bottom" className="max-w-56">
                           {CLIMATE_TAGLINES[key]}

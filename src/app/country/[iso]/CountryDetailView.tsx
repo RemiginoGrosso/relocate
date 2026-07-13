@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import type { CountryDetail } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
@@ -10,6 +10,7 @@ import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
 import { DimensionBreakdown } from '@/components/country/DimensionBreakdown';
 import { DataFreshness } from '@/components/country/DataFreshness';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { applyClimatePreference, computeComposite, normaliseWeights } from '@/lib/scoring';
 
@@ -72,7 +73,14 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
                     <option key={city.name} value={city.name}>{city.name}</option>
                   ))}
                 </select>
-                <span className="text-xs text-zinc-400">· only affects climate score</span>
+                <Tooltip>
+                  <TooltipTrigger className="text-zinc-400 hover:text-zinc-600 transition-colors" aria-label="About climate city selection">
+                    <Info className="size-3.5" />
+                  </TooltipTrigger>
+                  <TooltipContent side="right" align="start" className="max-w-56 text-xs">
+                    Only affects the climate score — the rest of the ranking uses country-level data.
+                  </TooltipContent>
+                </Tooltip>
               </div>
             ) : null;
           })()}

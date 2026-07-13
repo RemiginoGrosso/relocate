@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.18 — 2026-07-12
+
+### Fixed
+- **v0.1.17 build failure** — `TooltipTrigger asChild` in `WeightSliders.tsx` didn't match base-ui's `Props` type, breaking `next build` type-check in CI (Turbopack dev mode didn't catch it). v0.1.17 never reached production as a result; this release supersedes it.
+- **Mobile horizontal overflow on `/ranking` and `/compare`** — `<main>` was a flex item without `min-w-0`, so it refused to shrink below its subtree's min-content width, pushing content past the viewport edge and hiding the "Adjust priorities" CTA below the fold. Added `min-w-0` to `RankingView.tsx`, `CompareView.tsx`, and `ranking/loading.tsx`.
+- **Tooltip taps on mobile** — base-ui tooltips only opened on hover/focus, which don't fire reliably on touch. Tooltips now also toggle open on click/tap.
+
+### Changed
+- **Mobile country card redesign** — restructured `CountryRow.tsx` header into a two-row layout: country name + score on row 1, region/city selector/status badges grouped on row 2. Fixes truncated country names and cluttered single-row layout reported on mobile.
+- **Compare feature hidden on mobile** — compare checkboxes and the floating compare bar are now desktop-only (`lg:` and up). Mobile card real estate was dominated by the checkbox; comparison is a secondary desktop workflow.
+- Climate-city tooltip on country detail replaced the trailing "· only affects climate score" text fragment with an info-icon tooltip, consistent with other indicator tooltips.
+
 ## 0.1.17 — 2026-07-11
 
 ### Added

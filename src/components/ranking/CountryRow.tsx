@@ -51,127 +51,136 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
       >
         <span className="sr-only">{country.name} — view country profile</span>
       </Link>
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          {onToggleCompare && (
-            <div
-              className="relative z-10"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (isComparing || canAddMore) onToggleCompare(country.iso);
-              }}
-            >
-              <input
-                type="checkbox"
-                checked={isComparing ?? false}
-                disabled={!isComparing && !canAddMore}
-                readOnly
-                className="h-4 w-4 shrink-0 cursor-pointer rounded border-zinc-300 text-teal-700 focus:ring-teal-700 disabled:cursor-not-allowed disabled:opacity-40 pointer-events-none"
-                aria-label={`Compare ${country.name}`}
-                tabIndex={-1}
-              />
-            </div>
-          )}
-          {!unranked && (
-            <span className="text-xs text-zinc-400 tabular-nums w-5">
-              {country.rank}
-            </span>
-          )}
-          <span className="text-2xl" aria-hidden>
-            {country.flagEmoji}
+      <div className="flex items-center gap-3">
+        {onToggleCompare && (
+          <div
+            className="relative z-10 hidden shrink-0 lg:block"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (isComparing || canAddMore) onToggleCompare(country.iso);
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={isComparing ?? false}
+              disabled={!isComparing && !canAddMore}
+              readOnly
+              className="h-4 w-4 shrink-0 cursor-pointer rounded border-zinc-300 text-teal-700 focus:ring-teal-700 disabled:cursor-not-allowed disabled:opacity-40 pointer-events-none"
+              aria-label={`Compare ${country.name}`}
+              tabIndex={-1}
+            />
+          </div>
+        )}
+        {!unranked && (
+          <span className="shrink-0 text-xs text-zinc-400 tabular-nums w-5">
+            {country.rank}
           </span>
-          <div>
-            <h3 className="text-lg font-medium text-zinc-900">
+        )}
+        <span className="shrink-0 text-2xl" aria-hidden>
+          {country.flagEmoji}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="truncate text-lg font-medium text-zinc-900">
               {country.name}
             </h3>
-            <p className="text-xs text-zinc-500">{country.region}</p>
-            {singleDimension === 'healthcare' && (() => {
-              const systemType = HEALTHCARE_SYSTEM_MAP[country.iso.toUpperCase()];
-              if (!systemType) return null;
-              const meta = HEALTHCARE_SYSTEM_LABELS[systemType];
-              const Icon = SYSTEM_TYPE_ICONS[systemType];
-              return (
+            <div className="flex shrink-0 items-center gap-2">
+              {displayScore !== null ? (
+                <ScoreBadge score={displayScore} />
+              ) : (
+                <span className="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-medium tabular-nums bg-zinc-100 text-zinc-400">—</span>
+              )}
+              {singleDimension && displayScore === null && !unranked && (
                 <Tooltip>
                   <TooltipTrigger
-                    className="relative z-10 cursor-default"
+                    className="relative z-10 shrink-0 cursor-default"
+                    aria-label="Data unavailable for this dimension"
                     onClick={(e) => e.preventDefault()}
                   >
-                    <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-xs ${meta.color}`}>
-                      <Icon size={12} />
-                      {meta.short}
-                    </span>
+                    <AlertTriangle size={14} className="text-amber-500" />
                   </TooltipTrigger>
-                  <TooltipContent className="max-w-64 text-xs">
-                    {meta.tooltip}
+                  <TooltipContent className="max-w-48 text-xs">
+                    No data available for this dimension
                   </TooltipContent>
                 </Tooltip>
-              );
-            })()}
-            {hasCity && cities && (!singleDimension || singleDimension === 'climate') && (
-              <select
-                value={currentCity}
-                onChange={(e) => onCityChange?.(country.iso.toUpperCase(), e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-                className="relative z-10 text-xs text-teal-700 bg-transparent border-none cursor-pointer p-0 focus:outline-none focus:ring-0"
-                aria-label={`Select city for ${country.name}`}
-              >
-                {cities.map((city) => (
-                  <option key={city.name} value={city.name}>
-                    {city.name}
-                  </option>
-                ))}
-              </select>
-            )}
+              )}
+            </div>
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {displayScore !== null ? (
-            <ScoreBadge score={displayScore} />
-          ) : (
-            <span className="inline-flex items-center rounded-lg px-2.5 py-1 text-sm font-medium tabular-nums bg-zinc-100 text-zinc-400">—</span>
-          )}
-          {singleDimension && displayScore === null && !unranked && (
-            <Tooltip>
-              <TooltipTrigger
-                className="relative z-10 shrink-0 cursor-default"
-                aria-label="Data unavailable for this dimension"
-                onClick={(e) => e.preventDefault()}
-              >
-                <AlertTriangle size={14} className="text-amber-500" />
-              </TooltipTrigger>
-              <TooltipContent className="max-w-48 text-xs">
-                No data available for this dimension
-              </TooltipContent>
-            </Tooltip>
-          )}
-          {!singleDimension && missingCount > 0 && (() => {
-            const hasHighWeightGap = country.nullDimensions.some((d) => weights[d] >= 6);
-            return (
-              <Tooltip>
-                <TooltipTrigger
-                  className="relative z-10 shrink-0 cursor-default"
-                  onClick={(e) => e.preventDefault()}
-                >
-                  <Badge className={`text-xs ${hasHighWeightGap ? 'border-amber-500 text-amber-700 bg-amber-50' : 'border-zinc-300 text-zinc-500'}`} variant="outline">
-                    Limited data
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-64 text-xs">
-                  <span>Missing: {country.nullDimensions.map((d, i) => {
-                    const isHigh = weights[d] >= 6;
-                    return (
-                      <span key={d}>
-                        {i > 0 && ', '}
-                        {isHigh ? <strong>{dimensionName(d)}</strong> : dimensionName(d)}
+          <div className="mt-0.5 flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-1.5 text-xs text-zinc-500">
+              <span className="truncate">{country.region}</span>
+              {hasCity && cities && (!singleDimension || singleDimension === 'climate') && (
+                <>
+                  <span className="shrink-0 text-zinc-300" aria-hidden>·</span>
+                  <select
+                    value={currentCity}
+                    onChange={(e) => onCityChange?.(country.iso.toUpperCase(), e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
+                    className="relative z-10 max-w-24 shrink-0 truncate text-xs text-teal-700 bg-transparent border-none cursor-pointer p-0 focus:outline-none focus:ring-0"
+                    aria-label={`Select city for ${country.name}`}
+                  >
+                    {cities.map((city) => (
+                      <option key={city.name} value={city.name}>
+                        {city.name}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+            </div>
+            <div className="flex shrink-0 items-center gap-1.5">
+              {singleDimension === 'healthcare' && (() => {
+                const systemType = HEALTHCARE_SYSTEM_MAP[country.iso.toUpperCase()];
+                if (!systemType) return null;
+                const meta = HEALTHCARE_SYSTEM_LABELS[systemType];
+                const Icon = SYSTEM_TYPE_ICONS[systemType];
+                return (
+                  <Tooltip>
+                    <TooltipTrigger
+                      className="relative z-10 cursor-default"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-xs ${meta.color}`}>
+                        <Icon size={12} />
+                        {meta.short}
                       </span>
-                    );
-                  })}</span>
-                </TooltipContent>
-              </Tooltip>
-            );
-          })()}
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-64 text-xs">
+                      {meta.tooltip}
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })()}
+              {!singleDimension && missingCount > 0 && (() => {
+                const hasHighWeightGap = country.nullDimensions.some((d) => weights[d] >= 6);
+                return (
+                  <Tooltip>
+                    <TooltipTrigger
+                      className="relative z-10 shrink-0 cursor-default"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <Badge className={`text-xs ${hasHighWeightGap ? 'border-amber-500 text-amber-700 bg-amber-50' : 'border-zinc-300 text-zinc-500'}`} variant="outline">
+                        Limited data
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-64 text-xs">
+                      <span>Missing: {country.nullDimensions.map((d, i) => {
+                        const isHigh = weights[d] >= 6;
+                        return (
+                          <span key={d}>
+                            {i > 0 && ', '}
+                            {isHigh ? <strong>{dimensionName(d)}</strong> : dimensionName(d)}
+                          </span>
+                        );
+                      })}</span>
+                    </TooltipContent>
+                  </Tooltip>
+                );
+              })()}
+            </div>
+          </div>
         </div>
       </div>
       {!singleDimension && (
