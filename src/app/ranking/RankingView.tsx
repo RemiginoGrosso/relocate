@@ -7,6 +7,7 @@ import { DIMENSIONS } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { CountryList } from '@/components/ranking/CountryList';
+import { CountrySearch } from '@/components/ranking/CountrySearch';
 import { CompareBar } from '@/components/ranking/CompareBar';
 import { WeightSliders } from '@/components/ranking/WeightSliders';
 import { useCompareStore } from '@/stores/useCompareStore';
@@ -83,6 +84,9 @@ export function RankingView({ countries }: RankingViewProps) {
             <p className="mt-1 text-sm text-zinc-500">
               Adjust your priorities to see how countries rank for you.
             </p>
+          </div>
+          <div className="mb-4">
+            <CountrySearch countries={countries} />
           </div>
           <div className="mb-4 flex items-center gap-2">
             <span className="text-sm text-zinc-500">Ranked by</span>

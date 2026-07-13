@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.23 — 2026-07-13
+
+### Added
+- **Country search on `/ranking`** — type-ahead search bar (`CountrySearch.tsx`) placed in its own full-width row below the page title, above the "Ranked by" sort control. Matches on country name substring or exact ISO code, sorted name-starts-with-query first then alphabetically, capped at 8 results. Full keyboard support (arrow keys, Enter, Escape) via ARIA combobox pattern; selecting a result navigates straight to `/country/[iso]`. Fires `country_search_selected` (properties: `country`, `query`).
+- Deliberately not added to the global `Header.tsx` nav — verified on a real 390px mobile viewport that doing so would clutter/truncate the existing logo + nav-link row; placing it as its own row on the ranking page avoids that while keeping a clear hierarchy (Title → Search → Sort → Region filter → List).
+- New `src/components/ui/input.tsx` (shadcn/Base UI `Input` wrapper, added via `npx shadcn add input`).
+
+### Changed
+- **Region filter chips now scroll horizontally on mobile** (`RegionFilter.tsx`) instead of wrapping across 3 rows, reclaiming ~2 rows of vertical space above the fold for country cards. Reverts to `flex-wrap` at the `sm:` breakpoint and above, where wrapping isn't a space problem. No change to filter logic.
+
 ## 0.1.22 — 2026-07-13
 
 ### Added
