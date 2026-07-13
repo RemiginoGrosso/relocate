@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
-import type { CountryDetail } from '@/lib/types';
+import type { CountryDetail, CountryScores } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
 import { incrementCountriesExploredCount } from '@/lib/session-counters';
 import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
@@ -11,15 +11,17 @@ import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
 import { DimensionBreakdown } from '@/components/country/DimensionBreakdown';
 import { DataFreshness } from '@/components/country/DataFreshness';
+import { CompareCTA } from '@/components/country/CompareCTA';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { applyClimatePreference, computeComposite, normaliseWeights } from '@/lib/scoring';
 
 interface CountryDetailViewProps {
   detail: CountryDetail;
+  allCountries: CountryScores[];
 }
 
-export function CountryDetailView({ detail }: CountryDetailViewProps) {
+export function CountryDetailView({ detail, allCountries }: CountryDetailViewProps) {
   const { country, rawIndices, climate } = detail;
   const { weights, climateType, selectedCities, setSelectedCity } = useWeightStore();
 
@@ -89,6 +91,8 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
         </div>
         <ScoreBadge score={score} size="lg" />
       </div>
+
+      <CompareCTA currentCountry={country} allCountries={allCountries} />
 
       <div className="grid gap-8 lg:grid-cols-2">
         <div>

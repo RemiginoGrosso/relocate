@@ -35,7 +35,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function CountryPage({ params }: PageProps) {
   const { iso } = await params;
-  const detail = await fetchCountryDetail(iso);
+  const [detail, allCountries] = await Promise.all([
+    fetchCountryDetail(iso),
+    fetchAllCountryScores(),
+  ]);
 
   if (!detail) notFound();
 
@@ -50,7 +53,7 @@ export default async function CountryPage({ params }: PageProps) {
           { '@type': 'ListItem', position: 3, name: detail.country.name, item: `https://relocateindex.com/country/${iso}` },
         ],
       }} />
-      <CountryDetailView detail={detail} />
+      <CountryDetailView detail={detail} allCountries={allCountries} />
     </>
   );
 }

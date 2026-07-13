@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.25 — 2026-07-13
+
+### Added
+- **"Compare with..." CTA on `/country/[iso]`** — new `CompareCTA.tsx` component rendered below the country header, above the radar/breakdown grid. Click opens an inline panel (not a modal/popover — no Popover primitive exists in this codebase, and an inline expanding panel needs no z-index/positioning handling and stays mobile-safe by default) showing the current country as a locked teal chip plus a type-ahead search (reusing the `CountrySearch.tsx` ARIA-combobox pattern) to add up to 2 more countries. Added countries render as removable indigo/amber chips — same `COLORS` array and position-based assignment used on `/compare`, so a country keeps its color from the picker through to the comparison table/chart. Clicking "Compare (N)" pushes `/compare?countries=<current>,<added...>` (current country always first, preserving color continuity) and fires `compare_cta_used` (`from_country`, `target_countries`). Picker selection is local component state only — deliberately not written to the global `useCompareStore`, since that store only has visible UI feedback on `/ranking` and writing to it from a different page risked surprising the user with a pre-populated `CompareBar` later. `/compare`'s existing empty-store URL-hydration logic picks up the query param with no changes needed on that side.
+- `page.tsx` for `/country/[iso]` now also fetches `fetchAllCountryScores()` in parallel with the existing single-country detail fetch (same pattern as `/compare/page.tsx`), passed down as a new `allCountries` prop for the picker's search list.
+
 ## 0.1.24 — 2026-07-13
 
 ### Added
