@@ -71,7 +71,7 @@ const STEPS = [
     number: '1',
     title: 'Answer 6 questions about your priorities',
     description:
-      'The questions surface dimensions you may not have considered — civic culture, warmth, school environment, religious freedom. The tool educates before it ranks.',
+      'The questions surface dimensions you may not have considered — rule of law, warmth, school environment, religious freedom. The tool educates before it ranks.',
   },
   {
     number: '2',

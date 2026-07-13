@@ -9,7 +9,7 @@ export const revalidate = 86400;
 export const metadata: Metadata = {
   title: 'Country ranking',
   description:
-    'Rank 60 countries by purchasing power, civic culture, safety, warmth, and 6 more dimensions. Adjust weights to match your priorities.',
+    'Rank 60 countries by purchasing power, rule of law, safety, warmth, and 6 more dimensions. Adjust weights to match your priorities.',
   openGraph: {
     title: 'Country ranking — Relocate Index',
     description: 'Rank 60 countries across 10 data-driven dimensions for relocation.',

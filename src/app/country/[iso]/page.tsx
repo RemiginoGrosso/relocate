@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const name = detail.country.name;
   return {
     title: name,
-    description: `Relocation profile for ${name}: purchasing power, civic culture, safety, warmth, and 6 more dimensions scored on data from OECD, World Bank, and WHO.`,
+    description: `Relocation profile for ${name}: purchasing power, rule of law, safety, warmth, and 6 more dimensions scored on data from OECD, World Bank, and WHO.`,
     openGraph: {
       title: `${name} — Relocate Index`,
       description: `See how ${name} scores across 10 relocation dimensions.`,

@@ -43,7 +43,7 @@ export default function MethodologyPage() {
             name: 'What are the 10 dimensions used to rank countries for relocation?',
             acceptedAnswer: {
               '@type': 'Answer',
-              text: 'Purchasing Power, Civic Culture, Safety, Warmth, School Culture, Healthcare, Infrastructure, Climate, Religious Freedom, and English Proficiency. Each dimension uses institutional data sources and is scored 0-100.',
+              text: 'Purchasing Power, Rule of Law, Safety, Warmth, School Culture, Healthcare, Infrastructure, Climate, Religious Freedom, and English Proficiency. Each dimension uses institutional data sources and is scored 0-100.',
             },
           },
           {

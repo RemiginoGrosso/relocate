@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.19 — 2026-07-13
+
+### Changed
+- **Renamed "Civic Culture" dimension to "Rule of Law"** — display label only; internal key `civic_culture` unchanged (no migration, no analytics discontinuity). Copy updated across slider labels, country detail, methodology page/FAQ, onboarding, landing, SEO metadata, and CSV export header. Dimension copy now states explicitly that everyday etiquette (queuing, littering, noise norms) is not measured.
+- Rationale: decision `2026-07-13-civic-culture-rename` — label was a category error; the dimension scores governance + street safety, not civic values.
+
 ## 0.1.18 — 2026-07-12
 
 ### Fixed

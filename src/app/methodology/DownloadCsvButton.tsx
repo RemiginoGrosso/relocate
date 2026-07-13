@@ -8,7 +8,7 @@ import type { DimensionKey } from '@/lib/types';
 
 const DIMENSION_LABELS: Record<DimensionKey, string> = {
   purchasing_power: 'Purchasing Power',
-  civic_culture: 'Civic Culture',
+  civic_culture: 'Rule of Law',
   safety: 'Safety',
   warmth: 'Warmth',
   school_culture: 'School Culture',

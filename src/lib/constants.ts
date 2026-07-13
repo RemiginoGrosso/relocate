@@ -29,9 +29,9 @@ export const DIMENSIONS: DimensionDefinition[] = [
   },
   {
     key: 'civic_culture',
-    name: 'Civic Culture',
+    name: 'Rule of Law',
     description: 'How well institutions work and how safe the streets actually feel — combining governance quality with street-level crime perception.',
-    context: 'Civic culture captures two things: institutional quality (do courts work, is corruption controlled?) and street-level reality (do people feel safe walking around?). Some countries have great institutions but rough streets; others have modest governance but feel very safe day-to-day. This dimension measures both, so your ranking reflects the full picture.',
+    context: 'Rule of law captures two things: institutional quality (do courts work, is corruption controlled?) and street-level reality (do people feel safe walking around?). Some countries have great institutions but rough streets; others have modest governance but feel very safe day-to-day. It does not measure everyday etiquette — queuing, littering, noise norms — because no reliable cross-country data for those behaviours exists.',
     methodology: 'civic_culture = governance × 0.60 + street_safety × 0.40. governance = wgi_rule_of_law × 0.55 + wgi_corruption_control × 0.45. street_safety = 100 − numbeo_crime_index.',
     category: 'social',
     sources: ['World Bank WGI Rule of Law', 'World Bank WGI Control of Corruption', 'Numbeo Crime Index'],
@@ -51,7 +51,7 @@ export const DIMENSIONS: DimensionDefinition[] = [
     defaultWeight: 5,
     sortOrder: 3,
     confidence: 'high',
-    knownLimitation: 'Single-source — measures country-level peace/conflict (GPI). Street-level crime perception is captured in Civic Culture via Numbeo.',
+    knownLimitation: 'Single-source — measures country-level peace/conflict (GPI). Street-level crime perception is captured in Rule of Law via Numbeo.',
   },
   {
     key: 'warmth',
