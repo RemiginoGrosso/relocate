@@ -182,7 +182,8 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
         const statuses = getSourceStatuses(dim.key, rawIndices);
         const hasScore = dimScore?.score != null;
         const missingKeySources = statuses.filter((s) => !s.present && s.tier === 'key');
-        const isPartial = hasScore && missingKeySources.length > 0;
+        const isNativeEnglishOverride = dim.key === 'english_proficiency' && dimScore?.components?.native_speaker === 1;
+        const isPartial = hasScore && missingKeySources.length > 0 && !isNativeEnglishOverride;
         const hasAnyRawData = !isClimate && indicators.some((indKey) => {
           const [source, indicator] = indKey.split('.');
           return getRawValue(rawIndices, source, indicator)?.value != null;
@@ -205,6 +206,9 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                       <ScoreBadge score={dimScore!.score!} />
                       {isPartial && (
                         <span className="text-xs text-amber-500">(partial)</span>
+                      )}
+                      {isNativeEnglishOverride && (
+                        <span className="text-xs text-zinc-400">(native)</span>
                       )}
                     </>
                   ) : (

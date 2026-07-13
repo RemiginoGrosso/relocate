@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.21 — 2026-07-13
+
+### Fixed
+- **English proficiency "(partial)" mislabel for native-English countries** — `DimensionBreakdown.tsx` flagged the badge as "(partial)" and showed a "Partial data — missing EF EPI" warning for GB, IE, AU, NZ, CA, and US, because the badge logic only checks whether a raw `ef.epi_score` row exists. Those six countries are hardcoded to a score of 100 by design (see `ENGLISH_NATIVE_COUNTRIES` in `src/lib/constants.ts`) and never get an EF EPI row, so the missing-source check always read as a data gap. Now reads `components.native_speaker` (already written by `compute-normalised.ts`, previously unused) to suppress the partial-data warning and show a neutral "(native)" tag instead.
+
 ## 0.1.20 — 2026-07-13
 
 ### Added
