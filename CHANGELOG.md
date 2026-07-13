@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.24 — 2026-07-13
+
+### Added
+- **Dimension-source accordion on `/compare`** — new "Dimension sources" card below the radar chart and delta table. One accordion row per non-zero-weight dimension; expanding a row shows the underlying source-level indicator values (e.g. WGI Rule of Law, Numbeo Crime Index, each PISA sub-score) side by side for all compared countries, with the same teal/indigo/amber color-coding used in the summary table so a country's column is recognizable across both. Climate has no raw indicator sources, so its row instead compares the already-fetched avg temp/winter temp/sunshine/rain-day figures rather than triggering a second fetch. Indicator tooltips and value interpretations reuse the exact logic from the single-country detail accordion (`DimensionBreakdown.tsx`) via new shared module `src/lib/indicator-display.ts`, so the two views can't drift out of sync.
+- New `fetchRawIndicesForCountries()` in `src/lib/supabase.ts` — batch fetch of `raw_indices` for 2–3 countries at once (single query, grouped client-side), used only by the new accordion.
+- New `src/components/compare/CompareSourceAccordion.tsx`.
+
+### Changed
+- `DimensionBreakdown.tsx` refactored to import indicator labels/formatting from the new shared `src/lib/indicator-display.ts` instead of duplicating them locally. No behavior change on `/country/[iso]`.
+
 ## 0.1.23 — 2026-07-13
 
 ### Added

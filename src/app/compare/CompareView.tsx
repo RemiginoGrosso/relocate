@@ -8,6 +8,7 @@ import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { useCompareStore } from '@/stores/useCompareStore';
 import { CompareRadarChart } from '@/components/compare/CompareRadarChart';
 import { CompareTable } from '@/components/compare/CompareTable';
+import { CompareSourceAccordion } from '@/components/compare/CompareSourceAccordion';
 import { WeightSliders } from '@/components/ranking/WeightSliders';
 import {
   Drawer,
@@ -16,10 +17,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/components/ui/drawer';
-import type { CountryScores } from '@/lib/types';
+import type { CountryScores, RawIndex } from '@/lib/types';
 import { applyClimatePreference } from '@/lib/scoring';
 import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { trackEvent } from '@/lib/analytics';
+import { fetchRawIndicesForCountries } from '@/lib/supabase';
 
 interface CompareViewProps {
   allCountries: CountryScores[];
@@ -29,6 +31,7 @@ export function CompareView({ allCountries }: CompareViewProps) {
   const searchParams = useSearchParams();
   const { weights, setWeight, resetToDefaults, climateType, setClimateType, selectedCities, setSelectedCity } = useWeightStore();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [rawIndicesByCountry, setRawIndicesByCountry] = useState<Record<string, RawIndex[]>>({});
 
   useEffect(() => {
     hydrateWeightStore();
@@ -60,6 +63,20 @@ export function CompareView({ allCountries }: CompareViewProps) {
       isos.forEach((iso) => store.toggleCompare(iso));
     }
   }, [isos]);
+
+  const countryIds = countries.map((c) => c.id).join(',');
+  useEffect(() => {
+    if (countries.length < 2) return;
+    let cancelled = false;
+    fetchRawIndicesForCountries(countries.map((c) => c.id)).then((data) => {
+      if (!cancelled) setRawIndicesByCountry(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  // countries is recomputed every render; countryIds is the stable dependency
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countryIds]);
 
   useEffect(() => {
     if (countries.length >= 2) {
@@ -152,6 +169,20 @@ export function CompareView({ allCountries }: CompareViewProps) {
             </div>
             <div className="rounded-lg border border-zinc-200 bg-white p-4">
               <CompareTable countries={countries} weights={weights} />
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-lg border border-zinc-200 bg-white p-4">
+            <h2 className="text-sm font-medium text-zinc-900">Dimension sources</h2>
+            <p className="mt-1 text-xs text-zinc-500">
+              See the underlying data behind each score, side by side.
+            </p>
+            <div className="mt-3">
+              <CompareSourceAccordion
+                countries={countries}
+                weights={weights}
+                rawIndicesByCountry={rawIndicesByCountry}
+              />
             </div>
           </div>
         </div>

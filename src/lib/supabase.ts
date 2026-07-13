@@ -55,6 +55,33 @@ export async function fetchAllCountryScores(): Promise<CountryScores[]> {
   return (data as VCountryScoresRow[]).map(mapRowToCountryScores);
 }
 
+export async function fetchRawIndicesForCountries(
+  countryIds: string[],
+): Promise<Record<string, RawIndex[]>> {
+  if (countryIds.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from('raw_indices')
+    .select('country_id, source, indicator, value, unit, year, source_url')
+    .in('country_id', countryIds);
+
+  if (error) throw new Error(`Failed to fetch raw indices: ${error.message}`);
+
+  const byCountry: Record<string, RawIndex[]> = {};
+  for (const r of data ?? []) {
+    const list = (byCountry[r.country_id] ??= []);
+    list.push({
+      source: r.source,
+      indicator: r.indicator,
+      value: r.value,
+      unit: r.unit,
+      year: r.year,
+      sourceUrl: r.source_url,
+    });
+  }
+  return byCountry;
+}
+
 export async function fetchCountryDetail(iso: string): Promise<CountryDetail | null> {
   const { data: countryData, error: countryError } = await supabase
     .from('v_country_scores')
