@@ -5,6 +5,7 @@ import { ArrowLeft, Info } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import type { CountryDetail } from '@/lib/types';
 import { trackEvent } from '@/lib/analytics';
+import { incrementCountriesExploredCount } from '@/lib/session-counters';
 import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { CountryRadarChart } from '@/components/country/CountryRadarChart';
@@ -36,6 +37,7 @@ export function CountryDetailView({ detail }: CountryDetailViewProps) {
 
   useEffect(() => {
     trackEvent('country_detail_view', { country: country.iso, name: country.name });
+    incrementCountriesExploredCount();
   }, [country.iso, country.name]);
 
   return (

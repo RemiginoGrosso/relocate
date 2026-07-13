@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.20 — 2026-07-13
+
+### Added
+- **Analytics: `page_viewed`** — typed event with full page taxonomy (`page_name`, `page_path`, `referrer_page`, `country_slug`), fired via new `usePageTracking` hook mounted in `AnalyticsProvider`.
+- **`methodology_viewed` and `csv_downloaded` brought into `TRACKING_PLAN.md` spec** — now send `entry_method`, `countries_explored_before`, `onboarding_completed`, and `time_on_methodology_ms` respectively.
+- **`weight_summary_cta_clicked`** — new event on the onboarding weight summary (fires on both "see my ranking" and "adjust weights first" CTAs).
+- **`civic_norms_context_expanded`** — typed helper registered in `src/lib/analytics.ts`; no call site yet, fires when the Civic-Norms-Context display block ships.
+
+### Changed
+- **Disabled the Amplitude SDK's default page-view autocapture** (`defaultTracking: { pageViews: false }`), which had been silently double-firing untyped page views since launch alongside our own `page_viewed`. Dashboard readers: native page-view counts stop at this release.
+
+### Not implemented
+- Scroll depth — intentionally excluded; see `TRACKING_PLAN.md` "What NOT to track."
+
 ## 0.1.19 — 2026-07-13
 
 ### Changed

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ClimatePreference, OnboardingAnswers } from '@/lib/types';
 import { computeOnboardingWeights } from '@/lib/weights';
@@ -100,6 +100,17 @@ export default function OnboardingFlow() {
   const showSummary = step >= QUESTIONS.length;
   const computedWeights = computeOnboardingWeights(answers);
 
+  const summaryShownAt = useRef<number | null>(null);
+  useEffect(() => {
+    if (showSummary && summaryShownAt.current === null) {
+      summaryShownAt.current = Date.now();
+    }
+  }, [showSummary]);
+
+  const timeOnSummaryMs = useCallback(() => {
+    return summaryShownAt.current ? Date.now() - summaryShownAt.current : 0;
+  }, []);
+
   const handleResume = useCallback(() => {
     trackEvent('onboarding_resume', {});
     router.push('/ranking');
@@ -127,20 +138,28 @@ export default function OnboardingFlow() {
 
   const handleContinue = useCallback(() => {
     trackEvent('onboarding_complete', { answers_count: Object.keys(answers).length });
+    trackEvent('weight_summary_cta_clicked', {
+      cta_label: 'see_my_ranking',
+      time_on_summary_ms: timeOnSummaryMs(),
+    });
     setAllWeights(computedWeights, true);
     if (answers.climatePreference) {
       setClimateType(answers.climatePreference as ClimatePreference);
     }
     router.push('/ranking');
-  }, [computedWeights, answers, setAllWeights, setClimateType, router]);
+  }, [computedWeights, answers, setAllWeights, setClimateType, router, timeOnSummaryMs]);
 
   const handleAdjust = useCallback(() => {
+    trackEvent('weight_summary_cta_clicked', {
+      cta_label: 'adjust_weights_first',
+      time_on_summary_ms: timeOnSummaryMs(),
+    });
     setAllWeights(computedWeights, true);
     if (answers.climatePreference) {
       setClimateType(answers.climatePreference as ClimatePreference);
     }
     router.push('/ranking');
-  }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router]);
+  }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router, timeOnSummaryMs]);
 
   if (showResumeBanner) {
     return (

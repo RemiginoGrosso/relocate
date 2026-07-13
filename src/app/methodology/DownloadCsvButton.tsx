@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { fetchAllCountryScores } from '@/lib/supabase';
 import { DIMENSION_KEYS } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
@@ -21,6 +21,11 @@ const DIMENSION_LABELS: Record<DimensionKey, string> = {
 
 export function DownloadCsvButton() {
   const [loading, setLoading] = useState(false);
+  const mountedAt = useRef<number>(0);
+
+  useEffect(() => {
+    mountedAt.current = Date.now();
+  }, []);
 
   async function handleDownload() {
     setLoading(true);
@@ -46,7 +51,11 @@ export function DownloadCsvButton() {
       a.href = url;
       a.download = 'relocator-scores.csv';
       a.click();
-      trackEvent('csv_downloaded', { file_name: 'relocator-scores.csv', country_count: countries.length });
+      trackEvent('csv_downloaded', {
+        file_name: 'relocator-scores.csv',
+        time_on_methodology_ms: mountedAt.current ? Date.now() - mountedAt.current : null,
+        country_count: countries.length,
+      });
       URL.revokeObjectURL(url);
     } finally {
       setLoading(false);
