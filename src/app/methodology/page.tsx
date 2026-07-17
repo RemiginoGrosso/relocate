@@ -169,6 +169,25 @@ export default function MethodologyPage() {
 
       <section className="mt-12">
         <h2 className="text-xl font-medium text-zinc-900">
+          Context data — shown, never scored
+        </h2>
+        <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+          Some country pages show additional context rows that do not enter any
+          score or ranking. Under Rule of Law these are: Cultural
+          Tightness–Looseness (Gelfand 2011 / Uz 2015 — how strictly a society
+          enforces social norms, a matter of personal fit rather than quality),
+          Yale EPI Waste Management (waste infrastructure, strongly tied to
+          national wealth), and the World Happiness Report&apos;s expected
+          wallet return (perceived trust from the 2019 World Risk Poll, not a
+          measured outcome). Under Warmth, Gallup&apos;s Migrant Acceptance
+          Index plays the same role. These rows exist to help you build your
+          own picture of everyday life — they never move a country up or down
+          the ranking.
+        </p>
+      </section>
+
+      <section className="mt-12">
+        <h2 className="text-xl font-medium text-zinc-900">
           What this tool does NOT cover
         </h2>
         <p className="mt-3 text-sm text-zinc-600">

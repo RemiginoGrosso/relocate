@@ -1,0 +1,302 @@
+[
+  {
+    "iso_alpha2": "AR",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "AT",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "AU",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "BE",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "BG",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "BR",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "CA",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "CL",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "CN",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "CZ",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "DE",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "DK",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "EE",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "ES",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "FI",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "FR",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "GB",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "GR",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "HR",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "HU",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "ID",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "IE",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "IN",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "IS",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "IT",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "JP",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "KR",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "LT",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "LU",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "LV",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "MA",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "MX",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "MY",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "NL",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "NO",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "NZ",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "PE",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "PH",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "PL",
+    "band": 2,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "PT",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "RO",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "SA",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "SE",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "SG",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "SI",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "SK",
+    "band": 2,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "TR",
+    "band": 3,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "US",
+    "band": 1,
+    "source": "gelfand",
+    "year": 2011
+  },
+  {
+    "iso_alpha2": "VN",
+    "band": 3,
+    "source": "uz",
+    "year": 2015
+  },
+  {
+    "iso_alpha2": "ZA",
+    "band": 1,
+    "source": "uz",
+    "year": 2015
+  }
+]

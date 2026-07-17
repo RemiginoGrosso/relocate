@@ -27,6 +27,9 @@ export const INDICATOR_LABELS: Record<string, string> = {
   'pew.govt_restrictions': 'Pew Govt Restrictions',
   'pew.social_hostility': 'Pew Social Hostilities',
   'ef.epi_score': 'EF EPI Score',
+  // Display-only civic-norms context rows (rendered in the Rule of Law context block, not the scored-indicator loop)
+  'epi.waste_mgmt': 'Waste Discipline (Yale EPI)',
+  'whr.wallet_return': 'Expected Wallet Return',
 };
 
 export const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
@@ -59,6 +62,7 @@ export function formatValue(raw: RawIndex): string {
   const v = raw.value;
   const key = `${raw.source}.${raw.indicator}`;
   if (key === 'worldbank.who_oop_pct') return `${v.toFixed(1)}%`;
+  if (key === 'whr.wallet_return') return `${Math.round(v)}%`;
   if (key === 'worldbank.price_level_ratio') return v.toFixed(2);
   if (key === 'gpi.gpi_score') return v.toFixed(3);
   if (key.startsWith('pisa.') && !['pisa.reading', 'pisa.maths', 'pisa.science'].includes(key)) return v.toFixed(2);

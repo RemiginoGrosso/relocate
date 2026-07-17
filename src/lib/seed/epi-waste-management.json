@@ -1,0 +1,302 @@
+[
+  {
+    "iso_alpha2": "AE",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "AR",
+    "waste_mgmt_score": 89.3,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "AT",
+    "waste_mgmt_score": 99.5,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "AU",
+    "waste_mgmt_score": 99.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "BE",
+    "waste_mgmt_score": 98.1,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "BG",
+    "waste_mgmt_score": 94.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "BR",
+    "waste_mgmt_score": 79.9,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CA",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CH",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CL",
+    "waste_mgmt_score": 92.7,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CN",
+    "waste_mgmt_score": 93.3,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CO",
+    "waste_mgmt_score": 84.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CR",
+    "waste_mgmt_score": 88.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CY",
+    "waste_mgmt_score": 76.3,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "CZ",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "DE",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "DK",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "EE",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "ES",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "FI",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "FR",
+    "waste_mgmt_score": 98.2,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "GB",
+    "waste_mgmt_score": 97.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "GR",
+    "waste_mgmt_score": 98.7,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "HR",
+    "waste_mgmt_score": 89.1,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "HU",
+    "waste_mgmt_score": 97.2,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "ID",
+    "waste_mgmt_score": 50.5,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "IE",
+    "waste_mgmt_score": 98.7,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "IN",
+    "waste_mgmt_score": 18.4,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "IS",
+    "waste_mgmt_score": 71.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "IT",
+    "waste_mgmt_score": 91.4,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "JP",
+    "waste_mgmt_score": 95.7,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "KR",
+    "waste_mgmt_score": 94.1,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "LT",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "LU",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "LV",
+    "waste_mgmt_score": 99.9,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "MA",
+    "waste_mgmt_score": 63.1,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "MX",
+    "waste_mgmt_score": 76.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "MY",
+    "waste_mgmt_score": 16.9,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "NL",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "NO",
+    "waste_mgmt_score": 99.3,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "NZ",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "PA",
+    "waste_mgmt_score": 0.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "PE",
+    "waste_mgmt_score": 62.9,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "PH",
+    "waste_mgmt_score": 0.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "PL",
+    "waste_mgmt_score": 99.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "PT",
+    "waste_mgmt_score": 96.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "QA",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "RO",
+    "waste_mgmt_score": 99.6,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "SA",
+    "waste_mgmt_score": 92.3,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "SE",
+    "waste_mgmt_score": 96.6,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "SG",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "SI",
+    "waste_mgmt_score": 82.4,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "SK",
+    "waste_mgmt_score": 96.7,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "TH",
+    "waste_mgmt_score": 34.5,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "TR",
+    "waste_mgmt_score": 93.5,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "TW",
+    "waste_mgmt_score": 97.9,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "US",
+    "waste_mgmt_score": 100.0,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "UY",
+    "waste_mgmt_score": 94.8,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "VN",
+    "waste_mgmt_score": 68.2,
+    "epi_year": 2026
+  },
+  {
+    "iso_alpha2": "ZA",
+    "waste_mgmt_score": 68.6,
+    "epi_year": 2026
+  }
+]

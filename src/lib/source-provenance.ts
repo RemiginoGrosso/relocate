@@ -2,6 +2,8 @@ import type { DimensionKey, RawIndex } from './types';
 
 interface SourceInfo {
   key: string;
+  /** Alternative raw-index keys that also satisfy this source (e.g. tightness data may come from Gelfand or Uz). */
+  altKeys?: string[];
   label: string;
   tier: 'key' | 'directional';
 }
@@ -16,6 +18,10 @@ const DIMENSION_SOURCES: Record<DimensionKey, SourceInfo[]> = {
     { key: 'worldbank.wgi_rule_of_law', label: 'WGI Rule of Law', tier: 'key' },
     { key: 'worldbank.wgi_corruption_control', label: 'WGI Corruption Control', tier: 'key' },
     { key: 'numbeo.crime_index', label: 'Numbeo Crime Index', tier: 'directional' },
+    // Display-only context rows — never scored (see decisions/2026-07-12-civic-culture-behavioural-review.md)
+    { key: 'gelfand.tightness', altKeys: ['uz.tightness'], label: 'Cultural Tightness–Looseness', tier: 'directional' },
+    { key: 'epi.waste_mgmt', label: 'Yale EPI Waste Management', tier: 'directional' },
+    { key: 'whr.wallet_return', label: 'WHR Expected Wallet Return', tier: 'directional' },
   ],
   safety: [
     { key: 'gpi.gpi_score', label: 'Global Peace Index', tier: 'key' },
@@ -74,7 +80,7 @@ export function getSourceStatuses(
 
   return sources.map((src) => ({
     label: src.label,
-    present: rawMap.has(src.key),
+    present: rawMap.has(src.key) || (src.altKeys?.some((k) => rawMap.has(k)) ?? false),
     tier: src.tier,
   }));
 }

@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useRef, type ReactNode } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -14,6 +15,7 @@ import { DIMENSIONS, INDICATOR_TOOLTIPS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_S
 import { INDICATOR_LABELS, DIMENSION_INDICATORS, getRawValue, getInterpretation, formatValue } from '@/lib/indicator-display';
 import { hasCityData, getCityClimate } from '@/lib/large-countries';
 import { getSourceStatuses } from '@/lib/source-provenance';
+import { trackCivicNormsContextExpanded } from '@/lib/analytics';
 import type { CountryScores, RawIndex, ClimateData, HealthcareSystemType } from '@/lib/types';
 
 interface DimensionBreakdownProps {
@@ -49,6 +51,115 @@ function HealthcareSystemBadge({ iso }: { iso: string }) {
         <span>{meta.label}</span>
       </div>
       <p className="text-xs text-zinc-500">{meta.tooltip}</p>
+    </div>
+  );
+}
+
+const TIGHTNESS_BANDS: Record<number, { label: string; explainer: string }> = {
+  1: { label: 'Loose', explainer: 'Loose societies are more permissive of individual variation and rule-bending — a cultural preference, not a measure of quality.' },
+  2: { label: 'Moderate', explainer: 'Sits between strict norm enforcement and permissiveness — a cultural preference, not a measure of quality.' },
+  3: { label: 'Tight', explainer: 'Tight societies enforce social norms strictly and have low tolerance for deviation — a cultural preference, not a measure of quality.' },
+};
+
+const TIGHTNESS_SOURCE_LABELS: Record<string, string> = {
+  gelfand: 'Gelfand',
+  uz: 'Uz estimate',
+};
+
+function ContextRowLabel({ indKey, children }: { indKey: string; children: ReactNode }) {
+  const tooltipText = INDICATOR_TOOLTIPS[indKey];
+  if (!tooltipText) return <span className="min-w-0 text-zinc-500">{children}</span>;
+  return (
+    <Tooltip>
+      <TooltipTrigger className="min-w-0 text-left text-zinc-500 cursor-default border-b border-dotted border-zinc-300">
+        {children}
+      </TooltipTrigger>
+      <TooltipContent className="max-w-64 text-xs">{tooltipText}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+// Display-only behavioural-civicness context inside the Rule of Law accordion.
+// None of these sources enter scoring (decisions/2026-07-12-civic-culture-behavioural-review.md).
+function CivicNormsContext({ rawIndices, onSeen }: { rawIndices: RawIndex[]; onSeen: (rowsShown: number) => void }) {
+  const tightness = rawIndices.find(
+    (r) => (r.source === 'gelfand' || r.source === 'uz') && r.indicator === 'tightness' && r.value != null,
+  );
+  const wasteRaw = getRawValue(rawIndices, 'epi', 'waste_mgmt');
+  const waste = wasteRaw?.value != null ? wasteRaw : undefined;
+  const walletRaw = getRawValue(rawIndices, 'whr', 'wallet_return');
+  const wallet = walletRaw?.value != null ? walletRaw : undefined;
+
+  const band = tightness?.value != null ? TIGHTNESS_BANDS[tightness.value] : undefined;
+  const rowsShown = [tightness && band, waste, wallet].filter(Boolean).length;
+
+  const seenRef = useRef(false);
+  useEffect(() => {
+    if (seenRef.current) return;
+    seenRef.current = true;
+    onSeen(rowsShown);
+  }, [onSeen, rowsShown]);
+
+  if (rowsShown === 0) return null;
+
+  return (
+    <div className="flex flex-col gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
+      <span className="text-xs font-medium uppercase tracking-wide text-zinc-400">
+        Context — not scored
+      </span>
+
+      {tightness && band && (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-baseline justify-between gap-4 text-xs">
+            <ContextRowLabel indKey={`${tightness.source}.tightness`}>
+              Cultural Tightness–Looseness
+            </ContextRowLabel>
+            <span className="shrink-0 text-right">
+              <span className="rounded-full border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-medium text-zinc-600">
+                {band.label}
+              </span>
+              <span className="block pt-0.5 text-zinc-400">
+                As of {tightness.year} ({TIGHTNESS_SOURCE_LABELS[tightness.source] ?? tightness.source})
+              </span>
+            </span>
+          </div>
+          <p className="text-xs leading-snug text-zinc-400">{band.explainer}</p>
+        </div>
+      )}
+
+      {waste && (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-baseline justify-between gap-4 text-xs">
+            <ContextRowLabel indKey="epi.waste_mgmt">
+              {INDICATOR_LABELS['epi.waste_mgmt']}
+            </ContextRowLabel>
+            <span className="shrink-0 text-right text-zinc-700 tabular-nums">
+              {formatValue(waste)}
+              {waste.year ? ` (${waste.year})` : ''}
+            </span>
+          </div>
+          <p className="text-xs leading-snug text-zinc-400">
+            Reflects waste infrastructure and enforcement capacity, which correlates strongly with national wealth — not a pure measure of citizen behaviour.
+          </p>
+        </div>
+      )}
+
+      {wallet && (
+        <div className="flex flex-col gap-1">
+          <div className="flex items-baseline justify-between gap-4 text-xs">
+            <ContextRowLabel indKey="whr.wallet_return">
+              {INDICATOR_LABELS['whr.wallet_return']}
+            </ContextRowLabel>
+            <span className="shrink-0 text-right text-zinc-700 tabular-nums">
+              {formatValue(wallet)}
+              {wallet.year ? ` (${wallet.year})` : ''}
+            </span>
+          </div>
+          <p className="text-xs leading-snug text-zinc-400">
+            What survey respondents expect would happen to a lost wallet found by a stranger — perceived trust, not a measured return rate.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
@@ -99,6 +210,19 @@ function ClimateSection({ climate, selectedCity, countryIso, countryName }: Clim
 }
 
 export function DimensionBreakdown({ country, rawIndices, climate, selectedCity }: DimensionBreakdownProps) {
+  const mountedAtRef = useRef(Date.now());
+  const civicNormsFiredRef = useRef(false);
+  const handleCivicNormsSeen = (rowsShown: number) => {
+    if (civicNormsFiredRef.current) return;
+    civicNormsFiredRef.current = true;
+    trackCivicNormsContextExpanded({
+      country_code: country.iso.toUpperCase(),
+      country_name: country.name,
+      rows_shown: rowsShown,
+      time_to_expand_ms: Date.now() - mountedAtRef.current,
+    });
+  };
+
   const warmthScore = country.dimensionScores.warmth;
   const warmthMismatch = (() => {
     const ivrRaw = rawIndices.find((r) => r.source === 'hofstede' && r.indicator === 'ivr');
@@ -204,6 +328,10 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                       );
                     })}
                   </div>
+                )}
+
+                {dim.key === 'civic_culture' && (
+                  <CivicNormsContext rawIndices={rawIndices} onSeen={handleCivicNormsSeen} />
                 )}
 
                 {dim.key === 'warmth' && warmthMismatch && warmthScore?.components && (() => {

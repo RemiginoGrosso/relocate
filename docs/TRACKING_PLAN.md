@@ -15,7 +15,7 @@
 | `weight_summary_cta_clicked` | **Implemented** | `src/app/onboarding/OnboardingFlow.tsx` (`handleContinue` / `handleAdjust`). |
 | Landing-page CTA clicks (`cta_click`) | **Implemented, pre-existing — not in this plan's spec** | `src/components/landing/CtaButtons.tsx` fires `cta_click` with a `label` property. This plan never defined a landing-CTA event/shape, so the pre-existing implementation was left as-is rather than guessing a new one. Gap: add a formal spec here if this needs to match `weight_summary_cta_clicked`'s shape. |
 | Scroll depth | **Not implemented — by design** | See §10 "What NOT to track": scroll depth is explicitly excluded as not actionable for this product. Not built. |
-| `civic_norms_context_expanded` | **Defined — call site pending Civic-Norms-Context build** | Typed helper `trackCivicNormsContextExpanded()` added to `src/lib/analytics.ts`. No call site yet — wired by the Civic-Norms-Context project when the UI block ships (`DimensionBreakdown.tsx`). See §5a below. |
+| `civic_norms_context_expanded` | **Implemented (2026-07-16)** | Call site wired in `DimensionBreakdown.tsx` by the Civic-Norms-Context build; fires once per country-detail pageview on Rule of Law accordion expand. See §5a below. |
 
 Other events already live but not covered by this document's original spec (names differ from the plan below — documented for accuracy, not changed): `dimension_sort`, `comparison_started`, `country_detail_view` (plan calls it `country_detail_viewed`), `slider_change` (plan: `slider_changed`), `country_click` (plan: `country_clicked`), `region_filter` (plan: `region_filter_changed`), `onboarding_answer`/`onboarding_skip`/`onboarding_complete`/`onboarding_resume`/`onboarding_start_fresh` (plan: `onboarding_answer_selected`/`onboarding_question_skipped`/`onboarding_completed`), `climate_type_change`. Reconciling these name/shape drifts against this plan is out of scope for this pass.
 
@@ -293,20 +293,20 @@ The onboarding is 6 questions. Each question is identified by a stable `question
 
 ### `civic_norms_context_expanded`
 
-**Status:** Defined — call site pending Civic-Norms-Context build.
+**Status:** Implemented (Civic-Norms-Context build, 2026-07-16). Feeds the 2026-08-15 standalone-dimension analytics gate.
 
-**Description:** User expanded/engaged the "civic norms context" display block inside the Rule of Law dimension section of country detail. Source: `Projects/Civic-Norms-Context/IMPLEMENTATION_PLAN.md` Phase 5.
+**Description:** User expanded the Rule of Law accordion in country detail, exposing the display-only civic-norms context block (Cultural Tightness–Looseness, EPI Waste Management, WHR expected wallet return). Source: `Projects/Civic-Norms-Context/IMPLEMENTATION_PLAN.md` Phase 5.
 
-**Trigger (planned):** On expand/interaction with the civic-norms context block in `DimensionBreakdown.tsx` (component does not exist yet).
+**Trigger:** Fires when the Rule of Law accordion panel mounts (Base UI unmounts closed panels, so mount = expand). Fires at most once per country-detail pageview, even if the block renders zero rows (`rows_shown: 0` records exposure with no data).
 
 | Property | Type | Example | Notes |
 |---|---|---|---|
-| `country_code` | string | `"DEU"` | ISO alpha-3, per convention in §10 |
+| `country_code` | string | `"DE"` | ISO alpha-2, uppercase. Deviation from the §10 alpha-3 convention: the app carries only alpha-2 (`CountryScores.iso`, URLs, DB lookups) and the pre-existing `country_detail_view` event already sends alpha-2 — matching in-app reality beats an event-local alpha-3 mapping. |
 | `country_name` | string | `"Germany"` | |
-| `rows_shown` | number | `2` | Count of the 2–3 rows that had data for this country |
-| `time_to_expand_ms` | number | `4200` | Optional — ms from block render to expand |
+| `rows_shown` | number | `2` | Count of the 0–3 rows that had data for this country |
+| `time_to_expand_ms` | number | `4200` | ms from `DimensionBreakdown` mount to first expand |
 
-**Implementation:** Typed helper `trackCivicNormsContextExpanded()` exported from `src/lib/analytics.ts`. No call site exists yet — the Civic-Norms-Context project wires it into `DimensionBreakdown.tsx` when that UI ships.
+**Implementation:** Typed helper `trackCivicNormsContextExpanded()` in `src/lib/analytics.ts`; call site in `src/components/country/DimensionBreakdown.tsx` (`CivicNormsContext` mount effect → fire-once handler in `DimensionBreakdown`).
 
 ---
 

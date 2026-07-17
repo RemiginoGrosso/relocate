@@ -76,6 +76,27 @@ interface PisaEntry {
   data_year?: number;
 }
 
+// Display-only civic-norms context sources — never scored (see Projects/Civic-Norms-Context).
+// Tightness stores a band code (1 = Loose, 2 = Moderate, 3 = Tight), never the raw journal score.
+interface TightnessEntry {
+  iso_alpha2: string;
+  band: 1 | 2 | 3;
+  source: 'gelfand' | 'uz';
+  year: number;
+}
+
+interface EpiWasteEntry {
+  iso_alpha2: string;
+  waste_mgmt_score: number;
+  epi_year: number;
+}
+
+interface WhrWalletReturnEntry {
+  iso_alpha2: string;
+  wallet_return_pct: number;
+  whr_year: number;
+}
+
 type ExternalIndices = Record<string, Record<string, number>>;
 
 interface ClimateEntry {
@@ -198,6 +219,77 @@ async function seedGallupMai(data: GallupMaiEntry[], countryIds: Record<string, 
     .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
   if (error) throw new Error(`Gallup MAI seed failed: ${error.message}`);
   console.log(`  Gallup MAI seeded: ${rows.length} rows.`);
+}
+
+async function seedTightness(data: TightnessEntry[], countryIds: Record<string, string>) {
+  console.log(`Seeding Cultural Tightness–Looseness data for ${data.length} countries...`);
+  const rows = data
+    .filter((t) => countryIds[t.iso_alpha2])
+    .map((t) => ({
+      country_id: countryIds[t.iso_alpha2],
+      source: t.source,
+      indicator: 'tightness',
+      value: t.band,
+      unit: 'band_1_3',
+      year: t.year,
+      source_url:
+        t.source === 'gelfand'
+          ? 'https://www.science.org/doi/10.1126/science.1197754'
+          : 'https://doi.org/10.1177/0022022114563611',
+      fetched_at: '2026-07-16T00:00:00Z',
+    }));
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`Tightness seed failed: ${error.message}`);
+  console.log(`  Tightness seeded: ${rows.length} rows.`);
+}
+
+async function seedEpiWaste(data: EpiWasteEntry[], countryIds: Record<string, string>) {
+  console.log(`Seeding EPI Waste Management data for ${data.length} countries...`);
+  const rows = data
+    .filter((e) => countryIds[e.iso_alpha2])
+    .map((e) => ({
+      country_id: countryIds[e.iso_alpha2],
+      source: 'epi',
+      indicator: 'waste_mgmt',
+      value: e.waste_mgmt_score,
+      unit: 'index_0_100',
+      year: e.epi_year,
+      source_url: 'https://epi.yale.edu',
+      fetched_at: '2026-07-16T00:00:00Z',
+    }));
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`EPI Waste seed failed: ${error.message}`);
+  console.log(`  EPI Waste seeded: ${rows.length} rows.`);
+}
+
+// WHR editions republish the one-off 2019 Lloyd's Register Foundation World Risk Poll
+// wallet wave (WHR25 Ch.2 Appendix B). Store the survey vintage as `year` so the UI's
+// "as of" label is honest — the whr_year field in the JSON records the edition consulted.
+const WHR_WALLET_SURVEY_YEAR = 2019;
+
+async function seedWhrWalletReturn(data: WhrWalletReturnEntry[], countryIds: Record<string, string>) {
+  console.log(`Seeding WHR wallet-return data for ${data.length} countries...`);
+  const rows = data
+    .filter((w) => countryIds[w.iso_alpha2])
+    .map((w) => ({
+      country_id: countryIds[w.iso_alpha2],
+      source: 'whr',
+      indicator: 'wallet_return',
+      value: w.wallet_return_pct,
+      unit: 'pct',
+      year: WHR_WALLET_SURVEY_YEAR,
+      source_url: 'https://files.worldhappiness.report/WHR25_Ch02_Appendix_B.pdf',
+      fetched_at: '2026-07-16T00:00:00Z',
+    }));
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`WHR wallet-return seed failed: ${error.message}`);
+  console.log(`  WHR wallet-return seeded: ${rows.length} rows.`);
 }
 
 async function seedNumbeoCrime(data: NumbeoCrimeEntry[], countryIds: Record<string, string>) {
@@ -377,6 +469,9 @@ async function main() {
   const pisa = loadJson<PisaEntry[]>('pisa.json');
   const externalIndices = loadJson<ExternalIndices>('external-indices.json');
   const climateData = loadJson<ClimateData>('climate.json');
+  const tightness = loadJson<TightnessEntry[]>('tightness-looseness.json');
+  const epiWaste = loadJson<EpiWasteEntry[]>('epi-waste-management.json');
+  const whrWallet = loadJson<WhrWalletReturnEntry[]>('whr-wallet-return.json');
 
   await seedCountries(countries);
   await seedDimensions();
@@ -392,6 +487,9 @@ async function main() {
   await seedPisa(pisa, countryIds);
   await seedExternalIndices(externalIndices, countryIds);
   await seedClimate(climateData, countryIds);
+  await seedTightness(tightness, countryIds);
+  await seedEpiWaste(epiWaste, countryIds);
+  await seedWhrWalletReturn(whrWallet, countryIds);
 
   console.log('\nSeed complete. Run compute-normalised.ts next to populate normalised_scores.');
 }

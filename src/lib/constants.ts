@@ -521,6 +521,10 @@ export const INDICATOR_TOOLTIPS: Record<string, string> = {
   'ef.epi_score': 'How well adults in the country speak English as a second language. Based on standardised test results.',
   'pew.govt_restrictions': 'Government laws, policies, and actions that restrict religious practice. Lower is more free.',
   'pew.social_hostility': 'Hostility toward religion by individuals or social groups — harassment, violence, discrimination. Lower is more tolerant.',
+  'gelfand.tightness': 'How strictly a society enforces its social norms and expects conformity. Tight societies have low tolerance for rule-bending; loose societies are more permissive. Neither is better — it is a matter of personal fit.',
+  'uz.tightness': 'How strictly a society enforces its social norms and expects conformity. Tight societies have low tolerance for rule-bending; loose societies are more permissive. Neither is better — it is a matter of personal fit.',
+  'epi.waste_mgmt': 'How well a country manages waste and recycling infrastructure. Strongly tied to national wealth, so it reflects state capacity as much as citizen behaviour.',
+  'whr.wallet_return': 'The share of people who believe a lost wallet would be returned if found by a stranger (2019 World Risk Poll, via the World Happiness Report). A measure of perceived trust, not a tested outcome.',
 };
 
 export const HEALTHCARE_SYSTEM_LABELS: Record<HealthcareSystemType, { label: string; short: string; tooltip: string; color: string }> = {

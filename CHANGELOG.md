@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.26 — 2026-07-17
+
+### Added
+- **Civic-norms context block in the Rule of Law country-detail accordion** — three display-only rows, never scored (zero scoring impact verified: `src/lib/scoring.ts` untouched, grepped clean for `gelfand|uz|tightness|waste_mgmt|wallet_return`): Cultural Tightness–Looseness (Gelfand 2011, falling back to the Uz 2015 estimate — categorical Loose/Moderate/Tight chip, 50/60 country coverage), Yale EPI 2026 Waste Management (60/60 coverage, with an inline caveat that it correlates with national wealth as much as citizen behaviour), and WHR expected wallet return (55/60 coverage, sourced from the 2019 World Risk Poll wave via WHR25 Ch.2 Appendix B — a perceived-trust caveat is shown, and the 2019 vintage is intentional, not stale data). New `CivicNormsContext` component in `DimensionBreakdown.tsx`, fires `civic_norms_context_expanded` once per country-detail pageview on Rule of Law accordion mount (feeds the 2026-08-15 standalone-dimension analytics gate).
+- **Methodology page** — new "Context data — shown, never scored" section explaining the same three rows plus the pre-existing Gallup Migrant Acceptance Index context under Warmth.
+- Three new seed files (`src/lib/seed/tightness-looseness.json`, `epi-waste-management.json`, `whr-wallet-return.json`) and matching seed functions in `scripts/seed.ts`. Not re-run for this release — production `raw_indices`/`normalised_scores` were already seeded and verified byte-identical on 2026-07-16.
+
+### Note
+- Yale EPI data is licensed CC BY-NC-SA 4.0 (non-commercial only). If Relocator ever monetizes, the EPI Waste Management row must be removed or re-sourced.
+
 ## 0.1.25 — 2026-07-13
 
 ### Added
