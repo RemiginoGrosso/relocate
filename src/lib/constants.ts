@@ -573,3 +573,52 @@ export const HEALTHCARE_SYSTEM_MAP: Record<string, HealthcareSystemType> = {
   PA: 'budget_private', PH: 'budget_private', RO: 'budget_private', ZA: 'budget_private',
   TH: 'budget_private', VN: 'budget_private',
 };
+
+export const DIMENSION_SLUGS: Record<DimensionKey, string> = {
+  purchasing_power: 'purchasing-power',
+  civic_culture: 'rule-of-law',
+  safety: 'safety',
+  warmth: 'warmth',
+  school_culture: 'school-culture',
+  healthcare: 'healthcare',
+  infrastructure: 'infrastructure',
+  climate: 'climate',
+  religious_freedom: 'religious-freedom',
+  english_proficiency: 'english-proficiency',
+};
+
+export const SLUG_TO_DIMENSION: Record<string, DimensionKey> = Object.fromEntries(
+  Object.entries(DIMENSION_SLUGS).map(([k, v]) => [v, k as DimensionKey]),
+) as Record<string, DimensionKey>;
+
+export const DIMENSION_SEO_TITLES: Record<DimensionKey, string> = {
+  purchasing_power: 'Most Affordable Countries to Live In',
+  civic_culture: 'Best Countries for Rule of Law',
+  safety: 'Safest Countries to Live In',
+  warmth: 'Most Welcoming Countries for Expats',
+  school_culture: 'Best Countries for Schools and Education',
+  healthcare: 'Best Countries for Healthcare',
+  infrastructure: 'Best Countries for Infrastructure',
+  climate: 'Best Countries by Climate',
+  religious_freedom: 'Best Countries for Religious Freedom',
+  english_proficiency: 'Best Countries for English Proficiency',
+};
+
+export const REGION_SLUGS: Record<Region, string> = {
+  'Western Europe': 'western-europe',
+  'Northern Europe': 'northern-europe',
+  'Southern Europe': 'southern-europe',
+  'Eastern Europe': 'eastern-europe',
+  'North America': 'north-america',
+  'Latin America': 'latin-america',
+  'East Asia': 'east-asia',
+  'Southeast Asia': 'southeast-asia',
+  'South Asia': 'south-asia',
+  'Middle East': 'middle-east',
+  'Oceania': 'oceania',
+  'Africa': 'africa',
+};
+
+export const SLUG_TO_REGION: Record<string, Region> = Object.fromEntries(
+  Object.entries(REGION_SLUGS).map(([k, v]) => [v, k as Region]),
+) as Record<string, Region>;

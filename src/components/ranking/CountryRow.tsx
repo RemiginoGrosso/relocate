@@ -82,9 +82,9 @@ export function CountryRow({ country, weights, singleDimension, selectedCity, on
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="truncate text-lg font-medium text-zinc-900">
+            <h2 className="truncate text-lg font-medium text-zinc-900">
               {country.name}
-            </h3>
+            </h2>
             <div className="flex shrink-0 items-center gap-2">
               {displayScore !== null ? (
                 <ScoreBadge score={displayScore} />

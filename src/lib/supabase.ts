@@ -129,3 +129,14 @@ export async function fetchCountryDetail(iso: string): Promise<CountryDetail | n
 
   return { country, rawIndices, climate };
 }
+
+export async function fetchLatestDataDate(): Promise<Date> {
+  const { data } = await supabase
+    .from('raw_indices')
+    .select('fetched_at')
+    .order('fetched_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  return data?.fetched_at ? new Date(data.fetched_at) : new Date('2026-07-01');
+}

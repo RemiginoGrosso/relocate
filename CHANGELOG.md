@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.1.29 — 2026-08-02
+
+### Added
+- **SEO/AEO/GEO content layer** — programmatic content generation and structured data across the entire app. From ~63 indexed URLs to ~263.
+- **Country prose generator** (`src/lib/country-prose.ts`) — unique data-backed summaries for all 60 country pages using Claim-Evidence-Source pattern. Per-dimension prose blocks with rank, indicator values, interpretations, and source attribution.
+- **Per-country FAQ schema** (`src/lib/country-faq.ts`) — ~7 FAQs per country (420 total Q&A pairs) with FAQPage JSON-LD. Covers safety, healthcare, affordability, warmth, climate, schools, English proficiency.
+- **10 dimension landing pages** (`/best-countries-for/[dimension]`) — "Best Countries for Safety 2026", "Best Countries for Healthcare 2026", etc. Top 15 + bottom 5 rankings, methodology section, FAQ schema. SSG with ISR.
+- **12 region pages** (`/region/[slug]`) — ranked countries per region with dimension delta table (region vs global average), limited-data section, comparison pair links. SSG with ISR.
+- **~166 comparison pages** (`/compare/[pair]`) — same-region country pairs with composite scores, per-dimension delta table, 3 FAQs. Limited-data caveats when applicable.
+- **Standalone FAQ page** (`/faq`) — consolidates methodology FAQs + 7 general FAQs with FAQPage JSON-LD.
+- **Glossary page** (`/glossary`) — 13 index/source definitions (EF EPI, GPI, HAQ, IVR, IMD, etc.) with DefinedTermSet JSON-LD and dimension cross-links.
+- **FooterLinks component** (`src/components/seo/FooterLinks.tsx`) — internal link mesh with dimension pills, region pills, and utility links. Self-link filtering via `currentDimension` prop. Added to ranking, methodology, dimension, region, FAQ, glossary, compare, and country detail pages.
+- **DataFreshnessNote component** (`src/components/seo/DataFreshnessNote.tsx`) — `<time>` element with ISO datetime for data freshness signals.
+- **Place JSON-LD** on country pages — coverage-aware description (limited-data countries get "partial composite score" phrasing).
+- **BreadcrumbList JSON-LD** on every page, using `BASE_URL` constant.
+- **Related countries section** on country detail pages — 4-5 same-region countries with scores and links.
+- **Dynamic sitemap** — `fetchLatestDataDate()` for `lastModified`, all new page types included.
+
+### Changed
+- **DimensionBreakdown accordion** — migrated from Base UI `Accordion` to native `<details>`/`<summary>` for SSR crawlability. Collapsed content now appears in static HTML for search engine crawlers. Chevron icons toggle via `group-open:` Tailwind classes.
+- **BASE_URL pattern** — all JSON-LD URLs across 12 page files use `process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocateindex.com'` instead of hardcoded domain.
+- **Dynamic year in SEO titles** — dimension, region, and comparison page titles use `new Date().getFullYear()` instead of hardcoded "2026".
+- **Heading hierarchy fix** — `CountryRow.tsx` changed from `<h3>` to `<h2>` for country names on ranking page.
+- **Country detail** — `CountryDetailView.tsx` uses `<main>` wrapper, renders prose summary and FAQ accordion.
+- **Methodology page** — added internal links, FooterLinks, exported `METHODOLOGY_FAQS` for reuse by FAQ page.
+
+### Fixed
+- **Region page limited-data ranking** — countries with `coverageRatio < 0.7` are now shown in a separate "Limited data" section with dashed borders and no rank number, instead of ranking alongside fully-scored countries.
+- **Compare page limited-data awareness** — pages now show an amber caveat when either compared country has limited data, and FAQ answers include the caveat.
+- **Country metadata for limited-data countries** — `generateMetadata()` now produces "has limited data" description instead of a bare score.
+- **Analytics regression** — `civic_norms_context_expanded` event was firing on mount after accordion migration (native `<details>` keeps children in DOM). Fixed to fire only on `<details>` toggle-open via `onToggle` handler.
+
 ## 0.1.28 — 2026-08-01
 
 ### Changed

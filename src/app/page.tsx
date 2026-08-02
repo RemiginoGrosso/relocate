@@ -11,6 +11,8 @@ import {
   CardDescription,
 } from '@/components/ui/card';
 
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocateindex.com';
+
 export const metadata: Metadata = {
   title: 'Relocate Index — Find your ideal country',
   description:
@@ -105,7 +107,7 @@ export default function Home() {
         '@context': 'https://schema.org',
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://relocateindex.com' },
+          { '@type': 'ListItem', position: 1, name: 'Home', item: BASE_URL },
         ],
       }} />
       {/* Minimal nav — Header returns null on "/" so we render our own */}

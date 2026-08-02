@@ -1,13 +1,7 @@
 'use client';
 
-import { useEffect, useRef, type ReactNode } from 'react';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
-import { AlertTriangle, ArrowLeftRight } from 'lucide-react';
+import { useRef, type ReactNode } from 'react';
+import { AlertTriangle, ArrowLeftRight, ChevronDownIcon, ChevronUpIcon, ExternalLink } from 'lucide-react';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
@@ -81,7 +75,7 @@ function ContextRowLabel({ indKey, children }: { indKey: string; children: React
 
 // Display-only behavioural-civicness context inside the Rule of Law accordion.
 // None of these sources enter scoring (decisions/2026-07-12-civic-culture-behavioural-review.md).
-function CivicNormsContext({ rawIndices, onSeen }: { rawIndices: RawIndex[]; onSeen: (rowsShown: number) => void }) {
+function CivicNormsContext({ rawIndices }: { rawIndices: RawIndex[] }) {
   const tightness = rawIndices.find(
     (r) => (r.source === 'gelfand' || r.source === 'uz') && r.indicator === 'tightness' && r.value != null,
   );
@@ -92,13 +86,6 @@ function CivicNormsContext({ rawIndices, onSeen }: { rawIndices: RawIndex[]; onS
 
   const band = tightness?.value != null ? TIGHTNESS_BANDS[tightness.value] : undefined;
   const rowsShown = [tightness && band, waste, wallet].filter(Boolean).length;
-
-  const seenRef = useRef(false);
-  useEffect(() => {
-    if (seenRef.current) return;
-    seenRef.current = true;
-    onSeen(rowsShown);
-  }, [onSeen, rowsShown]);
 
   if (rowsShown === 0) return null;
 
@@ -209,16 +196,28 @@ function ClimateSection({ climate, selectedCity, countryIso, countryName }: Clim
   );
 }
 
+function countCivicNormsRows(rawIndices: RawIndex[]): number {
+  const tightness = rawIndices.find(
+    (r) => (r.source === 'gelfand' || r.source === 'uz') && r.indicator === 'tightness' && r.value != null,
+  );
+  const band = tightness?.value != null ? TIGHTNESS_BANDS[tightness.value] : undefined;
+  const waste = getRawValue(rawIndices, 'epi', 'waste_mgmt')?.value != null;
+  const wallet = getRawValue(rawIndices, 'whr', 'wallet_return')?.value != null;
+  return [tightness && band, waste, wallet].filter(Boolean).length;
+}
+
 export function DimensionBreakdown({ country, rawIndices, climate, selectedCity }: DimensionBreakdownProps) {
   const mountedAtRef = useRef(Date.now());
   const civicNormsFiredRef = useRef(false);
-  const handleCivicNormsSeen = (rowsShown: number) => {
-    if (civicNormsFiredRef.current) return;
+  const civicNormsRowCount = countCivicNormsRows(rawIndices);
+
+  const handleCivicDetailsToggle = (e: React.ToggleEvent<HTMLDetailsElement>) => {
+    if (!e.currentTarget.open || civicNormsFiredRef.current) return;
     civicNormsFiredRef.current = true;
     trackCivicNormsContextExpanded({
       country_code: country.iso.toUpperCase(),
       country_name: country.name,
-      rows_shown: rowsShown,
+      rows_shown: civicNormsRowCount,
       time_to_expand_ms: Date.now() - mountedAtRef.current,
     });
   };
@@ -235,7 +234,7 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
   })();
 
   return (
-    <Accordion>
+    <div className="flex w-full flex-col">
       {DIMENSIONS.map((dim) => {
         const dimScore = country.dimensionScores[dim.key];
         const indicators = DIMENSION_INDICATORS[dim.key];
@@ -252,8 +251,10 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
         const isNullWithRawData = !hasScore && hasAnyRawData;
 
         return (
-          <AccordionItem key={dim.key} value={dim.key}>
-            <AccordionTrigger className="gap-3">
+          <details key={dim.key} className="group not-last:border-b" onToggle={dim.key === 'civic_culture' ? handleCivicDetailsToggle : undefined}>
+            <summary
+              className="relative flex cursor-pointer list-none items-start justify-between gap-3 rounded-lg border border-transparent py-2.5 text-left text-sm font-medium outline-none transition-all hover:underline focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [&::-webkit-details-marker]:hidden"
+            >
               <div className="flex flex-1 items-center justify-between pr-2">
                 <span>{dim.name}</span>
                 <span className="flex items-center gap-1.5">
@@ -277,8 +278,10 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                   )}
                 </span>
               </div>
-            </AccordionTrigger>
-            <AccordionContent>
+              <ChevronDownIcon size={16} className="pointer-events-none mt-0.5 shrink-0 text-zinc-400 group-open:hidden" />
+              <ChevronUpIcon size={16} className="pointer-events-none mt-0.5 hidden shrink-0 text-zinc-400 group-open:inline" />
+            </summary>
+            <div className="pb-2.5 text-sm [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4">
               <div className="flex flex-col gap-3 px-2">
                 <p className="text-xs text-zinc-500">{dim.description}</p>
                 <p className="text-xs text-zinc-600 leading-relaxed">{dim.context}</p>
@@ -320,6 +323,18 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                           <span className="shrink-0 text-right text-zinc-700 tabular-nums">
                             {raw ? formatValue(raw) : 'N/A'}
                             {raw?.year ? ` (${raw.year})` : ''}
+                            {raw?.sourceUrl && (
+                              <a
+                                href={raw.sourceUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="ml-1 inline-block align-middle text-zinc-400 hover:text-teal-700 transition-colors"
+                                aria-label={`Source: ${INDICATOR_LABELS[indKey] ?? indKey}`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink size={11} />
+                              </a>
+                            )}
                             {interpretation && (
                               <span className="block text-zinc-400">{interpretation}</span>
                             )}
@@ -331,7 +346,7 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                 )}
 
                 {dim.key === 'civic_culture' && (
-                  <CivicNormsContext rawIndices={rawIndices} onSeen={handleCivicNormsSeen} />
+                  <CivicNormsContext rawIndices={rawIndices} />
                 )}
 
                 {dim.key === 'warmth' && warmthMismatch && warmthScore?.components && (() => {
@@ -402,10 +417,10 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                   )}
                 </details>
               </div>
-            </AccordionContent>
-          </AccordionItem>
+            </div>
+          </details>
         );
       })}
-    </Accordion>
+    </div>
   );
 }
