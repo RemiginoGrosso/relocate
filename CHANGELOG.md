@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.27 — 2026-08-01
+
+### Fixed
+- **US warmth score now available** — added InterNations Expat Insider 2025 Ease of Settling In rank (25th) to seed data. US warmth computes at 59.51 (IVR 68 × 0.40 + InterNations 53.85 × 0.60). Known caveat: 2025 survey covers 46 destinations but normalisation denominator is still 53 (2024 vintage); full refresh tracked in backlog.
+- **Climate winter temperature penalties now apply correctly** — `avg_temp_winter` was stored in the `climate_data` DB table but never written to `component_scores` in `normalised_scores`, so `applyClimatePreference()` couldn't apply winter penalties for countries without explicit city selection. Fixed in both `compute-normalised.ts` and the `recompute-scores` Edge Function. Base (no-preference) climate scores unchanged.
+- **Default city fallback for large countries** — `applyClimatePreference()` now uses the default city's climate data for ~35 countries with city-level data when a climate preference is active, even if the user hasn't interacted with the city picker. Previously, untouched city dropdowns caused the function to fall back to meaningless national averages (e.g., US national avg 14.5°C represents no actual city). No-preference scores unchanged.
+
+### Note
+- InterNations 2025 audit: all 14 other null countries confirmed absent from 2025 index. NZ, CR, IN carry 2024 ranks but dropped from 2025 (below 50-respondent threshold) — left as-is pending full refresh decision.
+
 ## 0.1.26 — 2026-07-17
 
 ### Added

@@ -7,7 +7,8 @@
     "gpi_source": "Global Peace Index 2025 via worldpopulationreview.com",
     "ef_epi_source": "EF EPI 2025 via Wikipedia (EF Education First)",
     "imd_source": "IMD Infrastructure 2024 via worldpopulationreview.com",
-    "internations_source": "InterNations Expat Insider 2024, verified ranks from audit",
+    "internations_source": "InterNations Expat Insider 2024, verified ranks from audit. Exception: US is Expat Insider 2025 Ease of Settling In Index (rank 25 of 46 — that index shrank from 53 to 46 destinations in 2025; normalisation in compute-normalised.ts still divides by (53-1), so the US warmth component is a slight under-normalisation until the full dataset is refreshed to 2025).",
+    "internations_2025_audit_note": "2026-08-01: cross-checked all 60 countries against Expat Insider 2025 Ease of Settling In Index (46 destinations, internations.org/expat-insider/2025/ease-of-settling-in-2025). US gained coverage (rank 25) — added. All other currently-null countries (EE, HR, RO, LT, AR, UY, TW, SK, SI, LV, IS, BG, MA, PE) remain uncovered in 2025 too — null confirmed correct. Note: NZ, CR, IN carry existing 2024-vintage ranks but dropped out of the 2025 index (below the 50-respondent sample threshold) — not nulled here since that would be a larger scope-of-data-vintage change than this pass covers; flagged for a future full 2025 refresh decision.",
     "pew_status": "NOT YET SOURCED — requires manual entry from Pew appendix download",
     "total_countries": 60
   },
@@ -841,7 +842,7 @@
     "worldbank.wgi_rule_of_law": 91.0,
     "worldbank.wgi_corruption_control": 86.0,
     "gpi.gpi_score": 2.27,
-    "internations.ease_rank": null,
+    "internations.ease_rank": 25,
     "worldbank.who_uhc_coverage": 90,
     "worldbank.oecd_ppp_aic": 80450.0,
     "worldbank.price_level_ratio": 1.05,

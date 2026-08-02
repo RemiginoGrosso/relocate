@@ -544,6 +544,7 @@ Deno.serve(async (req) => {
           confidence: "high",
           component_scores: {
             avg_temp: climateRow.avg_temp_annual,
+            avg_temp_winter: climateRow.avg_temp_winter,
             rain_days: climateRow.rain_days_annual,
             sunshine_hours: climateRow.sunshine_hours_annual,
           },

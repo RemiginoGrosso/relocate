@@ -32,6 +32,7 @@ interface CountryRow {
 interface ClimateRow {
   country_id: string;
   avg_temp_annual: number | null;
+  avg_temp_winter: number | null;
   sunshine_hours_annual: number | null;
   rain_days_annual: number | null;
 }
@@ -76,7 +77,7 @@ async function main() {
 
   const { data: climateData } = await supabase
     .from('climate_data')
-    .select('country_id, avg_temp_annual, sunshine_hours_annual, rain_days_annual');
+    .select('country_id, avg_temp_annual, avg_temp_winter, sunshine_hours_annual, rain_days_annual');
 
   if (!countries || !rawIndices) {
     console.error('No data found. Run seed.ts first.');
@@ -296,6 +297,7 @@ async function main() {
         confidence: 'high',
         component_scores: {
           avg_temp: climateRow.avg_temp_annual,
+          avg_temp_winter: climateRow.avg_temp_winter,
           rain_days: climateRow.rain_days_annual,
           sunshine_hours: climateRow.sunshine_hours_annual,
         },

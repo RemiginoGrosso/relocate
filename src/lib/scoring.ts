@@ -1,6 +1,6 @@
 import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, RankedCountry, ScoreTier, UserWeights } from './types';
 import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MAX_NULL_DIMENSIONS, SCORE_THRESHOLDS } from './constants';
-import { getCityClimate } from './large-countries';
+import { getCityClimate, getDefaultCity } from './large-countries';
 
 export function normaliseWeights(
   weights: UserWeights,
@@ -130,7 +130,7 @@ export function applyClimatePreference(
     const climateDim = c.dimensionScores.climate;
     if (!climateDim?.components) return c;
 
-    const cityName = selectedCities[c.iso.toUpperCase()];
+    const cityName = selectedCities[c.iso.toUpperCase()] ?? (hasPreference ? getDefaultCity(c.iso) : null);
     const cityClimate = cityName ? getCityClimate(c.iso, cityName) : null;
 
     const avgTemp = cityClimate?.avgTemp ?? climateDim.components.avg_temp ?? null;
