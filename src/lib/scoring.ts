@@ -1,5 +1,5 @@
 import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, RankedCountry, ScoreTier, UserWeights } from './types';
-import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MAX_NULL_DIMENSIONS, SCORE_THRESHOLDS } from './constants';
+import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MIN_COVERAGE_RATIO, SCORE_THRESHOLDS } from './constants';
 import { getCityClimate, getDefaultCity } from './large-countries';
 
 export function normaliseWeights(
@@ -19,9 +19,10 @@ export function normaliseWeights(
 export function computeComposite(
   country: CountryScores,
   normWeights: Partial<Record<DimensionKey, number>>,
-): { score: number; nullDimensions: DimensionKey[] } {
+): { score: number; nullDimensions: DimensionKey[]; coverageRatio: number } {
   let weightedSum = 0;
   let activeWeightSum = 0;
+  const totalWeightSum = Object.values(normWeights).reduce((s, w) => s + (w ?? 0), 0);
   const nullDimensions: DimensionKey[] = [];
 
   for (const [key, weight] of Object.entries(normWeights) as [DimensionKey, number][]) {
@@ -34,10 +35,11 @@ export function computeComposite(
     }
   }
 
-  if (activeWeightSum === 0) return { score: 0, nullDimensions };
+  if (activeWeightSum === 0) return { score: 0, nullDimensions, coverageRatio: 0 };
 
   const score = Math.round((weightedSum / activeWeightSum) * 10) / 10;
-  return { score, nullDimensions };
+  const coverageRatio = totalWeightSum > 0 ? activeWeightSum / totalWeightSum : 0;
+  return { score, nullDimensions, coverageRatio };
 }
 
 export function rankCountries(
@@ -51,31 +53,35 @@ export function rankCountries(
     Object.entries(normWeights) as [DimensionKey, number][]
   ).sort((a, b) => b[1] - a[1])[0]?.[0];
 
-  const ranked = countries
+  const scored = countries
     .map((country) => {
-      const { score, nullDimensions } = computeComposite(country, normWeights);
+      const { score, nullDimensions, coverageRatio } = computeComposite(country, normWeights);
       return {
         ...country,
         compositeScore: score,
         rank: 0,
         nullDimensions,
-        hasLimitedData: nullDimensions.length > MAX_NULL_DIMENSIONS,
+        hasLimitedData: coverageRatio < MIN_COVERAGE_RATIO,
+        coverageRatio,
       };
-    })
-    .sort((a, b) => {
-      if (b.compositeScore !== a.compositeScore) {
-        return b.compositeScore - a.compositeScore;
-      }
-      if (!highestWeightKey) return 0;
-      const aTop = a.dimensionScores[highestWeightKey]?.score ?? 0;
-      const bTop = b.dimensionScores[highestWeightKey]?.score ?? 0;
-      return bTop - aTop;
     });
 
-  return ranked.map((country, i) => ({
-    ...country,
-    rank: i + 1,
-  }));
+  const main = scored.filter((c) => !c.hasLimitedData);
+  const limited = scored.filter((c) => c.hasLimitedData);
+
+  const sortFn = (a: typeof scored[0], b: typeof scored[0]) => {
+    if (b.compositeScore !== a.compositeScore) return b.compositeScore - a.compositeScore;
+    if (!highestWeightKey) return 0;
+    return (b.dimensionScores[highestWeightKey]?.score ?? 0) - (a.dimensionScores[highestWeightKey]?.score ?? 0);
+  };
+
+  main.sort(sortFn);
+  limited.sort(sortFn);
+
+  return [
+    ...main.map((c, i) => ({ ...c, rank: i + 1 })),
+    ...limited.map((c) => ({ ...c, rank: 0 })),
+  ];
 }
 
 export function getScoreTier(score: number): ScoreTier {

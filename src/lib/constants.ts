@@ -171,6 +171,7 @@ export const ENGLISH_NATIVE_COUNTRIES = ['GB', 'IE', 'AU', 'NZ', 'CA', 'US'] as 
 export const WARMTH_MISMATCH_THRESHOLD = 30;
 
 export const MAX_NULL_DIMENSIONS = 3;
+export const MIN_COVERAGE_RATIO = 0.7;
 
 export const CLIMATE_REFERENCE_TEMP = 20;
 

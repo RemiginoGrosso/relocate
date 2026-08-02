@@ -48,6 +48,7 @@ export function CountryList({ countries, weights, climateType, selectedCities, r
         rank: i + 1,
         nullDimensions: dimScore?.score == null ? [rankedBy] : [],
         hasLimitedData: false,
+        coverageRatio: 1,
       };
     });
   }, [adjusted, weights, rankedBy]);
@@ -62,16 +63,27 @@ export function CountryList({ countries, weights, climateType, selectedCities, r
   const singleDimension = rankedBy !== 'overall' ? rankedBy : undefined;
 
   const { rankedCountries, unrankedCountries } = useMemo(() => {
-    if (!singleDimension) return { rankedCountries: filtered, unrankedCountries: [] as RankedCountry[] };
+    if (singleDimension) {
+      const rc: RankedCountry[] = [];
+      const uc: RankedCountry[] = [];
+      for (const c of filtered) {
+        const dimScore = c.dimensionScores[singleDimension];
+        const isUnranked = dimScore?.score == null || dimScore.confidence === 'medium';
+        if (isUnranked) {
+          uc.push(c);
+        } else {
+          rc.push({ ...c, rank: rc.length + 1 });
+        }
+      }
+      return { rankedCountries: rc, unrankedCountries: uc };
+    }
     const rc: RankedCountry[] = [];
     const uc: RankedCountry[] = [];
     for (const c of filtered) {
-      const dimScore = c.dimensionScores[singleDimension];
-      const isUnranked = dimScore?.score == null || dimScore.confidence === 'medium';
-      if (isUnranked) {
+      if (c.hasLimitedData) {
         uc.push(c);
       } else {
-        rc.push({ ...c, rank: rc.length + 1 });
+        rc.push(c);
       }
     }
     return { rankedCountries: rc, unrankedCountries: uc };
@@ -104,7 +116,7 @@ export function CountryList({ countries, weights, climateType, selectedCities, r
               className="text-teal-700 underline underline-offset-2 hover:text-teal-800"
               onClick={() => unrankedRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
             >
-              {unrankedCountries.length} not ranked
+              {unrankedCountries.length} {singleDimension ? 'not ranked' : 'limited data'}
             </button>
           </>
         )}
@@ -126,8 +138,14 @@ export function CountryList({ countries, weights, climateType, selectedCities, r
       </div>
       {unrankedCountries.length > 0 && (
         <div ref={unrankedRef} className="mt-2 scroll-mt-4 border-t border-zinc-200 pt-4">
-          <p className="text-sm font-medium text-zinc-500">Not ranked for {dimensionName}</p>
-          <p className="mb-3 text-xs text-zinc-400">These countries don&apos;t have enough comparable data for this dimension.</p>
+          <p className="text-sm font-medium text-zinc-500">
+            {singleDimension ? `Not ranked for ${dimensionName}` : 'Limited data'}
+          </p>
+          <p className="mb-3 text-xs text-zinc-400">
+            {singleDimension
+              ? "These countries don’t have enough comparable data for this dimension."
+              : "These countries are missing too many of the dimensions you care about to rank fairly. Scores shown are based on available data only."}
+          </p>
           <div className="flex flex-col gap-3">
             {unrankedCountries.map((country) => (
               <CountryRow

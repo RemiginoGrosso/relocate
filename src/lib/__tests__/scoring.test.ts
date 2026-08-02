@@ -139,7 +139,7 @@ describe('rankCountries', () => {
     expect(ranked[2].rank).toBe(3);
   });
 
-  it('sets hasLimitedData flag when > 3 dimensions are null', () => {
+  it('sets hasLimitedData when coverage ratio < 0.7', () => {
     const country = makeCountry({
       scores: {
         purchasing_power: 50, civic_culture: 50, safety: 50, warmth: 50,
@@ -150,6 +150,37 @@ describe('rankCountries', () => {
     const ranked = rankCountries([country], DEFAULT_WEIGHTS);
     expect(ranked[0].hasLimitedData).toBe(true);
     expect(ranked[0].nullDimensions).toHaveLength(4);
+    expect(ranked[0].coverageRatio).toBeLessThan(0.7);
+  });
+
+  it('does not set hasLimitedData when coverage ratio >= 0.7', () => {
+    const country = makeCountry({
+      scores: {
+        purchasing_power: 50, civic_culture: 50, safety: 50, warmth: null,
+        school_culture: 50, healthcare: 50, infrastructure: 50, climate: 50,
+        religious_freedom: 50, english_proficiency: 50,
+      },
+    });
+    const ranked = rankCountries([country], DEFAULT_WEIGHTS);
+    expect(ranked[0].hasLimitedData).toBe(false);
+    expect(ranked[0].coverageRatio).toBeGreaterThanOrEqual(0.7);
+  });
+
+  it('sorts limited-data countries after fully-ranked ones', () => {
+    const full = makeCountry({
+      name: 'Full', iso: 'FU',
+      scores: { purchasing_power: 50, civic_culture: 50, safety: 50, warmth: 50, school_culture: 50, healthcare: 50, infrastructure: 50, climate: 50, religious_freedom: 50, english_proficiency: 50 },
+    });
+    const partial = makeCountry({
+      name: 'Partial', iso: 'PA',
+      scores: { purchasing_power: 90, civic_culture: 90, safety: 90, warmth: null, school_culture: null, healthcare: null, infrastructure: null, climate: null, religious_freedom: null, english_proficiency: null },
+    });
+    const ranked = rankCountries([partial, full], DEFAULT_WEIGHTS);
+    expect(ranked[0].name).toBe('Full');
+    expect(ranked[0].rank).toBe(1);
+    expect(ranked[1].name).toBe('Partial');
+    expect(ranked[1].rank).toBe(0);
+    expect(ranked[1].hasLimitedData).toBe(true);
   });
 
   it('returns empty array when all weights are zero', () => {

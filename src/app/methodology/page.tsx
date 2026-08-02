@@ -99,10 +99,13 @@ export default function MethodologyPage() {
           slider weight is normalised so they sum to 1.0. Dimensions set to 0
           are excluded. If a country is missing data for a dimension, that
           dimension is excluded and the remaining weights re-normalise
-          automatically. Countries missing more than 3 dimensions are flagged
-          as &quot;limited data.&quot; When a dimension has partial data (some
+          automatically. If the missing dimensions account for more than 30%
+          of your total weight budget, that country is moved to a separate
+          &quot;Limited data&quot; section below the main ranking — its partial
+          score is still shown, but it won&apos;t rank above countries with
+          more complete data. When a dimension has partial data (some
           but not all sources available), the available sources are reweighted
-          proportionally. These scores are marked as limited data.
+          proportionally.
         </p>
         <div className="mt-4 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3">
           <code className="text-sm text-zinc-700">

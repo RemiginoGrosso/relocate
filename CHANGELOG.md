@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.28 — 2026-08-01
+
+### Changed
+- **Weight-aware two-tier ranking** — countries missing more than 30% of the user's weighted dimensions are moved to a separate "Limited data" section below the main ranking. Partial composite scores are still shown, but limited-data countries no longer rank above fully-scored countries. Replaces the old count-based flag (>3 null dims). Taiwan (6/10 dims) was the primary case — it ranked #1 despite missing purchasing power, healthcare, warmth, and English proficiency.
+- **Coverage ratio** — `computeComposite()` now returns `coverageRatio` (active weight / total weight). Used by `rankCountries()` to split main vs. limited tiers. `MIN_COVERAGE_RATIO = 0.7` in constants.
+- **Methodology page** updated to explain the weight-aware limited data threshold.
+
 ## 0.1.27 — 2026-08-01
 
 ### Fixed

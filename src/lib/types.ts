@@ -51,6 +51,7 @@ export interface RankedCountry extends CountryScores {
   rank: number;
   nullDimensions: DimensionKey[];
   hasLimitedData: boolean;
+  coverageRatio: number;
 }
 
 export type UserWeights = Record<DimensionKey, number>;
