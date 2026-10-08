@@ -46,6 +46,7 @@ export const COUNTRIES: CountryRef[] = [
   { name: "Bulgaria", iso2: "BG", iso3: "BGR", capitalLat: 42.6977, capitalLon: 23.3219 },
   { name: "Cyprus", iso2: "CY", iso3: "CYP", capitalLat: 35.1856, capitalLon: 33.3823 },
   { name: "Canada", iso2: "CA", iso3: "CAN", capitalLat: 43.6532, capitalLon: -79.3832 },
+  { name: "United States", iso2: "US", iso3: "USA", capitalLat: 38.8951, capitalLon: -77.0369 },
   { name: "Mexico", iso2: "MX", iso3: "MEX", capitalLat: 19.4326, capitalLon: -99.1332 },
   { name: "Chile", iso2: "CL", iso3: "CHL", capitalLat: -33.4489, capitalLon: -70.6693 },
   { name: "Colombia", iso2: "CO", iso3: "COL", capitalLat: 4.711, capitalLon: -74.0721 },

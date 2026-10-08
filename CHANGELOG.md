@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.33 - 2026-10-08
+
+Methodology Iteration 30 (project repo, `KNOWLEDGE/03_Research/CHANGELOG.md`). No formula change.
+
+### Changed
+- **Live data refreshed to the 2025 World Bank editions** (WGI, GDP per capita PPP, price level ratio; revised UNODC homicide; 2024 out-of-pocket spend). Run by hand and checked instead of waiting for the unattended 1 November run. Purchasing power moved for 53 countries (largest: Iceland 28.6 to 14.5), Rule of Law for 41 (largest: United States 88.8 to 68.9). Parity after the run: 571 of 571 scores, 0 differences.
+
+### Fixed
+- The refresh functions' country list (`supabase/functions/_shared/countries.ts`) was missing the United States, so monthly refreshes never updated its World Bank figures. Added; `refresh-world-bank` (version 5) and `refresh-who` (version 4) deployed.
+
 ## 0.1.32 - 2026-10-08
 
 ### Added
