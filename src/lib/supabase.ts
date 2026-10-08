@@ -63,7 +63,8 @@ export async function fetchRawIndicesForCountries(
   const { data, error } = await supabase
     .from('raw_indices')
     .select('country_id, source, indicator, value, unit, year, source_url')
-    .in('country_id', countryIds);
+    .in('country_id', countryIds)
+    .order('year', { ascending: false });
 
   if (error) throw new Error(`Failed to fetch raw indices: ${error.message}`);
 
@@ -97,7 +98,8 @@ export async function fetchCountryDetail(iso: string): Promise<CountryDetail | n
     .from('raw_indices')
     .select('source, indicator, value, unit, year, source_url')
     .eq('country_id', country.id)
-    .order('source');
+    .order('source')
+    .order('year', { ascending: false });
 
   const rawIndices: RawIndex[] = (rawData ?? []).map((r) => ({
     source: r.source,

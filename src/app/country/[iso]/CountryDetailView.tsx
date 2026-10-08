@@ -17,7 +17,7 @@ import { CompareCTA } from '@/components/country/CompareCTA';
 import { FooterLinks } from '@/components/seo/FooterLinks';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
-import { applyClimatePreference, computeComposite, normaliseWeights } from '@/lib/scoring';
+import { applyClimatePreference, applyIncomeType, computeComposite, normaliseWeights } from '@/lib/scoring';
 import { DEFAULT_WEIGHTS } from '@/lib/constants';
 
 interface CountryDetailViewProps {
@@ -29,15 +29,15 @@ interface CountryDetailViewProps {
 
 export function CountryDetailView({ detail, allCountries, prose, faqs }: CountryDetailViewProps) {
   const { country, rawIndices, climate } = detail;
-  const { weights, climateType, selectedCities, setSelectedCity } = useWeightStore();
+  const { weights, climateType, incomeType, selectedCities, setSelectedCity } = useWeightStore();
 
   useEffect(() => {
     hydrateWeightStore();
   }, []);
 
   const adjustedCountry = useMemo(
-    () => applyClimatePreference([country], climateType, selectedCities)[0],
-    [country, climateType, selectedCities],
+    () => applyIncomeType(applyClimatePreference([country], climateType, selectedCities), incomeType)[0],
+    [country, climateType, selectedCities, incomeType],
   );
 
   const normWeights = normaliseWeights(weights);

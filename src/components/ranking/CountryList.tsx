@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useMemo, useState } from 'react';
-import type { ClimatePreference, CountryScores, DimensionKey, RankedCountry, UserWeights } from '@/lib/types';
-import { applyClimatePreference, rankCountries } from '@/lib/scoring';
+import type { ClimatePreference, CountryScores, DimensionKey, IncomeType, RankedCountry, UserWeights } from '@/lib/types';
+import { applyClimatePreference, applyIncomeType, rankCountries } from '@/lib/scoring';
 import { DIMENSIONS, REGION_FILTER_GROUPS } from '@/lib/constants';
 import { useCompareStore } from '@/stores/useCompareStore';
 import { CountryRow } from './CountryRow';
@@ -12,19 +12,20 @@ interface CountryListProps {
   countries: CountryScores[];
   weights: UserWeights;
   climateType: ClimatePreference;
+  incomeType: IncomeType;
   selectedCities: Record<string, string>;
   rankedBy: DimensionKey | 'overall';
   onCityChange: (iso: string, city: string) => void;
 }
 
-export function CountryList({ countries, weights, climateType, selectedCities, rankedBy, onCityChange }: CountryListProps) {
+export function CountryList({ countries, weights, climateType, incomeType, selectedCities, rankedBy, onCityChange }: CountryListProps) {
   const [regionGroup, setRegionGroup] = useState('All');
   const { compareIsos, toggleCompare, canAddMore } = useCompareStore();
   const unrankedRef = useRef<HTMLDivElement>(null);
 
   const adjusted = useMemo(
-    () => applyClimatePreference(countries, climateType, selectedCities),
-    [countries, climateType, selectedCities],
+    () => applyIncomeType(applyClimatePreference(countries, climateType, selectedCities), incomeType),
+    [countries, climateType, selectedCities, incomeType],
   );
 
   const ranked: RankedCountry[] = useMemo(() => {
@@ -68,7 +69,7 @@ export function CountryList({ countries, weights, climateType, selectedCities, r
       const uc: RankedCountry[] = [];
       for (const c of filtered) {
         const dimScore = c.dimensionScores[singleDimension];
-        const isUnranked = dimScore?.score == null || dimScore.confidence === 'medium';
+        const isUnranked = dimScore?.score == null || dimScore.confidence !== 'high';
         if (isUnranked) {
           uc.push(c);
         } else {

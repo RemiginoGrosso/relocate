@@ -1,6 +1,14 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { DIMENSIONS, DIMENSION_SLUGS } from '@/lib/constants';
+import { DIMENSIONS, DIMENSION_SLUGS, TIE_THRESHOLD } from '@/lib/constants';
+import type { Confidence } from '@/lib/types';
+
+const CONFIDENCE_LABELS: Record<Confidence, string> = {
+  high: 'well',
+  medium: 'reasonably, with gaps',
+  low: 'roughly',
+  no_data: 'not measured',
+};
 import { FooterLinks } from '@/components/seo/FooterLinks';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { DownloadCsvButton } from './DownloadCsvButton';
@@ -30,7 +38,7 @@ export const METHODOLOGY_FAQS = [
   },
   {
     question: 'What data sources does Relocate Index use?',
-    answer: 'OECD (purchasing power parity, health capacity), World Bank (governance indicators, price levels), WHO (universal health coverage), IHME GBD (healthcare access and quality), Global Peace Index (safety), Numbeo (street-level crime perception), PISA 2022 (education quality), Hofstede Insights (cultural dimensions), InterNations (expat friendliness), IMD (infrastructure), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo ERA5 (climate data).',
+    answer: 'World Bank (governance indicators, price levels, income per person, and UNODC homicide rates), Numbeo (crime as residents report it), OECD (health workforce and hospital beds, PISA 2022 school data), WHO (universal health coverage), IHME GBD (healthcare access and quality), Hofstede Insights and InterNations (warmth), IMD (infrastructure), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo (modelled climate data). The Global Peace Index is shown on country pages as context but is not scored.',
   },
   {
     question: 'How many countries does Relocate Index cover?',
@@ -38,7 +46,7 @@ export const METHODOLOGY_FAQS = [
   },
   {
     question: 'How are country scores normalised?',
-    answer: 'All raw values are normalised to a 0-100 scale where higher is always better. For indices where a lower raw value is better (e.g., Global Peace Index, Pew restrictions), the scale is inverted at normalisation time. Min-max boundaries are set from observed data across the 60-country panel.',
+    answer: 'All raw values are converted to a 0-100 scale where higher is always better. For indices where a lower raw value is better (e.g., homicide rates, Pew restrictions), the scale is inverted. Each indicator has fixed bounds written into the method, so a score does not move just because another country was added. Homicide rates and income use a log scale, so going from 20 to 10 homicides per 100,000 counts as much as going from 2 to 1.',
   },
   {
     question: 'Is Relocate Index free to use?',
@@ -46,7 +54,7 @@ export const METHODOLOGY_FAQS = [
   },
   {
     question: 'How often is the data updated?',
-    answer: 'Data refreshes monthly via automated pipelines. Most underlying sources (World Bank, WHO, GPI, PISA) publish annually or biennially. The pipeline checks for new releases on the 1st of each month and recomputes all scores when fresh data arrives.',
+    answer: 'Most underlying sources (World Bank, WHO, PISA, Pew) publish once a year or less often, so scores change rarely. Each country page shows the year of every value it uses. Scores are recomputed when a source publishes a new edition.',
   },
   {
     question: 'Can I download the raw data?',
@@ -54,7 +62,7 @@ export const METHODOLOGY_FAQS = [
   },
   {
     question: 'What is the difference between safety and rule of law?',
-    answer: 'Safety measures country-level peace and security using the Global Peace Index — conflict risk, political instability, and societal safety. Rule of law measures institutional quality (World Bank governance indicators for courts, corruption control) combined with street-level crime perception (Numbeo Crime Index). A country can be peaceful overall but have weak institutions, or vice versa.',
+    answer: 'Safety measures crime: half from homicide rates (UNODC), half from how residents rate crime in their area (Numbeo). Rule of law measures institutions: whether courts and contracts work and how well corruption is controlled (World Bank governance indicators). A country can have low crime but weak institutions, or the reverse.',
   },
   {
     question: 'Why are some countries shown with limited data?',
@@ -66,7 +74,7 @@ export const METHODOLOGY_FAQS = [
   },
   {
     question: 'How does the climate scoring work?',
-    answer: 'Climate is scored differently from other dimensions. You select a climate preference (tropical heat, sunny warm, four seasons, etc.) and countries are scored on how well their actual climate data matches that preference. Temperature, sunshine hours, and rainfall data come from Open-Meteo ERA5 reanalysis. If you select "no preference," a simple heuristic score is used.',
+    answer: 'Climate is scored differently from other dimensions. You select a climate preference (tropical heat, sunny warm, four seasons, etc.) and countries are scored on how well their actual climate data matches that preference. Temperature, sunshine hours, and rainfall come from Open-Meteo\'s climate API, which serves modelled climate data rather than weather-station records. If you select "no preference," a simple heuristic score is used.',
   },
   {
     question: 'Why doesn\'t the index cover visa, tax, or job markets?',
@@ -142,6 +150,11 @@ export default function MethodologyPage() {
             composite = Σ (dimension_score × normalised_weight)
           </code>
         </div>
+        <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
+          The data behind each score is approximate. Treat countries whose
+          scores are within {TIE_THRESHOLD} points of each other as tied: the
+          order between them is not meaningful.
+        </p>
       </section>
 
       <section className="mt-12">
@@ -150,9 +163,11 @@ export default function MethodologyPage() {
         </h2>
         <p className="mt-3 text-sm text-zinc-600 leading-relaxed">
           All raw values are normalised to a 0–100 scale where higher is always
-          better. For indices where a lower raw value is better (e.g., GPI,
-          Pew restrictions), the scale is inverted. Min-max boundaries are set
-          from observed data across the 60-country panel.
+          better. For indices where a lower raw value is better (e.g., homicide
+          rates, Pew restrictions), the scale is inverted. Each indicator has
+          fixed bounds written into the method, so adding a country does not
+          move anyone else&apos;s score. Homicide rates and income use a log
+          scale.
         </p>
       </section>
 
@@ -177,6 +192,10 @@ export default function MethodologyPage() {
                 </span>
               </div>
               <p className="mt-2 text-sm text-zinc-600">{dim.description}</p>
+              <p className="mt-2 text-xs text-zinc-500">
+                How well the data measures this:{' '}
+                <span className="font-medium text-zinc-700">{CONFIDENCE_LABELS[dim.confidence]}</span>
+              </p>
               <div className="mt-3 rounded bg-zinc-50 px-3 py-2">
                 <code className="text-xs text-zinc-700 break-all">
                   {dim.methodology}
@@ -215,7 +234,8 @@ export default function MethodologyPage() {
           national wealth), and the World Happiness Report&apos;s expected
           wallet return (perceived trust from the 2019 World Risk Poll, not a
           measured outcome). Under Warmth, Gallup&apos;s Migrant Acceptance
-          Index plays the same role. These rows exist to help you build your
+          Index plays the same role, and under Safety, the Global Peace Index
+          (which mostly measures war, militarisation and politics). These rows exist to help you build your
           own picture of everyday life — they never move a country up or down
           the ranking.
         </p>

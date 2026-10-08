@@ -60,23 +60,18 @@ function generatePurchasingPower(
 
   const sentences: string[] = [];
   const r = dimRank(country.iso, 'purchasing_power', allCountries);
-  if (r) sentences.push(`${country.name} ranks ${ordinal(r.rank)} out of ${r.total} countries for purchasing power, scoring ${fmtScore(dimScore)} out of 100.`);
+  if (r) sentences.push(`${country.name} ranks ${ordinal(r.rank)} out of ${r.total} countries for purchasing power on income from abroad, scoring ${fmtScore(dimScore)} out of 100.`);
 
-  const ppp = findRaw(rawIndices, 'worldbank.oecd_ppp_aic');
   const plr = findRaw(rawIndices, 'worldbank.price_level_ratio');
-  const oop = findRaw(rawIndices, 'worldbank.who_oop_pct');
+  const gdp = findRaw(rawIndices, 'worldbank.oecd_ppp_aic');
 
-  if (ppp?.value != null) {
-    const label = interpret('worldbank.oecd_ppp_aic', ppp.value);
-    sentences.push(`OECD purchasing power parity: ${formatValue(ppp)}${label ? ` (${label.toLowerCase()})` : ''}.`);
-  }
   if (plr?.value != null) {
     const label = interpret('worldbank.price_level_ratio', plr.value);
     sentences.push(`Price level ratio vs US: ${formatValue(plr)}${label ? ` (${label.toLowerCase()})` : ''}.`);
   }
-  if (oop?.value != null) {
-    const label = interpret('worldbank.who_oop_pct', oop.value);
-    sentences.push(`Out-of-pocket health spending: ${formatValue(oop)} of total health expenditure${label ? ` (${label.toLowerCase()})` : ''}.`);
+  if (gdp?.value != null) {
+    const label = interpret('worldbank.oecd_ppp_aic', gdp.value);
+    sentences.push(`GDP per person, adjusted for local prices: ${formatValue(gdp)}${label ? ` (${label.toLowerCase()})` : ''}. This is what the score uses for someone earning a local salary.`);
   }
 
   return {
@@ -101,7 +96,6 @@ function generateCivicCulture(
 
   const rol = findRaw(rawIndices, 'worldbank.wgi_rule_of_law');
   const cc = findRaw(rawIndices, 'worldbank.wgi_corruption_control');
-  const crime = findRaw(rawIndices, 'numbeo.crime_index');
 
   if (rol?.value != null) {
     const label = interpret('worldbank.wgi_rule_of_law', rol.value);
@@ -110,10 +104,6 @@ function generateCivicCulture(
   if (cc?.value != null) {
     const label = interpret('worldbank.wgi_corruption_control', cc.value);
     sentences.push(`WGI Corruption Control: ${formatValue(cc)}${label ? ` (${label.toLowerCase()})` : ''}.`);
-  }
-  if (crime?.value != null) {
-    const label = interpret('numbeo.crime_index', crime.value);
-    sentences.push(`Numbeo Crime Index: ${formatValue(crime)}${label ? ` (${label.toLowerCase()})` : ''}.`);
   }
 
   return {
@@ -136,10 +126,15 @@ function generateSafety(
   const r = dimRank(country.iso, 'safety', allCountries);
   if (r) sentences.push(`${country.name} ranks ${ordinal(r.rank)} out of ${r.total} countries for safety, scoring ${fmtScore(dimScore)} out of 100.`);
 
-  const gpi = findRaw(rawIndices, 'gpi.gpi_score');
-  if (gpi?.value != null) {
-    const label = interpret('gpi.gpi_score', gpi.value);
-    sentences.push(`Global Peace Index: ${formatValue(gpi)}${label ? ` (${label.toLowerCase()})` : ''}.`);
+  const homicide = findRaw(rawIndices, 'worldbank.homicide_rate');
+  const crime = findRaw(rawIndices, 'numbeo.crime_index');
+  if (homicide?.value != null) {
+    const label = interpret('worldbank.homicide_rate', homicide.value);
+    sentences.push(`Homicides per 100,000 people: ${formatValue(homicide)}${label ? ` (${label.toLowerCase()})` : ''}.`);
+  }
+  if (crime?.value != null) {
+    const label = interpret('numbeo.crime_index', crime.value);
+    sentences.push(`Numbeo Crime Index, based on residents' reports: ${formatValue(crime)}${label ? ` (${label.toLowerCase()})` : ''}.`);
   }
 
   return {
@@ -319,7 +314,7 @@ function generateClimate(
     key: 'climate',
     name: 'Climate',
     sentences,
-    sources: climate.dataYear ? [`Open-Meteo ERA5 (${climate.dataYear})`] : ['Open-Meteo ERA5'],
+    sources: climate.dataYear ? [`Open-Meteo climate model (${climate.dataYear})`] : ['Open-Meteo climate model'],
   };
 }
 

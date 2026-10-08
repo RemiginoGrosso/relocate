@@ -1,4 +1,4 @@
-import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, RankedCountry, ScoreTier, UserWeights } from './types';
+import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, IncomeType, RankedCountry, ScoreTier, UserWeights } from './types';
 import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MIN_COVERAGE_RATIO, SCORE_THRESHOLDS } from './constants';
 import { getCityClimate, getDefaultCity } from './large-countries';
 
@@ -155,6 +155,30 @@ export function applyClimatePreference(
       dimensionScores: {
         ...c.dimensionScores,
         climate: { ...climateDim, score: newScore, components: newComponents },
+      },
+    };
+  });
+}
+
+/**
+ * Purchasing power is stored as cost affordability (income from abroad).
+ * For a local salary, swap in the local_income component (GDP per capita PPP, log scale).
+ */
+export function applyIncomeType(countries: CountryScores[], incomeType: IncomeType): CountryScores[] {
+  if (incomeType === 'abroad') return countries;
+  return countries.map((c) => {
+    const pp = c.dimensionScores.purchasing_power;
+    if (!pp?.components) return c;
+    const localIncome = pp.components.local_income ?? null;
+    return {
+      ...c,
+      dimensionScores: {
+        ...c.dimensionScores,
+        purchasing_power: {
+          ...pp,
+          score: localIncome,
+          confidence: localIncome == null ? 'no_data' : 'high',
+        },
       },
     };
   });

@@ -16,6 +16,7 @@
 | Landing-page CTA clicks (`cta_click`) | **Implemented, pre-existing — not in this plan's spec** | `src/components/landing/CtaButtons.tsx` fires `cta_click` with a `label` property. This plan never defined a landing-CTA event/shape, so the pre-existing implementation was left as-is rather than guessing a new one. Gap: add a formal spec here if this needs to match `weight_summary_cta_clicked`'s shape. |
 | Scroll depth | **Not implemented — by design** | See §10 "What NOT to track": scroll depth is explicitly excluded as not actionable for this product. Not built. |
 | `civic_norms_context_expanded` | **Implemented (2026-07-16)** | Call site wired in `DimensionBreakdown.tsx` by the Civic-Norms-Context build; fires once per country-detail pageview on Rule of Law accordion expand. See §5a below. |
+| `income_type_change` | **Implemented (2026-10-08, not yet deployed)** | `src/components/ranking/WeightSliders.tsx`, fired from the "Your income" toggle under the Purchasing power slider. Measures how many users switch from the default (income from abroad) to a local salary. See §4.
 
 Other events already live but not covered by this document's original spec (names differ from the plan below — documented for accuracy, not changed): `dimension_sort`, `comparison_started`, `country_detail_view` (plan calls it `country_detail_viewed`), `slider_change` (plan: `slider_changed`), `country_click` (plan: `country_clicked`), `region_filter` (plan: `region_filter_changed`), `onboarding_answer`/`onboarding_skip`/`onboarding_complete`/`onboarding_resume`/`onboarding_start_fresh` (plan: `onboarding_answer_selected`/`onboarding_question_skipped`/`onboarding_completed`), `climate_type_change`. Reconciling these name/shape drifts against this plan is out of scope for this pass.
 
@@ -233,6 +234,16 @@ The onboarding is 6 questions. Each question is identified by a stable `question
 |---|---|---|---|
 | `sliders_modified_count` | number | `4` | How many sliders had been changed from default before reset |
 | `session_slider_adjustments_before_reset` | number | `12` | Total slider adjustments before this reset |
+
+### `income_type_change`
+
+**Description:** User switched the income type under the Purchasing power slider. Income from abroad scores price levels; a local salary scores local income. Default is `abroad`, an unmeasured assumption this event tests.
+
+**Trigger:** On click of either option in the "Your income" toggle. Only visible while the Purchasing power weight is above 0. Onboarding Q2 (`local_job`) sets the type without firing this event.
+
+| Property | Type | Example | Notes |
+|---|---|---|---|
+| `income_type` | string | `"local"` | `abroad` or `local`; the option clicked |
 
 ---
 

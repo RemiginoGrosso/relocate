@@ -1,11 +1,11 @@
-import { INDICATOR_INTERPRETATIONS } from './constants';
+import { ESTIMATED_VALUES, INDICATOR_INTERPRETATIONS } from './constants';
 import type { DimensionKey, RawIndex } from './types';
 
 export const INDICATOR_LABELS: Record<string, string> = {
   'worldbank.wgi_rule_of_law': 'WGI Rule of Law',
   'worldbank.wgi_corruption_control': 'WGI Corruption Control',
   'numbeo.crime_index': 'Numbeo Crime Index',
-  'gpi.gpi_score': 'GPI Score',
+  'gpi.gpi_score': 'Global Peace Index (context, not scored)',
   'hofstede.ivr': 'Hofstede IVR',
   'gallup.mai': 'Gallup MAI',
   'internations.ease_rank': 'InterNations Ease Rank',
@@ -21,7 +21,8 @@ export const INDICATOR_LABELS: Record<string, string> = {
   'oecd.physicians_per_1000': 'Physicians per 1,000',
   'oecd.beds_per_1000': 'Hospital beds per 1,000',
   'oecd.nurses_per_1000': 'Nurses per 1,000',
-  'worldbank.oecd_ppp_aic': 'OECD PPP (AIC)',
+  'worldbank.oecd_ppp_aic': 'GDP per person (PPP, intl $)',
+  'worldbank.homicide_rate': 'Homicides per 100,000',
   'worldbank.price_level_ratio': 'Price Level Ratio',
   'imd.infrastructure_score': 'IMD Infrastructure Score',
   'pew.govt_restrictions': 'Pew Govt Restrictions',
@@ -33,9 +34,9 @@ export const INDICATOR_LABELS: Record<string, string> = {
 };
 
 export const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
-  purchasing_power: ['worldbank.oecd_ppp_aic', 'worldbank.price_level_ratio', 'worldbank.who_oop_pct'],
-  civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control', 'numbeo.crime_index'],
-  safety: ['gpi.gpi_score'],
+  purchasing_power: ['worldbank.price_level_ratio', 'worldbank.oecd_ppp_aic'],
+  civic_culture: ['worldbank.wgi_rule_of_law', 'worldbank.wgi_corruption_control'],
+  safety: ['worldbank.homicide_rate', 'numbeo.crime_index', 'gpi.gpi_score'],
   warmth: ['hofstede.ivr', 'internations.ease_rank', 'gallup.mai'],
   school_culture: ['pisa.pisa_reading', 'pisa.pisa_maths', 'pisa.pisa_science', 'pisa.pisa_belonging', 'pisa.pisa_bullying', 'pisa.pisa_safety'],
   healthcare: ['worldbank.who_uhc_coverage', 'ihme.haq_index', 'oecd.physicians_per_1000', 'oecd.beds_per_1000', 'oecd.nurses_per_1000'],
@@ -44,6 +45,11 @@ export const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
   religious_freedom: ['pew.govt_restrictions', 'pew.social_hostility'],
   english_proficiency: ['ef.epi_score'],
 };
+
+/** True when the team filled this value from a different source (see ESTIMATED_VALUES). */
+export function isEstimate(indicatorKey: string, iso: string): boolean {
+  return ESTIMATED_VALUES[indicatorKey]?.includes(iso) ?? false;
+}
 
 export function getRawValue(rawIndices: RawIndex[], source: string, indicator: string): RawIndex | undefined {
   return rawIndices.find((r) => `${r.source}.${r.indicator}` === `${source}.${indicator}`);
@@ -65,6 +71,8 @@ export function formatValue(raw: RawIndex): string {
   if (key === 'whr.wallet_return') return `${Math.round(v)}%`;
   if (key === 'worldbank.price_level_ratio') return v.toFixed(2);
   if (key === 'gpi.gpi_score') return v.toFixed(3);
+  if (key === 'worldbank.homicide_rate') return v.toFixed(1);
+  if (key === 'worldbank.oecd_ppp_aic') return `$${Math.round(v).toLocaleString('en-US')}`;
   if (key.startsWith('pisa.') && !['pisa.reading', 'pisa.maths', 'pisa.science'].includes(key)) return v.toFixed(2);
   return Number.isInteger(v) ? String(v) : v.toFixed(1);
 }

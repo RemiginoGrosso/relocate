@@ -130,92 +130,77 @@ function round2(val: number): number {
 // All formulas match SCORING_ENGINE.md sections 3.1-3.10
 // ---------------------------------------------------------------------------
 
+function logNormalise(value: number, min: number, max: number): number {
+  const clamped = Math.min(Math.max(value, min), max);
+  return round2(((Math.log(clamped) - Math.log(min)) / (Math.log(max) - Math.log(min))) * 100);
+}
+
+// Homicides per 100k, log scale: 0.3 or lower = 100, 40 or higher = 0
+function homicideNormalise(rate: number): number {
+  const clamped = Math.min(Math.max(rate, 0.3), 40);
+  return round2(((Math.log10(40) - Math.log10(clamped)) / (Math.log10(40) - Math.log10(0.3))) * 100);
+}
+
+// Score = cost affordability (income from abroad). local_income kept as a component for local-job users.
 function computePurchasingPower(raw: RawMap): DimensionScore | null {
-  const oecdPpp = safeNum(raw["worldbank.oecd_ppp_aic"]);
+  // Key name is historical: the value is World Bank GDP per capita PPP (NY.GDP.PCAP.PP.CD)
+  const gdpPcPpp = safeNum(raw["worldbank.oecd_ppp_aic"]);
   const priceLevel = safeNum(raw["worldbank.price_level_ratio"]);
-  const oopPct = safeNum(raw["worldbank.who_oop_pct"]);
 
-  if (oecdPpp == null && priceLevel == null) return null;
+  if (gdpPcPpp == null && priceLevel == null) return null;
 
-  const pppNorm = oecdPpp != null ? minMaxNormalise(oecdPpp, 8000, 160000) : null;
-  const affordNorm = priceLevel != null
-    ? minMaxNormalise(priceLevel, 0.10, 1.50, true)
+  const costAffordability = priceLevel != null
+    ? round2(minMaxNormalise(priceLevel, 0.10, 1.50, true)!)
     : null;
-  const oopNorm = oopPct != null
-    ? minMaxNormalise(oopPct, 5, 65, true)
-    : null;
-
-  // Weighted sum with re-normalisation for missing components
-  const parts: { val: number; weight: number }[] = [];
-  if (pppNorm != null) parts.push({ val: pppNorm, weight: 0.55 });
-  if (affordNorm != null) parts.push({ val: affordNorm, weight: 0.30 });
-  if (oopNorm != null) parts.push({ val: oopNorm, weight: 0.15 });
-
-  if (parts.length === 0) return null;
-
-  const totalWeight = parts.reduce((s, p) => s + p.weight, 0);
-  const score = parts.reduce((s, p) => s + p.val * (p.weight / totalWeight), 0);
+  const localIncome = gdpPcPpp != null ? logNormalise(gdpPcPpp, 8000, 160000) : null;
 
   return {
     country_id: "",
     dimension_key: "purchasing_power",
-    score: round2(score),
-    confidence: "high",
+    score: costAffordability,
+    confidence: costAffordability != null ? "high" : "no_data",
     component_scores: {
-      oecd_ppp: pppNorm,
-      cost_affordability: affordNorm,
-      oop_burden: oopNorm,
+      cost_affordability: costAffordability,
+      local_income: localIncome,
     },
   };
 }
 
+// Rule of Law (key civic_culture): WGI only
 function computeCivicCulture(raw: RawMap): DimensionScore | null {
   const wgiRol = safeNum(raw["worldbank.wgi_rule_of_law"]);
   const wgiCc = safeNum(raw["worldbank.wgi_corruption_control"]);
-  const numbeoCrime = safeNum(raw["numbeo.crime_index"]);
 
   if (wgiRol == null || wgiCc == null) return null;
-
-  const governance = wgiRol * 0.55 + wgiCc * 0.45;
-  const streetSafety = numbeoCrime != null ? 100 - numbeoCrime : null;
-
-  let civicScore: number;
-  let confidence: "high" | "medium";
-  if (streetSafety != null) {
-    civicScore = governance * 0.60 + streetSafety * 0.40;
-    confidence = "high";
-  } else {
-    civicScore = governance;
-    confidence = "medium";
-  }
 
   return {
     country_id: "",
     dimension_key: "civic_culture",
-    score: round2(civicScore),
-    confidence,
+    score: round2(wgiRol * 0.55 + wgiCc * 0.45),
+    confidence: "high",
     component_scores: {
       wgi_rule_of_law: wgiRol,
       wgi_corruption: wgiCc,
-      governance: round2(governance),
-      street_safety: streetSafety != null ? round2(streetSafety) : null,
     },
   };
 }
 
+// Safety: UNODC homicide (log) x 0.50 + Numbeo street crime x 0.50
 function computeSafety(raw: RawMap): DimensionScore | null {
-  const gpi = safeNum(raw["gpi.gpi_score"]);
-  if (gpi == null) return null;
+  const homicideRate = safeNum(raw["worldbank.homicide_rate"]);
+  const numbeoCrime = safeNum(raw["numbeo.crime_index"]);
+  const homicide = homicideRate != null ? homicideNormalise(homicideRate) : null;
+  const streetCrime = numbeoCrime != null ? round2(100 - numbeoCrime) : null;
 
-  const gpiNorm = minMaxNormalise(gpi, 1.00, 3.50, true);
-  if (gpiNorm == null) return null;
+  if (homicide == null && streetCrime == null) return null;
 
+  const both = homicide != null && streetCrime != null;
   return {
     country_id: "",
     dimension_key: "safety",
-    score: gpiNorm,
-    confidence: "high",
-    component_scores: { gpi: gpiNorm },
+    score: both ? round2(homicide! * 0.5 + streetCrime! * 0.5) : (homicide ?? streetCrime),
+    confidence: both ? "high" : "medium",
+    component_scores: { homicide, street_crime: streetCrime },
   };
 }
 
@@ -338,7 +323,10 @@ function computeHealthcare(raw: RawMap): DimensionScore | null {
   };
 }
 
-function computeInfrastructure(raw: RawMap): DimensionScore | null {
+// Values patched from the World Bank LPI, not IMD: shown as estimates (keep in sync with ESTIMATED_VALUES in src/lib/constants.ts)
+const INFRASTRUCTURE_ESTIMATES = new Set(["CZ", "VN", "PA", "UY", "CR"]);
+
+function computeInfrastructure(raw: RawMap, iso: string): DimensionScore | null {
   const imd = safeNum(raw["imd.infrastructure_score"]);
   if (imd == null) return null;
 
@@ -346,7 +334,7 @@ function computeInfrastructure(raw: RawMap): DimensionScore | null {
     country_id: "",
     dimension_key: "infrastructure",
     score: imd,
-    confidence: "high",
+    confidence: INFRASTRUCTURE_ESTIMATES.has(iso) ? "low" : "high",
     component_scores: { imd_score: imd },
   };
 }
@@ -524,7 +512,7 @@ Deno.serve(async (req) => {
         computeWarmth(raw),
         computeSchoolCulture(raw),
         computeHealthcare(raw),
-        computeInfrastructure(raw),
+        computeInfrastructure(raw, iso),
         computeReligiousFreedom(raw),
         computeEnglishProficiency(raw, iso),
       ];

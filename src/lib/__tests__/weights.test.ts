@@ -57,6 +57,22 @@ describe('computeOnboardingWeights', () => {
     expect(weights.religious_freedom).toBe(DEFAULT_WEIGHTS.religious_freedom + 3);
   });
 
+  it('lowers civic_culture to 1 when not important', () => {
+    expect(computeOnboardingWeights({ civicImportance: 'not_important' }).civic_culture).toBe(1);
+  });
+
+  it('keeps civic_culture at default for nice to have', () => {
+    expect(computeOnboardingWeights({ civicImportance: 'nice_to_have' }).civic_culture).toBe(DEFAULT_WEIGHTS.civic_culture);
+  });
+
+  it('lowers warmth to 2 when not a priority', () => {
+    expect(computeOnboardingWeights({ warmthImportance: 'not_priority' }).warmth).toBe(2);
+  });
+
+  it('lowers religious_freedom to 2 when not a priority', () => {
+    expect(computeOnboardingWeights({ religiousNeeds: 'not_priority' }).religious_freedom).toBe(2);
+  });
+
   it('stacks adjustments across all questions', () => {
     const weights = computeOnboardingWeights({
       household: 'family_young',

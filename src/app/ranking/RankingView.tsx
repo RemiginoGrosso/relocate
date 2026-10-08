@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowUp } from 'lucide-react';
 import type { CountryScores, DimensionKey } from '@/lib/types';
-import { DIMENSIONS } from '@/lib/constants';
+import Link from 'next/link';
+import { DIMENSIONS, TIE_THRESHOLD } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
 import { useWeightStore, hydrateWeightStore } from '@/stores/useWeightStore';
 import { CountryList } from '@/components/ranking/CountryList';
@@ -31,7 +32,7 @@ interface RankingViewProps {
 }
 
 export function RankingView({ countries }: RankingViewProps) {
-  const { weights, setWeight, resetToDefaults, climateType, setClimateType, selectedCities, setSelectedCity } = useWeightStore();
+  const { weights, setWeight, resetToDefaults, climateType, setClimateType, incomeType, setIncomeType, selectedCities, setSelectedCity } = useWeightStore();
   const compareCount = useCompareStore((s) => s.compareIsos.length);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [rankedBy, setRankedBy] = useState<DimensionKey | 'overall'>('overall');
@@ -70,6 +71,8 @@ export function RankingView({ countries }: RankingViewProps) {
             onReset={resetToDefaults}
             climateType={climateType}
             onClimateTypeChange={setClimateType}
+            incomeType={incomeType}
+            onIncomeTypeChange={setIncomeType}
           />
         </div>
       </aside>
@@ -83,6 +86,13 @@ export function RankingView({ countries }: RankingViewProps) {
             </h1>
             <p className="mt-1 text-sm text-zinc-500">
               Adjust your priorities to see how countries rank for you.
+            </p>
+            <p className="mt-2 text-xs text-zinc-500">
+              A shortlist, not a verdict: national averages from public indices, no visas, jobs, housing or taxes.
+              Scores within {TIE_THRESHOLD} points of each other are effectively tied.{' '}
+              <Link href="/methodology" className="text-teal-700 underline-offset-2 hover:underline">
+                What each score measures
+              </Link>
             </p>
           </div>
           <div className="mb-4">
@@ -112,6 +122,7 @@ export function RankingView({ countries }: RankingViewProps) {
             countries={countries}
             weights={weights}
             climateType={climateType}
+            incomeType={incomeType}
             selectedCities={selectedCities}
             rankedBy={rankedBy}
             onCityChange={setSelectedCity}
@@ -143,6 +154,8 @@ export function RankingView({ countries }: RankingViewProps) {
                 onReset={resetToDefaults}
                 climateType={climateType}
                 onClimateTypeChange={setClimateType}
+                incomeType={incomeType}
+                onIncomeTypeChange={setIncomeType}
               />
             </div>
           </DrawerContent>

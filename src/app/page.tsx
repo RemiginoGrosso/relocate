@@ -31,7 +31,7 @@ const SOURCE_NAMES = [
   'World Bank',
   'WHO',
   'IHME GBD',
-  'Global Peace Index',
+  'UNODC',
   'Numbeo',
   'PISA 2022',
   'Hofstede',
@@ -44,20 +44,20 @@ const SOURCE_NAMES = [
 
 // Sources with descriptions for the trust section
 const SOURCES_DETAIL = [
-  { name: 'OECD', note: 'Purchasing power parity, PISA education data' },
-  { name: 'World Bank', note: 'Governance indicators, rule of law, price levels' },
-  { name: 'WHO', note: 'Healthcare coverage index (UHC). Out-of-pocket data used in purchasing power.' },
+  { name: 'OECD', note: 'PISA education data, health workforce and hospital beds' },
+  { name: 'World Bank', note: 'Governance indicators, price levels, income per person' },
+  { name: 'WHO', note: 'Healthcare coverage index (UHC)' },
   { name: 'IHME GBD', note: 'Healthcare Access & Quality Index — amenable mortality across 32 causes' },
   { name: 'OECD Health Statistics', note: 'Physicians, hospital beds, and nurses per 1,000 population' },
-  { name: 'Global Peace Index', note: 'Safety, conflict risk, political stability' },
-  { name: 'Numbeo', note: 'Street-level crime perception — how safe people feel day-to-day' },
+  { name: 'UNODC', note: 'Homicides per 100,000 people (published by the World Bank)' },
+  { name: 'Numbeo', note: 'Crime as residents report it, crowdsourced' },
   { name: 'PISA 2022', note: 'Academic quality, belonging, bullying, school safety' },
   { name: 'Hofstede Insights', note: 'Indulgence vs. Restraint (IVR) cultural dimension' },
   { name: 'InterNations', note: 'Expat ease of settling in, rated annually' },
   { name: 'IMD', note: 'Physical and digital infrastructure score' },
   { name: 'Pew Research', note: 'Government restrictions and social hostility indexes' },
   { name: 'EF EPI', note: 'Population-level English proficiency, 100+ countries' },
-  { name: 'Open-Meteo ERA5', note: 'Historical climate reanalysis — temperature, sunshine, and rainfall by city' },
+  { name: 'Open-Meteo', note: 'Climate model data: temperature, sunshine and rainfall by city' },
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {

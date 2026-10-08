@@ -3,7 +3,8 @@ import { join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { minMaxNormalise, pisaAcademicNormalise } from '../src/lib/normalisation';
 import { computeClimateScore } from '../src/lib/scoring';
-import { ENGLISH_NATIVE_COUNTRIES } from '../src/lib/constants';
+import { ENGLISH_NATIVE_COUNTRIES, ESTIMATED_VALUES } from '../src/lib/constants';
+import { computePurchasingPower, computeRuleOfLaw, computeSafety } from '../src/lib/dimension-formulas';
 
 config({ path: join(__dirname, '..', '.env.local') });
 
@@ -22,6 +23,7 @@ interface RawRow {
   source: string;
   indicator: string;
   value: number | null;
+  year: number;
 }
 
 interface CountryRow {
@@ -39,10 +41,15 @@ interface ClimateRow {
 
 type RawMap = Record<string, number | null>;
 
+// Latest year wins when an indicator has rows for several years.
 function getRaw(rawByCountry: Record<string, RawRow[]>, countryId: string): RawMap {
   const map: RawMap = {};
+  const years: Record<string, number> = {};
   for (const row of rawByCountry[countryId] ?? []) {
-    map[`${row.source}.${row.indicator}`] = row.value;
+    const key = `${row.source}.${row.indicator}`;
+    if (years[key] != null && years[key] >= row.year) continue;
+    years[key] = row.year;
+    map[key] = row.value;
   }
   return map;
 }
@@ -65,7 +72,7 @@ async function main() {
   while (true) {
     const { data, error } = await supabase
       .from('raw_indices')
-      .select('country_id, source, indicator, value')
+      .select('country_id, source, indicator, value, year')
       .range(from, from + pageSize - 1);
     if (error) throw new Error(`Failed to fetch raw_indices: ${error.message}`);
     if (!data || data.length === 0) break;
@@ -107,70 +114,48 @@ async function main() {
     const raw = getRaw(rawByCountry, country.id);
     const iso = country.iso_alpha2;
 
-    // Purchasing Power (needs live data from World Bank/OECD — placeholder from seed)
-    const oecdPpp = safeNum(raw['worldbank.oecd_ppp_aic']);
-    const priceLevel = safeNum(raw['worldbank.price_level_ratio']);
-    const oopPct = safeNum(raw['worldbank.who_oop_pct']);
-    if (oecdPpp != null || priceLevel != null) {
-      const pppNorm = oecdPpp != null ? minMaxNormalise(oecdPpp, 8000, 160000) : null;
-      const affordNorm = priceLevel != null ? minMaxNormalise(priceLevel, 0.10, 1.50, true) : null;
-      const oopNorm = oopPct != null ? minMaxNormalise(oopPct, 5, 65, true) : null;
-      const parts = [
-        pppNorm != null ? pppNorm * 0.55 : null,
-        affordNorm != null ? affordNorm * 0.30 : null,
-        oopNorm != null ? oopNorm * 0.15 : null,
-      ].filter((v): v is number => v != null);
-      const weightSum = (pppNorm != null ? 0.55 : 0) + (affordNorm != null ? 0.30 : 0) + (oopNorm != null ? 0.15 : 0);
-      const score = weightSum > 0 ? parts.reduce((a, b) => a + b, 0) / weightSum : null;
+    // Purchasing Power: score = cost affordability (income from abroad); local_income component for local-job users
+    const pp = computePurchasingPower(
+      safeNum(raw['worldbank.oecd_ppp_aic']), // GDP per capita PPP (NY.GDP.PCAP.PP.CD); key name is historical
+      safeNum(raw['worldbank.price_level_ratio']),
+    );
+    if (pp) {
       scores.push({
         country_id: country.id,
         dimension_key: 'purchasing_power',
-        score: score != null ? Math.round(score * 100) / 100 : null,
-        confidence: score != null ? 'high' : 'no_data',
-        component_scores: { oecd_ppp: pppNorm, cost_affordability: affordNorm, oop_burden: oopNorm },
+        score: pp.score,
+        confidence: pp.confidence,
+        component_scores: pp.components,
       });
     }
 
-    // Civic Culture (WGI governance × 0.60 + Numbeo street safety × 0.40)
-    const wgiRol = safeNum(raw['worldbank.wgi_rule_of_law']);
-    const wgiCc = safeNum(raw['worldbank.wgi_corruption_control']);
-    const numbeoCrime = safeNum(raw['numbeo.crime_index']);
-    if (wgiRol != null && wgiCc != null) {
-      const governance = wgiRol * 0.55 + wgiCc * 0.45;
-      const streetSafety = numbeoCrime != null ? 100 - numbeoCrime : null;
-      let civicScore: number;
-      let confidence: string;
-      if (streetSafety != null) {
-        civicScore = governance * 0.60 + streetSafety * 0.40;
-        confidence = 'high';
-      } else {
-        civicScore = governance;
-        confidence = 'medium';
-      }
+    // Rule of Law (key civic_culture): WGI only
+    const rol = computeRuleOfLaw(
+      safeNum(raw['worldbank.wgi_rule_of_law']),
+      safeNum(raw['worldbank.wgi_corruption_control']),
+    );
+    if (rol) {
       scores.push({
         country_id: country.id,
         dimension_key: 'civic_culture',
-        score: Math.round(civicScore * 100) / 100,
-        confidence,
-        component_scores: {
-          wgi_rule_of_law: wgiRol,
-          wgi_corruption: wgiCc,
-          governance: Math.round(governance * 100) / 100,
-          street_safety: streetSafety != null ? Math.round(streetSafety * 100) / 100 : null,
-        },
+        score: rol.score,
+        confidence: rol.confidence,
+        component_scores: rol.components,
       });
     }
 
-    // Safety
-    const gpi = safeNum(raw['gpi.gpi_score']);
-    if (gpi != null) {
-      const gpiNorm = minMaxNormalise(gpi, 1.00, 3.50, true);
+    // Safety: UNODC homicide (log) × 0.50 + Numbeo street crime × 0.50
+    const safetyResult = computeSafety(
+      safeNum(raw['worldbank.homicide_rate']),
+      safeNum(raw['numbeo.crime_index']),
+    );
+    if (safetyResult) {
       scores.push({
         country_id: country.id,
         dimension_key: 'safety',
-        score: gpiNorm,
-        confidence: 'high',
-        component_scores: { gpi: gpiNorm },
+        score: safetyResult.score,
+        confidence: safetyResult.confidence,
+        component_scores: safetyResult.components,
       });
     }
 
@@ -277,7 +262,7 @@ async function main() {
         country_id: country.id,
         dimension_key: 'infrastructure',
         score: imd,
-        confidence: 'high',
+        confidence: ESTIMATED_VALUES['imd.infrastructure_score'].includes(iso) ? 'low' : 'high',
         component_scores: { imd_score: imd },
       });
     }

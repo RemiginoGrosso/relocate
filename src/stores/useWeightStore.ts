@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { ClimatePreference, DimensionKey, UserWeights } from '@/lib/types';
+import type { ClimatePreference, DimensionKey, IncomeType, UserWeights } from '@/lib/types';
 import { DEFAULT_WEIGHTS } from '@/lib/constants';
 
 const STORAGE_KEY = 'relocator-weights';
@@ -10,6 +10,7 @@ interface PersistedState {
   climateType: ClimatePreference;
   fromOnboarding: boolean;
   selectedCities: Record<string, string>;
+  incomeType: IncomeType;
 }
 
 interface WeightStore extends PersistedState {
@@ -17,6 +18,7 @@ interface WeightStore extends PersistedState {
   setWeight: (key: DimensionKey, value: number) => void;
   setClimateType: (type: ClimatePreference) => void;
   setSelectedCity: (iso: string, cityName: string) => void;
+  setIncomeType: (type: IncomeType) => void;
   resetToDefaults: () => void;
   setAllWeights: (weights: UserWeights, fromOnboarding?: boolean) => void;
 }
@@ -75,6 +77,7 @@ export const useWeightStore = create<WeightStore>()((set, get) => ({
   climateType: 'no_preference' as ClimatePreference,
   fromOnboarding: false,
   selectedCities: {} as Record<string, string>,
+  incomeType: 'abroad' as IncomeType,
   _hydrated: false,
 
   setWeight: (key, value) => {
@@ -88,7 +91,13 @@ export const useWeightStore = create<WeightStore>()((set, get) => ({
   setClimateType: (type) => {
     set({ climateType: type });
     const s = get();
-    saveToStorage({ weights: s.weights, climateType: type, fromOnboarding: s.fromOnboarding, selectedCities: s.selectedCities });
+    saveToStorage({ weights: s.weights, climateType: type, fromOnboarding: s.fromOnboarding, selectedCities: s.selectedCities, incomeType: s.incomeType });
+  },
+
+  setIncomeType: (type) => {
+    set({ incomeType: type });
+    const s = get();
+    saveToStorage({ weights: s.weights, climateType: s.climateType, fromOnboarding: s.fromOnboarding, selectedCities: s.selectedCities, incomeType: type });
   },
 
   setSelectedCity: (iso, cityName) => {
@@ -105,6 +114,7 @@ export const useWeightStore = create<WeightStore>()((set, get) => ({
       climateType: 'no_preference',
       fromOnboarding: false,
       selectedCities: {},
+      incomeType: 'abroad',
     };
     set({ ...defaults });
     saveToStorage(defaults);
@@ -113,7 +123,7 @@ export const useWeightStore = create<WeightStore>()((set, get) => ({
   setAllWeights: (weights, fromOnboarding = false) => {
     set({ weights: { ...weights }, fromOnboarding });
     const s = get();
-    saveToStorage({ weights, climateType: s.climateType, fromOnboarding, selectedCities: s.selectedCities });
+    saveToStorage({ weights, climateType: s.climateType, fromOnboarding, selectedCities: s.selectedCities, incomeType: s.incomeType });
   },
 }));
 
@@ -121,7 +131,8 @@ export function hydrateWeightStore() {
   if (useWeightStore.getState()._hydrated) return;
   const saved = loadFromStorage();
   if (saved) {
-    useWeightStore.setState({ ...saved, _hydrated: true });
+    // incomeType was added without a version bump; older saved state defaults to income from abroad
+    useWeightStore.setState({ ...saved, incomeType: saved.incomeType ?? 'abroad', _hydrated: true });
   } else {
     useWeightStore.setState({ _hydrated: true });
   }

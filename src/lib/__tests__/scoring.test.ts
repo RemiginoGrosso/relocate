@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normaliseWeights, computeComposite, rankCountries, getScoreTier, computeClimateScore, applyClimatePreference } from '../scoring';
+import { normaliseWeights, computeComposite, rankCountries, getScoreTier, computeClimateScore, applyClimatePreference, applyIncomeType } from '../scoring';
 import { minMaxNormalise, rankToScore, pisaAcademicNormalise, gpiNormalise, pewNormalise } from '../normalisation';
 import { DEFAULT_WEIGHTS, CLIMATE_PROFILES } from '../constants';
 import type { CountryScores, UserWeights, DimensionKey } from '../types';
@@ -414,5 +414,30 @@ describe('normalisation functions', () => {
 
   it('pewNormalise: 10 = no freedom (0)', () => {
     expect(pewNormalise(10)).toBe(0);
+  });
+});
+
+describe('applyIncomeType', () => {
+  function withPP(localIncome: number | null) {
+    const c = makeCountry({ scores: { purchasing_power: 60 } });
+    c.dimensionScores.purchasing_power!.components = localIncome == null ? { cost_affordability: 60 } : { cost_affordability: 60, local_income: localIncome };
+    return c;
+  }
+
+  it('leaves scores unchanged for income from abroad', () => {
+    const countries = [withPP(80)];
+    expect(applyIncomeType(countries, 'abroad')).toBe(countries);
+  });
+
+  it('swaps in local income for a local salary', () => {
+    const pp = applyIncomeType([withPP(80)], 'local')[0].dimensionScores.purchasing_power!;
+    expect(pp.score).toBe(80);
+    expect(pp.confidence).toBe('high');
+  });
+
+  it('marks no data when local income is missing', () => {
+    const pp = applyIncomeType([withPP(null)], 'local')[0].dimensionScores.purchasing_power!;
+    expect(pp.score).toBeNull();
+    expect(pp.confidence).toBe('no_data');
   });
 });

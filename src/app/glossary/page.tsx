@@ -9,7 +9,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://relocateindex.com'
 
 export const metadata: Metadata = {
   title: 'Glossary',
-  description: 'Plain-language definitions of the indices and data sources Relocate Index uses to score countries for relocation — UHC, HAQ, GPI, PPP, PISA, WGI, and more.',
+  description: 'Plain-language definitions of the indices and data sources Relocate Index uses to score countries for relocation — UHC, HAQ, UNODC, PPP, PISA, WGI, and more.',
   openGraph: {
     title: 'Glossary — Relocate Index',
     description: 'Plain-language definitions of the indices and data sources Relocate Index uses to score countries for relocation.',
@@ -32,7 +32,7 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
   },
   {
     term: 'GPI (Global Peace Index)',
-    definition: "Measures a country's peacefulness based on conflict, political instability, and militarisation. Lower scores mean more peaceful. Produced annually by the Institute for Economics and Peace, and the sole source for the safety dimension.",
+    definition: "Measures a country's peacefulness based on conflict, political instability, and militarisation. Lower scores mean more peaceful. Produced annually by the Institute for Economics and Peace. Shown on country pages as context only: it is not part of the safety score, because it mostly measures war, militarisation and politics rather than everyday crime.",
     dimensionKey: 'safety',
   },
   {
@@ -57,12 +57,12 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
   },
   {
     term: 'Numbeo Crime Index',
-    definition: 'A crowdsourced measure of crime perception, based on surveys about safety walking alone at night and worry about property crime. Provides the street-level safety component of the Rule of Law dimension.',
-    dimensionKey: 'civic_culture',
+    definition: 'A crowdsourced measure of crime perception, based on surveys about safety walking alone at night and worry about property crime. Half of the Safety score, alongside UNODC homicide rates. Sample sizes vary by country.',
+    dimensionKey: 'safety',
   },
   {
-    term: 'Open-Meteo ERA5',
-    definition: "A global weather reanalysis dataset combining historical observations and modelling to produce consistent temperature, rainfall, and sunshine data back to 1940. Relocate Index uses ERA5 climate normals to score how well a country's actual weather matches your selected climate preference.",
+    term: 'Open-Meteo',
+    definition: "A free weather data service. Relocate Index uses its climate API, which serves modelled climate data (the EC-Earth3P-HR model) rather than weather-station records, to score how well a country's typical weather matches your selected climate preference.",
     dimensionKey: 'climate',
   },
   {
@@ -72,7 +72,7 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
   },
   {
     term: 'PPP (Purchasing Power Parity)',
-    definition: "How much a basket of goods and services costs relative to the OECD average, using World Bank and OECD price-level data. Higher purchasing power means your money buys more day-to-day, regardless of your salary.",
+    definition: "A way to compare prices and incomes across countries. Relocate Index uses two World Bank measures built on it: the price level ratio (how expensive a country is compared with the US), which scores purchasing power for income from abroad, and GDP per person adjusted for local prices, which scores it for a local salary.",
     dimensionKey: 'purchasing_power',
   },
   {
@@ -81,8 +81,13 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
     dimensionKey: 'healthcare',
   },
   {
+    term: 'UNODC Intentional Homicides',
+    definition: 'Murders per 100,000 people per year, compiled by the United Nations Office on Drugs and Crime and published by the World Bank. The hardest crime statistic available across countries, because a homicide is rarely unrecorded. Half of the Safety score, alongside the Numbeo Crime Index.',
+    dimensionKey: 'safety',
+  },
+  {
     term: 'WGI (Worldwide Governance Indicators)',
-    definition: "The World Bank's Rule of Law and Control of Corruption indicators — how much people trust and follow society's rules, and how well public power is kept in check. Combined with the Numbeo Crime Index to form the Rule of Law dimension.",
+    definition: "The World Bank's Rule of Law and Control of Corruption indicators — how much people trust and follow society's rules, and how well public power is kept in check. The only source of the Rule of Law dimension.",
     dimensionKey: 'civic_culture',
   },
   {

@@ -50,7 +50,9 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
         weights.civic_culture += 2;
         break;
       case 'nice_to_have':
+        break;
       case 'not_important':
+        weights.civic_culture = 1;
         break;
     }
   }
@@ -64,6 +66,7 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
         weights.warmth += 2;
         break;
       case 'not_priority':
+        weights.warmth = 2;
         break;
     }
   }
@@ -78,6 +81,7 @@ export function computeOnboardingWeights(answers: Partial<OnboardingAnswers>): U
         weights.religious_freedom += 3;
         break;
       case 'not_priority':
+        weights.religious_freedom = 2;
         break;
     }
   }

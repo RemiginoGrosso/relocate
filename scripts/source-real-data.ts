@@ -161,7 +161,8 @@ async function fetchWorldBankIndicator(
   indicatorId: string,
   preferredYear: number,
   fallbackYears: number[],
-  source?: number
+  source?: number,
+  byYear?: Map<string, Map<number, number>>
 ): Promise<Map<string, { value: number; year: number }>> {
   const allYears = [preferredYear, ...fallbackYears];
   const minYear = Math.min(...allYears);
@@ -203,6 +204,11 @@ async function fetchWorldBankIndicator(
         const value = item.value;
 
         if (value === null || value === undefined) continue;
+
+        if (byYear) {
+          if (!byYear.has(iso3)) byYear.set(iso3, new Map());
+          byYear.get(iso3)!.set(year, Number(value));
+        }
 
         const existing = results.get(iso3);
         // Keep the value from the most recent year
@@ -353,17 +359,36 @@ async function main(): Promise<void> {
   // Compute price level ratio from PPP conversion factor / exchange rate
   log("Computing price level ratio (PPP / exchange rate)...");
   try {
-    const pppData = await fetchWorldBankIndicator(
+    // Both factors must come from the same year. Dividing one year's PPP by a later
+    // year's exchange rate gave Argentina 0.15 (2021 PPP / 2023 rate) instead of 0.45.
+    const pppByYear = new Map<string, Map<number, number>>();
+    const fxByYear = new Map<string, Map<number, number>>();
+    await fetchWorldBankIndicator(
       PRICE_LEVEL_INDICATORS.ppp.indicatorId,
       PRICE_LEVEL_INDICATORS.preferredYear,
-      PRICE_LEVEL_INDICATORS.fallbackYears
+      PRICE_LEVEL_INDICATORS.fallbackYears,
+      undefined,
+      pppByYear
     );
     await sleep(500);
-    const fxData = await fetchWorldBankIndicator(
+    await fetchWorldBankIndicator(
       PRICE_LEVEL_INDICATORS.exchangeRate.indicatorId,
       PRICE_LEVEL_INDICATORS.preferredYear,
-      PRICE_LEVEL_INDICATORS.fallbackYears
+      PRICE_LEVEL_INDICATORS.fallbackYears,
+      undefined,
+      fxByYear
     );
+    const pppData = new Map<string, { value: number; year: number }>();
+    const fxData = new Map<string, { value: number; year: number }>();
+    for (const [iso3, pppYears] of pppByYear) {
+      const fxYears = fxByYear.get(iso3);
+      if (!fxYears) continue;
+      const shared = [...pppYears.keys()].filter((y) => fxYears.has(y));
+      if (shared.length === 0) continue;
+      const year = Math.max(...shared);
+      pppData.set(iso3, { value: pppYears.get(year)!, year });
+      fxData.set(iso3, { value: fxYears.get(year)!, year });
+    }
 
     let plrMatched = 0;
     const plrMissing: string[] = [];

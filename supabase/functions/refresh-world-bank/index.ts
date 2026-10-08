@@ -50,6 +50,14 @@ const INDICATORS: IndicatorSpec[] = [
     unit: "current_international_dollar",
     sourceUrl: "https://api.worldbank.org/v2/indicator/NY.GDP.PCAP.PP.CD",
   },
+  {
+    // UNODC intentional homicides per 100k, republished by the World Bank. Safety dimension.
+    wbId: "VC.IHR.PSRC.P5",
+    indicator: "homicide_rate",
+    source: "worldbank",
+    unit: "per_100k",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/VC.IHR.PSRC.P5",
+  },
 ];
 
 const PLR_INDICATORS = {
@@ -116,36 +124,30 @@ async function fetchPriceLevelRatio(
   const pppJson = await pppResp.json();
   const fxJson = await fxResp.json();
 
-  const pppByIso: Record<string, { value: number; year: number }> = {};
-  for (const entry of pppJson[1] ?? []) {
-    if (entry.value == null) continue;
-    const iso = entry.country?.id;
-    const year = parseInt(entry.date, 10);
-    if (!iso || isNaN(year)) continue;
-    if (!pppByIso[iso] || year > pppByIso[iso].year) {
-      pppByIso[iso] = { value: entry.value, year };
+  // Both factors must come from the same year: dividing one year's PPP by a later
+  // year's exchange rate gave Argentina 0.15 (2021 PPP / 2023 rate) instead of 0.45.
+  const byYear = (entries: { value: number | null; country?: { id?: string }; date: string }[]) => {
+    const out: Record<string, Record<number, number>> = {};
+    for (const entry of entries) {
+      if (entry.value == null) continue;
+      const iso = entry.country?.id;
+      const year = parseInt(entry.date, 10);
+      if (!iso || isNaN(year)) continue;
+      (out[iso] ??= {})[year] = entry.value;
     }
-  }
-
-  const fxByIso: Record<string, { value: number; year: number }> = {};
-  for (const entry of fxJson[1] ?? []) {
-    if (entry.value == null) continue;
-    const iso = entry.country?.id;
-    const year = parseInt(entry.date, 10);
-    if (!iso || isNaN(year)) continue;
-    if (!fxByIso[iso] || year > fxByIso[iso].year) {
-      fxByIso[iso] = { value: entry.value, year };
-    }
-  }
+    return out;
+  };
+  const pppByIso = byYear(pppJson[1] ?? []);
+  const fxByIso = byYear(fxJson[1] ?? []);
 
   const result: Record<string, { value: number; year: number }> = {};
   for (const iso of Object.keys(pppByIso)) {
-    if (fxByIso[iso] && fxByIso[iso].value > 0) {
-      result[iso] = {
-        value: pppByIso[iso].value / fxByIso[iso].value,
-        year: Math.min(pppByIso[iso].year, fxByIso[iso].year),
-      };
-    }
+    const fx = fxByIso[iso];
+    if (!fx) continue;
+    const shared = Object.keys(pppByIso[iso]).map(Number).filter((y) => fx[y] > 0);
+    if (shared.length === 0) continue;
+    const year = Math.max(...shared);
+    result[iso] = { value: pppByIso[iso][year] / fx[year], year };
   }
 
   console.log(`  Computed PLR for ${Object.keys(result).length} countries.`);

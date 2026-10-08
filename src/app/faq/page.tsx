@@ -40,7 +40,7 @@ const GENERAL_FAQS = [
   },
   {
     question: 'What do the technical terms and acronyms mean?',
-    answer: 'See the glossary for plain-language definitions of terms like UHC, HAQ, GPI, PPP, PISA, and other indices used throughout Relocate Index scoring.',
+    answer: 'See the glossary for plain-language definitions of terms like UHC, HAQ, UNODC, PPP, PISA, and other indices used throughout Relocate Index scoring.',
   },
   {
     question: 'Can I see the data behind a specific country?',

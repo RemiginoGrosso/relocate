@@ -72,6 +72,8 @@ export interface DimensionDefinition {
 
 export type HouseholdSituation = 'solo' | 'couple' | 'family_young' | 'family_teen' | 'retiring';
 export type IncomeSource = 'remote' | 'local_job' | 'pension';
+/** Which purchasing-power view applies: income earned abroad (remote, pension) or a local salary. */
+export type IncomeType = 'abroad' | 'local';
 export type CivicImportance = 'top_priority' | 'very_important' | 'nice_to_have' | 'not_important';
 export type WarmthImportance = 'essential' | 'matters' | 'not_priority';
 export type ClimatePreference =

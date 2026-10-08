@@ -21,17 +21,22 @@ function safetyFaq(
   if (score == null) return null;
 
   const r = dimRank(country.iso, 'safety', allCountries);
-  const gpi = findRaw(rawIndices, 'gpi.gpi_score');
-  const gpiLabel = gpi?.value != null ? interpret('gpi.gpi_score', gpi.value) : null;
+  const homicide = findRaw(rawIndices, 'worldbank.homicide_rate');
+  const crime = findRaw(rawIndices, 'numbeo.crime_index');
 
   let answer = `${country.name} scores ${Math.round(score)} out of 100 for safety in the Relocate Index`;
   if (r) answer += `, ranking ${ordinal(r.rank)} out of ${r.total} countries`;
   answer += '.';
-  if (gpi?.value != null) {
-    answer += ` Its Global Peace Index score is ${formatValue(gpi)}`;
-    if (gpiLabel) answer += `, rated "${gpiLabel.toLowerCase()}"`;
-    answer += '. Source: Institute for Economics and Peace, Global Peace Index.';
+  if (homicide?.value != null) {
+    answer += ` It records ${formatValue(homicide)} homicides per 100,000 people per year.`;
   }
+  if (crime?.value != null) {
+    const label = interpret('numbeo.crime_index', crime.value);
+    answer += ` Residents rate crime at ${formatValue(crime)} on the Numbeo Crime Index`;
+    if (label) answer += ` (${label.toLowerCase()})`;
+    answer += '.';
+  }
+  answer += ' National averages: safety varies a lot between cities and neighbourhoods. Sources: UNODC via World Bank, Numbeo.';
 
   return { question: `How safe is ${country.name}?`, answer };
 }
@@ -76,7 +81,7 @@ function affordabilityFaq(
   const r = dimRank(country.iso, 'purchasing_power', allCountries);
   const plr = findRaw(rawIndices, 'worldbank.price_level_ratio');
 
-  let answer = `${country.name} scores ${Math.round(score)} out of 100 for purchasing power`;
+  let answer = `${country.name} scores ${Math.round(score)} out of 100 for purchasing power on income from abroad`;
   if (r) answer += `, ranking ${ordinal(r.rank)} out of ${r.total} countries`;
   answer += '.';
   if (plr?.value != null) {
@@ -85,7 +90,7 @@ function affordabilityFaq(
     if (label) answer += ` (${label.toLowerCase()})`;
     answer += '.';
   }
-  answer += ' Source: OECD, World Bank.';
+  answer += ' A local salary is scored differently, on local income levels. Source: World Bank.';
 
   return { question: `How affordable is ${country.name}?`, answer };
 }
@@ -150,7 +155,7 @@ function climateFaq(
 
   if (parts.length === 0) return null;
 
-  const answer = `${country.name} has ${parts.join(', ')}. Climate data from Open-Meteo ERA5 reanalysis.`;
+  const answer = `${country.name} has ${parts.join(', ')}. Climate data from an Open-Meteo climate model.`;
 
   return { question: `What is the climate like in ${country.name}?`, answer };
 }

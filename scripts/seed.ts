@@ -97,6 +97,12 @@ interface WhrWalletReturnEntry {
   whr_year: number;
 }
 
+interface HomicideEntry {
+  iso_alpha2: string;
+  homicide_rate: number;
+  year: number;
+}
+
 type ExternalIndices = Record<string, Record<string, number>>;
 
 interface ClimateEntry {
@@ -313,6 +319,27 @@ async function seedNumbeoCrime(data: NumbeoCrimeEntry[], countryIds: Record<stri
   console.log(`  Numbeo Crime seeded: ${rows.length} rows.`);
 }
 
+async function seedHomicide(data: HomicideEntry[], countryIds: Record<string, string>) {
+  console.log(`Seeding UNODC homicide data for ${data.length} countries...`);
+  const rows = data
+    .filter((h) => countryIds[h.iso_alpha2])
+    .map((h) => ({
+      country_id: countryIds[h.iso_alpha2],
+      source: 'worldbank',
+      indicator: 'homicide_rate',
+      value: h.homicide_rate,
+      unit: 'per_100k',
+      year: h.year,
+      source_url: 'https://api.worldbank.org/v2/indicator/VC.IHR.PSRC.P5',
+      fetched_at: '2026-10-08T00:00:00Z',
+    }));
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`Homicide seed failed: ${error.message}`);
+  console.log(`  Homicide seeded: ${rows.length} rows.`);
+}
+
 async function seedHaq(data: HaqEntry[], countryIds: Record<string, string>) {
   console.log(`Seeding HAQ Index data for ${data.length} countries...`);
   const rows = data
@@ -464,6 +491,7 @@ async function main() {
   const hofstede = loadJson<HofstedeEntry[]>('hofstede.json');
   const gallupMai = loadJson<GallupMaiEntry[]>('gallup-mai.json');
   const numbeoCrime = loadJson<NumbeoCrimeEntry[]>('numbeo-crime.json');
+  const homicide = loadJson<HomicideEntry[]>('homicide.json');
   const haqIndex = loadJson<HaqEntry[]>('haq-index.json');
   const healthCapacity = loadJson<HealthCapacityEntry[]>('health-capacity.json');
   const pisa = loadJson<PisaEntry[]>('pisa.json');
@@ -482,6 +510,7 @@ async function main() {
   await seedHofstede(hofstede, countryIds);
   await seedGallupMai(gallupMai, countryIds);
   await seedNumbeoCrime(numbeoCrime, countryIds);
+  await seedHomicide(homicide, countryIds);
   await seedHaq(haqIndex, countryIds);
   await seedHealthCapacity(healthCapacity, countryIds);
   await seedPisa(pisa, countryIds);

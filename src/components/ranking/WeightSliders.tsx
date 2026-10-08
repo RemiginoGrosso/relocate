@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/tooltip';
 import { DIMENSIONS, CLIMATE_PROFILES } from '@/lib/constants';
 import { trackEvent } from '@/lib/analytics';
-import type { ClimatePreference, DimensionKey, UserWeights } from '@/lib/types';
+import type { ClimatePreference, DimensionKey, IncomeType, UserWeights } from '@/lib/types';
 
 const CLIMATE_TAGLINES: Record<ClimatePreference, string> = {
   tropical_heat: 'Warm and humid weather all year round, perfect for beach and jungle climates.',
@@ -40,9 +40,16 @@ interface WeightSlidersProps {
   onReset: () => void;
   climateType: ClimatePreference;
   onClimateTypeChange: (type: ClimatePreference) => void;
+  incomeType: IncomeType;
+  onIncomeTypeChange: (type: IncomeType) => void;
 }
 
-export function WeightSliders({ weights, onWeightChange, onReset, climateType, onClimateTypeChange }: WeightSlidersProps) {
+const INCOME_OPTIONS: { key: IncomeType; label: string; hint: string }[] = [
+  { key: 'abroad', label: 'Income from abroad', hint: 'Remote work, pension or savings: scored on local prices.' },
+  { key: 'local', label: 'Local salary', hint: 'A job in the new country: scored on local income adjusted for prices.' },
+];
+
+export function WeightSliders({ weights, onWeightChange, onReset, climateType, onClimateTypeChange, incomeType, onIncomeTypeChange }: WeightSlidersProps) {
   return (
     <TooltipProvider>
       <div className="flex flex-col gap-5">
@@ -87,6 +94,34 @@ export function WeightSliders({ weights, onWeightChange, onReset, climateType, o
               step={1}
               className="w-full"
             />
+            {dim.key === 'purchasing_power' && weights.purchasing_power > 0 && (
+              <div className="ml-4 mt-2 border-l-2 border-zinc-200 pl-4 transition-all duration-150">
+                <p className="mb-1.5 text-xs text-zinc-500">Your income</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {INCOME_OPTIONS.map((opt) => (
+                    <Tooltip key={opt.key}>
+                      <TooltipTrigger
+                        onClick={() => {
+                          if (opt.key === incomeType) return;
+                          trackEvent('income_type_change', { income_type: opt.key });
+                          onIncomeTypeChange(opt.key);
+                        }}
+                        className={`w-full rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                          incomeType === opt.key
+                            ? 'bg-teal-700 text-white'
+                            : 'border border-zinc-200 bg-white text-zinc-700 hover:bg-zinc-50'
+                        }`}
+                      >
+                        {opt.label}
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-56">
+                        {opt.hint}
+                      </TooltipContent>
+                    </Tooltip>
+                  ))}
+                </div>
+              </div>
+            )}
             {dim.key === 'climate' && weights.climate > 0 && (
               <div className="ml-4 mt-2 border-l-2 border-zinc-200 pl-4 transition-all duration-150">
                 <p className="mb-1.5 text-xs text-zinc-500">Your climate type</p>

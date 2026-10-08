@@ -1,0 +1,287 @@
+[
+  {
+    "iso_alpha2": "DK",
+    "homicide_rate": 0.84,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "NL",
+    "homicide_rate": 0.69,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "DE",
+    "homicide_rate": 0.91,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "CH",
+    "homicide_rate": 0.6,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "SE",
+    "homicide_rate": 1.15,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "FI",
+    "homicide_rate": 0.98,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "NO",
+    "homicide_rate": 0.72,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "FR",
+    "homicide_rate": 1.34,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "IE",
+    "homicide_rate": 0.65,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "GB",
+    "homicide_rate": 1.12,
+    "year": 2021
+  },
+  {
+    "iso_alpha2": "PT",
+    "homicide_rate": 0.72,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "ES",
+    "homicide_rate": 0.69,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "IT",
+    "homicide_rate": 0.57,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "AT",
+    "homicide_rate": 0.88,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "LU",
+    "homicide_rate": 1.53,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "BE",
+    "homicide_rate": 1.08,
+    "year": 2021
+  },
+  {
+    "iso_alpha2": "CZ",
+    "homicide_rate": 0.77,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "PL",
+    "homicide_rate": 0.8,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "HU",
+    "homicide_rate": 0.72,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "GR",
+    "homicide_rate": 0.84,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "EE",
+    "homicide_rate": 1.54,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "HR",
+    "homicide_rate": 0.67,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "RO",
+    "homicide_rate": 1.11,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "LT",
+    "homicide_rate": 2.63,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "CA",
+    "homicide_rate": 1.98,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "MX",
+    "homicide_rate": 24.86,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "CL",
+    "homicide_rate": 6.35,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "CO",
+    "homicide_rate": 24.91,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "AR",
+    "homicide_rate": 4.49,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "UY",
+    "homicide_rate": 11.25,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "JP",
+    "homicide_rate": 0.23,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "KR",
+    "homicide_rate": 0.48,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "SG",
+    "homicide_rate": 0.07,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "MY",
+    "homicide_rate": 0.73,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "AU",
+    "homicide_rate": 0.85,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "NZ",
+    "homicide_rate": 1.46,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "AE",
+    "homicide_rate": 0.69,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "SK",
+    "homicide_rate": 1.12,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "SI",
+    "homicide_rate": 0.57,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "LV",
+    "homicide_rate": 2.5,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "IS",
+    "homicide_rate": 1.29,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "BG",
+    "homicide_rate": 1.09,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "CY",
+    "homicide_rate": 0.82,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "BR",
+    "homicide_rate": 19.28,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "CR",
+    "homicide_rate": 17.75,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "PA",
+    "homicide_rate": 11.71,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "IN",
+    "homicide_rate": 2.82,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "PH",
+    "homicide_rate": 4.35,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "ID",
+    "homicide_rate": 0.3,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "CN",
+    "homicide_rate": 0.5,
+    "year": 2020
+  },
+  {
+    "iso_alpha2": "TR",
+    "homicide_rate": 3.23,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "SA",
+    "homicide_rate": 0.94,
+    "year": 2019
+  },
+  {
+    "iso_alpha2": "QA",
+    "homicide_rate": 0.07,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "ZA",
+    "homicide_rate": 43.72,
+    "year": 2022
+  },
+  {
+    "iso_alpha2": "MA",
+    "homicide_rate": 1.71,
+    "year": 2023
+  },
+  {
+    "iso_alpha2": "PE",
+    "homicide_rate": 8.6,
+    "year": 2021
+  },
+  {
+    "iso_alpha2": "US",
+    "homicide_rate": 5.76,
+    "year": 2023
+  }
+]

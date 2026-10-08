@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.1.30 - 2026-10-08
+
+Methodology Iteration 29. Decision: `decisions/2026-10-08-source-swap-and-honesty-pass.md` in the project repo.
+
+### Changed
+- **Safety** now scores UNODC homicide rate (log scale) × 0.50 + Numbeo street crime (inverted) × 0.50. GPI is shown as context only, because it weights wars and military spending heavily.
+- **Rule of Law** is WGI only: Rule of Law × 0.55 + Control of Corruption × 0.45. Numbeo moved to Safety.
+- **Purchasing power** depends on income type. Income from abroad (default) scores the inverted price level ratio; a local salary scores GDP per capita PPP on a log scale. New toggle in the weight sliders, new `income_type_change` event.
+- **Onboarding can lower weights:** Rule of Law "not important" = 1, warmth and religion "not a priority" = 2.
+- **Wording pass** on every dimension: each now says what it measures and what it does not. Confidence labels re-graded to mean how closely a score matches its label.
+- Raw-data readers (`compute-normalised.ts`, `supabase.ts`) take the latest year when an indicator has several.
+
+### Fixed
+- **Argentina price level ratio** 0.15 to 0.45: PPP and exchange rate are now paired from the same year (seed data and the `refresh-world-bank` edge function code; the edge function itself is not redeployed).
+
 ## 0.1.29 — 2026-08-02
 
 ### Added

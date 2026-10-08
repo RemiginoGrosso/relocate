@@ -6,7 +6,7 @@ import { ScoreBadge } from '@/components/shared/ScoreBadge';
 import { Shield, ShieldCheck, Briefcase, DollarSign } from 'lucide-react';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { DIMENSIONS, INDICATOR_TOOLTIPS, WARMTH_MISMATCH_THRESHOLD, HEALTHCARE_SYSTEM_MAP, HEALTHCARE_SYSTEM_LABELS } from '@/lib/constants';
-import { INDICATOR_LABELS, DIMENSION_INDICATORS, getRawValue, getInterpretation, formatValue } from '@/lib/indicator-display';
+import { INDICATOR_LABELS, DIMENSION_INDICATORS, getRawValue, getInterpretation, formatValue, isEstimate } from '@/lib/indicator-display';
 import { hasCityData, getCityClimate } from '@/lib/large-countries';
 import { getSourceStatuses } from '@/lib/source-provenance';
 import { trackCivicNormsContextExpanded } from '@/lib/analytics';
@@ -323,6 +323,9 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                           <span className="shrink-0 text-right text-zinc-700 tabular-nums">
                             {raw ? formatValue(raw) : 'N/A'}
                             {raw?.year ? ` (${raw.year})` : ''}
+                            {raw?.value != null && isEstimate(indKey, country.iso.toUpperCase()) && (
+                              <span className="ml-1 text-amber-600">estimate</span>
+                            )}
                             {raw?.sourceUrl && (
                               <a
                                 href={raw.sourceUrl}

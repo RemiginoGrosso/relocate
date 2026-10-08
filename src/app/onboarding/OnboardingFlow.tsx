@@ -57,7 +57,7 @@ const QUESTIONS: Question[] = [
   {
     key: 'civicImportance',
     question:
-      'How important is rule of law — honest courts, corruption control, and how safe the streets feel?',
+      'How important is rule of law: honest courts and low corruption?',
     options: [
       { label: 'My top priority', value: 'top_priority' },
       { label: 'Very important', value: 'very_important' },
@@ -96,7 +96,7 @@ const QUESTIONS: Question[] = [
 
 export default function OnboardingFlow() {
   const router = useRouter();
-  const { setAllWeights, setClimateType, resetToDefaults } = useWeightStore();
+  const { setAllWeights, setClimateType, setIncomeType, resetToDefaults } = useWeightStore();
   const hydrated = useHydrated();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Partial<OnboardingAnswers>>({});
@@ -153,8 +153,11 @@ export default function OnboardingFlow() {
     if (answers.climatePreference) {
       setClimateType(answers.climatePreference as ClimatePreference);
     }
+    if (answers.income) {
+      setIncomeType(answers.income === 'local_job' ? 'local' : 'abroad');
+    }
     router.push('/ranking');
-  }, [computedWeights, answers, setAllWeights, setClimateType, router, timeOnSummaryMs]);
+  }, [computedWeights, answers, setAllWeights, setClimateType, setIncomeType, router, timeOnSummaryMs]);
 
   const handleAdjust = useCallback(() => {
     trackEvent('weight_summary_cta_clicked', {
@@ -165,8 +168,11 @@ export default function OnboardingFlow() {
     if (answers.climatePreference) {
       setClimateType(answers.climatePreference as ClimatePreference);
     }
+    if (answers.income) {
+      setIncomeType(answers.income === 'local_job' ? 'local' : 'abroad');
+    }
     router.push('/ranking');
-  }, [computedWeights, answers.climatePreference, setAllWeights, setClimateType, router, timeOnSummaryMs]);
+  }, [computedWeights, answers.climatePreference, answers.income, setAllWeights, setClimateType, setIncomeType, router, timeOnSummaryMs]);
 
   if (showResumeBanner) {
     return (

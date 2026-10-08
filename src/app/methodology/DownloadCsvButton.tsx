@@ -7,7 +7,7 @@ import { trackEvent } from '@/lib/analytics';
 import type { DimensionKey } from '@/lib/types';
 
 const DIMENSION_LABELS: Record<DimensionKey, string> = {
-  purchasing_power: 'Purchasing Power',
+  purchasing_power: 'Purchasing Power (income from abroad)',
   civic_culture: 'Rule of Law',
   safety: 'Safety',
   warmth: 'Warmth',

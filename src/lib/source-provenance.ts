@@ -10,21 +10,22 @@ interface SourceInfo {
 
 const DIMENSION_SOURCES: Record<DimensionKey, SourceInfo[]> = {
   purchasing_power: [
-    { key: 'worldbank.oecd_ppp_aic', label: 'OECD PPP', tier: 'key' },
-    { key: 'worldbank.price_level_ratio', label: 'World Bank Price Level', tier: 'directional' },
-    { key: 'worldbank.who_oop_pct', label: 'WHO OOP Health Expenditure', tier: 'directional' },
+    { key: 'worldbank.price_level_ratio', label: 'World Bank Price Level', tier: 'key' },
+    { key: 'worldbank.oecd_ppp_aic', label: 'GDP per person (PPP)', tier: 'key' },
   ],
   civic_culture: [
     { key: 'worldbank.wgi_rule_of_law', label: 'WGI Rule of Law', tier: 'key' },
     { key: 'worldbank.wgi_corruption_control', label: 'WGI Corruption Control', tier: 'key' },
-    { key: 'numbeo.crime_index', label: 'Numbeo Crime Index', tier: 'directional' },
     // Display-only context rows — never scored (see decisions/2026-07-12-civic-culture-behavioural-review.md)
     { key: 'gelfand.tightness', altKeys: ['uz.tightness'], label: 'Cultural Tightness–Looseness', tier: 'directional' },
     { key: 'epi.waste_mgmt', label: 'Yale EPI Waste Management', tier: 'directional' },
     { key: 'whr.wallet_return', label: 'WHR Expected Wallet Return', tier: 'directional' },
   ],
   safety: [
-    { key: 'gpi.gpi_score', label: 'Global Peace Index', tier: 'key' },
+    { key: 'worldbank.homicide_rate', label: 'UNODC Homicide Rate', tier: 'key' },
+    { key: 'numbeo.crime_index', label: 'Numbeo Crime Index', tier: 'key' },
+    // Display-only context, not scored since Iteration 29
+    { key: 'gpi.gpi_score', label: 'Global Peace Index', tier: 'directional' },
   ],
   warmth: [
     { key: 'hofstede.ivr', label: 'Hofstede IVR', tier: 'key' },

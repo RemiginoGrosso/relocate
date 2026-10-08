@@ -18,7 +18,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 import type { CountryScores, RawIndex } from '@/lib/types';
-import { applyClimatePreference } from '@/lib/scoring';
+import { applyClimatePreference, applyIncomeType } from '@/lib/scoring';
 import { hasCityData, getCitiesForCountry, getDefaultCity } from '@/lib/large-countries';
 import { trackEvent } from '@/lib/analytics';
 import { fetchRawIndicesForCountries } from '@/lib/supabase';
@@ -29,7 +29,7 @@ interface CompareViewProps {
 
 export function CompareView({ allCountries }: CompareViewProps) {
   const searchParams = useSearchParams();
-  const { weights, setWeight, resetToDefaults, climateType, setClimateType, selectedCities, setSelectedCity } = useWeightStore();
+  const { weights, setWeight, resetToDefaults, climateType, setClimateType, incomeType, setIncomeType, selectedCities, setSelectedCity } = useWeightStore();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [rawIndicesByCountry, setRawIndicesByCountry] = useState<Record<string, RawIndex[]>>({});
 
@@ -45,8 +45,8 @@ export function CompareView({ allCountries }: CompareViewProps) {
     .slice(0, 3);
 
   const adjusted = useMemo(
-    () => applyClimatePreference(allCountries, climateType, selectedCities),
-    [allCountries, climateType, selectedCities],
+    () => applyIncomeType(applyClimatePreference(allCountries, climateType, selectedCities), incomeType),
+    [allCountries, climateType, selectedCities, incomeType],
   );
 
   const countries = useMemo(
@@ -115,6 +115,8 @@ export function CompareView({ allCountries }: CompareViewProps) {
             onReset={resetToDefaults}
             climateType={climateType}
             onClimateTypeChange={setClimateType}
+            incomeType={incomeType}
+            onIncomeTypeChange={setIncomeType}
           />
         </div>
       </aside>
@@ -206,6 +208,8 @@ export function CompareView({ allCountries }: CompareViewProps) {
                 onReset={resetToDefaults}
                 climateType={climateType}
                 onClimateTypeChange={setClimateType}
+                incomeType={incomeType}
+                onIncomeTypeChange={setIncomeType}
               />
             </div>
           </DrawerContent>

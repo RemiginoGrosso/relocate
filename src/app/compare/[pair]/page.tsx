@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fetchAllCountryScores } from '@/lib/supabase';
-import { DIMENSIONS, DIMENSION_SLUGS, DEFAULT_WEIGHTS, REGION_SLUGS, MIN_COVERAGE_RATIO } from '@/lib/constants';
+import { DIMENSIONS, DIMENSION_SLUGS, DEFAULT_WEIGHTS, REGION_SLUGS, MIN_COVERAGE_RATIO, TIE_THRESHOLD } from '@/lib/constants';
 import { computeComposite, normaliseWeights } from '@/lib/scoring';
 import { generateComparisonPairs, findComparisonPair } from '@/lib/comparison-pairs';
 import { ScoreBadge } from '@/components/shared/ScoreBadge';
@@ -112,8 +112,8 @@ export default async function ComparisonPage({ params }: PageProps) {
         const safetyA = a.dimensionScores.safety?.score;
         const safetyB = b.dimensionScores.safety?.score;
         if (safetyA != null && safetyB != null) {
-          const safer = safetyA > safetyB ? a.name : safetyB > safetyA ? b.name : 'Both';
-          return `${safer === 'Both' ? 'Both score equally' : `${safer} scores higher`} on safety: ${a.name} ${Math.round(safetyA)} vs ${b.name} ${Math.round(safetyB)}, based on the Global Peace Index.`;
+          const safer = Math.abs(safetyA - safetyB) < TIE_THRESHOLD ? 'Both' : safetyA > safetyB ? a.name : b.name;
+          return `${safer === 'Both' ? 'They are effectively tied' : `${safer} scores higher`} on safety: ${a.name} ${Math.round(safetyA)} vs ${b.name} ${Math.round(safetyB)}, based on homicide rates (UNODC) and residents' crime reports (Numbeo).`;
         }
         return `Safety data is not available for both countries.`;
       })(),
