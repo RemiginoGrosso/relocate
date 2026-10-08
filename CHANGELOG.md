@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.32 - 2026-10-08
+
+### Added
+- **"What would change your top 5" hint** on `/ranking` (overall view): the one slider move, to 1 or to 10, that changes the most countries in your top 5, naming who comes in and who drops out. Says so when no single move changes it. Pure function `findShortlistLever()` in `scoring.ts`; `SHORTLIST_SIZE` and `LEVER_WEIGHTS` in `constants.ts`. Review finding C3.
+
+### Fixed
+- Climate info buttons in onboarding now have an accessible name ("About {climate type}"). Review finding m2.
+- `seed.ts` writes each external index's real edition year (GPI 2025, EF EPI 2025, IMD 2024 with the five LPI patches at 2023, InterNations 2024 with the US at 2025, WHO UHC 2021, Argentina's price level 2021) instead of 2023 for everything. Production rows are not yet updated.
+
 ## 0.1.31 - 2026-10-08
 
 ### Fixed

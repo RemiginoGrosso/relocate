@@ -2,8 +2,8 @@
 
 import { useRef, useMemo, useState } from 'react';
 import type { ClimatePreference, CountryScores, DimensionKey, IncomeType, RankedCountry, UserWeights } from '@/lib/types';
-import { applyClimatePreference, applyIncomeType, rankCountries } from '@/lib/scoring';
-import { DIMENSIONS, REGION_FILTER_GROUPS } from '@/lib/constants';
+import { applyClimatePreference, applyIncomeType, findShortlistLever, rankCountries } from '@/lib/scoring';
+import { DIMENSIONS, REGION_FILTER_GROUPS, SHORTLIST_SIZE } from '@/lib/constants';
 import { useCompareStore } from '@/stores/useCompareStore';
 import { CountryRow } from './CountryRow';
 import { RegionFilter } from './RegionFilter';
@@ -90,6 +90,11 @@ export function CountryList({ countries, weights, climateType, incomeType, selec
     return { rankedCountries: rc, unrankedCountries: uc };
   }, [filtered, singleDimension]);
 
+  const lever = useMemo(
+    () => (rankedBy === 'overall' ? findShortlistLever(adjusted, weights) : null),
+    [adjusted, weights, rankedBy],
+  );
+
   const allZero = Object.values(weights).every((w) => w === 0);
 
   if (allZero && rankedBy === 'overall') {
@@ -107,6 +112,22 @@ export function CountryList({ countries, weights, climateType, incomeType, selec
   return (
     <div className="flex flex-col gap-4">
       <RegionFilter activeGroup={regionGroup} onChange={setRegionGroup} />
+      {rankedBy === 'overall' && (
+        <p className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2 text-xs text-zinc-600">
+          {lever ? (
+            <>
+              What would change your top {SHORTLIST_SIZE}: setting{' '}
+              <span className="font-medium text-zinc-900">
+                {DIMENSIONS.find((d) => d.key === lever.dimension)?.name ?? lever.dimension}
+              </span>{' '}
+              to {lever.to} brings in {joinNames(lever.entering.map((c) => c.name))}
+              {lever.leaving.length > 0 && <>, replacing {joinNames(lever.leaving.map((c) => c.name))}</>}.
+            </>
+          ) : (
+            <>No single slider change alters your top {SHORTLIST_SIZE}.</>
+          )}
+        </p>
+      )}
       <p className="text-xs text-zinc-400">
         {rankedCountries.length} {rankedCountries.length === 1 ? 'country' : 'countries'} ranked
         {unrankedCountries.length > 0 && (
@@ -167,4 +188,9 @@ export function CountryList({ countries, weights, climateType, incomeType, selec
       )}
     </div>
   );
+}
+
+function joinNames(names: string[]): string {
+  if (names.length <= 1) return names.join('');
+  return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
 }

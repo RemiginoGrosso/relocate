@@ -428,6 +428,32 @@ async function seedPisa(pisa: PisaEntry[], countryIds: Record<string, string>) {
   console.log(`  PISA seeded: ${rows.length} rows.`);
 }
 
+// Edition year of each external index, from external-indices-real.json `_meta`.
+// Rows not listed here keep 2023, where the true year has not been established.
+const EXTERNAL_INDEX_YEARS: Record<string, number> = {
+  'gpi.gpi_score': 2025,
+  'ef.epi_score': 2025,
+  'imd.infrastructure_score': 2024,
+  'internations.ease_rank': 2024,
+  'worldbank.who_uhc_coverage': 2021,
+};
+const EXTERNAL_INDEX_YEAR_OVERRIDES: Record<string, number> = {
+  // World Bank LPI 2023 patches, not IMD
+  'imd.infrastructure_score:CZ': 2023,
+  'imd.infrastructure_score:VN': 2023,
+  'imd.infrastructure_score:PA': 2023,
+  'imd.infrastructure_score:UY': 2023,
+  'imd.infrastructure_score:CR': 2023,
+  // US rank comes from the 2025 Expat Insider
+  'internations.ease_rank:US': 2025,
+  // Latest year with both PPP and exchange rate (Iteration 29)
+  'worldbank.price_level_ratio:AR': 2021,
+};
+
+function externalIndexYear(key: string, iso: string): number {
+  return EXTERNAL_INDEX_YEAR_OVERRIDES[`${key}:${iso}`] ?? EXTERNAL_INDEX_YEARS[key] ?? 2023;
+}
+
 async function seedExternalIndices(data: ExternalIndices, countryIds: Record<string, string>) {
   const rows = [];
   for (const [iso, indicators] of Object.entries(data)) {
@@ -442,7 +468,7 @@ async function seedExternalIndices(data: ExternalIndices, countryIds: Record<str
         indicator,
         value,
         unit: 'various',
-        year: 2023,
+        year: externalIndexYear(key, iso),
         source_url: null,
         fetched_at: '2023-01-01T00:00:00Z',
       });
