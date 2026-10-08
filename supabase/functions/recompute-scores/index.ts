@@ -1,401 +1,26 @@
 /**
  * recompute-scores
  *
- * Reads all raw_indices and climate_data, applies normalisation formulas
- * from SCORING_ENGINE.md, writes results to normalised_scores, then
- * refreshes the v_country_scores materialised view.
+ * Reads all raw_indices (paged, count-checked) and climate_data, applies the
+ * formulas in compute.ts, upserts normalised_scores, deletes scores that no
+ * longer compute, then refreshes the v_country_scores materialised view.
  *
  * Should be called after any data refresh (world-bank, who, climate).
  *
  * Invoke: POST /functions/v1/recompute-scores
  * Auth: Bearer token with service role key
- *
- * Formulas implemented here MUST match SCORING_ENGINE.md exactly.
  */
 import { createServiceClient } from "../_shared/supabase-client.ts";
 import { corsHeaders } from "../_shared/cors.ts";
-import { ENGLISH_NATIVE } from "../_shared/countries.ts";
 import { logRefresh, jsonResponse } from "../_shared/logger.ts";
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-interface RawRow {
-  country_id: string;
-  source: string;
-  indicator: string;
-  value: number | null;
-}
-
-interface CountryRow {
-  id: string;
-  iso_alpha2: string;
-}
-
-interface ClimateRow {
-  country_id: string;
-  avg_temp_annual: number | null;
-  avg_temp_winter: number | null;
-  avg_temp_summer: number | null;
-  sunshine_hours_annual: number | null;
-  rain_days_annual: number | null;
-}
-
-interface DimensionScore {
-  country_id: string;
-  dimension_key: string;
-  score: number | null;
-  confidence: "high" | "medium" | "low" | "no_data";
-  component_scores: Record<string, number | null>;
-}
-
-type RawMap = Record<string, number | null>;
-
-// ---------------------------------------------------------------------------
-// Normalisation functions
-// (Mirrors src/lib/normalisation.ts for Deno runtime)
-// ---------------------------------------------------------------------------
-
-function minMaxNormalise(
-  value: number | null | undefined,
-  min: number,
-  max: number,
-  invert = false
-): number | null {
-  if (value == null || min === max) return null;
-  const clamped = Math.max(min, Math.min(max, value));
-  const normalised = ((clamped - min) / (max - min)) * 100;
-  return invert ? 100 - normalised : normalised;
-}
-
-function pisaAcademicNormalise(
-  reading: number | null | undefined,
-  maths: number | null | undefined,
-  science: number | null | undefined
-): number | null {
-  const scores = [reading, maths, science].filter(
-    (s): s is number => s != null
-  );
-  if (scores.length === 0) return null;
-  const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-  return minMaxNormalise(avg, 300, 600);
-}
-
-/**
- * Climate comfort heuristic from SCORING_ENGINE.md section 3.8:
- * climate = 100 - (|avg_temp - 20| * 3) - (rain_days > 150 ? 10 : 0) - (sunshine < 1500 ? 15 : 0)
- */
-function computeClimateScore(
-  avgTemp: number | null,
-  rainDays: number | null,
-  sunshineHours: number | null
-): number | null {
-  if (avgTemp == null) return null;
-  let score = 100 - Math.abs(avgTemp - 20) * 3;
-  if (rainDays != null && rainDays > 150) score -= 10;
-  if (sunshineHours != null && sunshineHours < 1500) score -= 15;
-  return Math.max(0, Math.min(100, score));
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function safeNum(val: number | null | undefined): number | null {
-  return val != null && !isNaN(val) ? val : null;
-}
-
-function getRaw(
-  rawByCountry: Record<string, RawRow[]>,
-  countryId: string
-): RawMap {
-  const map: RawMap = {};
-  for (const row of rawByCountry[countryId] ?? []) {
-    // Use the most recent value per source.indicator
-    // (raw_indices may have multiple years; we want the latest)
-    const key = `${row.source}.${row.indicator}`;
-    if (map[key] === undefined) {
-      map[key] = row.value;
-    }
-  }
-  return map;
-}
-
-function round2(val: number): number {
-  return Math.round(val * 100) / 100;
-}
-
-// ---------------------------------------------------------------------------
-// Dimension computations
-// All formulas match SCORING_ENGINE.md sections 3.1-3.10
-// ---------------------------------------------------------------------------
-
-function logNormalise(value: number, min: number, max: number): number {
-  const clamped = Math.min(Math.max(value, min), max);
-  return round2(((Math.log(clamped) - Math.log(min)) / (Math.log(max) - Math.log(min))) * 100);
-}
-
-// Homicides per 100k, log scale: 0.3 or lower = 100, 40 or higher = 0
-function homicideNormalise(rate: number): number {
-  const clamped = Math.min(Math.max(rate, 0.3), 40);
-  return round2(((Math.log10(40) - Math.log10(clamped)) / (Math.log10(40) - Math.log10(0.3))) * 100);
-}
-
-// Score = cost affordability (income from abroad). local_income kept as a component for local-job users.
-function computePurchasingPower(raw: RawMap): DimensionScore | null {
-  // Key name is historical: the value is World Bank GDP per capita PPP (NY.GDP.PCAP.PP.CD)
-  const gdpPcPpp = safeNum(raw["worldbank.oecd_ppp_aic"]);
-  const priceLevel = safeNum(raw["worldbank.price_level_ratio"]);
-
-  if (gdpPcPpp == null && priceLevel == null) return null;
-
-  const costAffordability = priceLevel != null
-    ? round2(minMaxNormalise(priceLevel, 0.10, 1.50, true)!)
-    : null;
-  const localIncome = gdpPcPpp != null ? logNormalise(gdpPcPpp, 8000, 160000) : null;
-
-  return {
-    country_id: "",
-    dimension_key: "purchasing_power",
-    score: costAffordability,
-    confidence: costAffordability != null ? "high" : "no_data",
-    component_scores: {
-      cost_affordability: costAffordability,
-      local_income: localIncome,
-    },
-  };
-}
-
-// Rule of Law (key civic_culture): WGI only
-function computeCivicCulture(raw: RawMap): DimensionScore | null {
-  const wgiRol = safeNum(raw["worldbank.wgi_rule_of_law"]);
-  const wgiCc = safeNum(raw["worldbank.wgi_corruption_control"]);
-
-  if (wgiRol == null || wgiCc == null) return null;
-
-  return {
-    country_id: "",
-    dimension_key: "civic_culture",
-    score: round2(wgiRol * 0.55 + wgiCc * 0.45),
-    confidence: "high",
-    component_scores: {
-      wgi_rule_of_law: wgiRol,
-      wgi_corruption: wgiCc,
-    },
-  };
-}
-
-// Safety: UNODC homicide (log) x 0.50 + Numbeo street crime x 0.50
-function computeSafety(raw: RawMap): DimensionScore | null {
-  const homicideRate = safeNum(raw["worldbank.homicide_rate"]);
-  const numbeoCrime = safeNum(raw["numbeo.crime_index"]);
-  const homicide = homicideRate != null ? homicideNormalise(homicideRate) : null;
-  const streetCrime = numbeoCrime != null ? round2(100 - numbeoCrime) : null;
-
-  if (homicide == null && streetCrime == null) return null;
-
-  const both = homicide != null && streetCrime != null;
-  return {
-    country_id: "",
-    dimension_key: "safety",
-    score: both ? round2(homicide! * 0.5 + streetCrime! * 0.5) : (homicide ?? streetCrime),
-    confidence: both ? "high" : "medium",
-    component_scores: { homicide, street_crime: streetCrime },
-  };
-}
-
-function computeWarmth(raw: RawMap): DimensionScore | null {
-  const ivr = safeNum(raw["hofstede.ivr"]);
-  const intRank = safeNum(raw["internations.ease_rank"]);
-  const intScore = intRank != null
-    ? round2(((53 - intRank) / (53 - 1)) * 100)
-    : null;
-
-  // Both sources required — no single-source or MAI fallback
-  if (ivr != null && intScore != null) {
-    return {
-      country_id: "",
-      dimension_key: "warmth",
-      score: round2(ivr * 0.4 + intScore * 0.6),
-      confidence: "high",
-      component_scores: { ivr, internations_score: intScore },
-    };
-  }
-
-  return null;
-}
-
-function computeSchoolCulture(raw: RawMap): DimensionScore | null {
-  const pisaReading = safeNum(raw["pisa.pisa_reading"]);
-  const pisaMaths = safeNum(raw["pisa.pisa_maths"]);
-  const pisaScience = safeNum(raw["pisa.pisa_science"]);
-  const pisaBelonging = safeNum(raw["pisa.pisa_belonging"]);
-  const pisaBullying = safeNum(raw["pisa.pisa_bullying"]);
-  const pisaSafety = safeNum(raw["pisa.pisa_safety"]);
-
-  if (pisaReading == null && pisaMaths == null && pisaScience == null)
-    return null;
-
-  const academic = pisaAcademicNormalise(pisaReading, pisaMaths, pisaScience);
-  const belonging =
-    pisaBelonging != null ? minMaxNormalise(pisaBelonging, -0.3, 0.5) : null;
-  const bullying =
-    pisaBullying != null
-      ? minMaxNormalise(pisaBullying, 0.05, 0.3, true)
-      : null;
-  const safety =
-    pisaSafety != null ? minMaxNormalise(pisaSafety, 0.1, 0.55) : null;
-
-  const parts: { val: number; weight: number }[] = [];
-  if (academic != null) parts.push({ val: academic, weight: 0.25 });
-  if (belonging != null) parts.push({ val: belonging, weight: 0.3 });
-  if (bullying != null) parts.push({ val: bullying, weight: 0.3 });
-  if (safety != null) parts.push({ val: safety, weight: 0.15 });
-
-  if (parts.length === 0) return null;
-
-  const totalWeight = parts.reduce((s, p) => s + p.weight, 0);
-  const score = parts.reduce(
-    (s, p) => s + p.val * (p.weight / totalWeight),
-    0
-  );
-
-  return {
-    country_id: "",
-    dimension_key: "school_culture",
-    score: round2(score),
-    confidence: parts.length >= 3 ? "high" : "medium",
-    component_scores: {
-      academic,
-      belonging,
-      bullying_inv: bullying,
-      safety,
-    },
-  };
-}
-
-function computeHealthcare(raw: RawMap): DimensionScore | null {
-  const uhc = safeNum(raw["worldbank.who_uhc_coverage"]);
-  if (uhc == null) return null;
-
-  const uhcNorm = minMaxNormalise(uhc, 0, 100);
-  const haq = safeNum(raw["ihme.haq_index"]);
-  const physicians = safeNum(raw["oecd.physicians_per_1000"]);
-  const beds = safeNum(raw["oecd.beds_per_1000"]);
-  const nurses = safeNum(raw["oecd.nurses_per_1000"]);
-
-  let capacityScore: number | null = null;
-  if (physicians != null && beds != null && nurses != null) {
-    const physNorm = minMaxNormalise(physicians, 0, 6);
-    const bedsNorm = minMaxNormalise(beds, 0, 13);
-    const nursesNorm = minMaxNormalise(nurses, 0, 18);
-    if (physNorm != null && bedsNorm != null && nursesNorm != null) {
-      capacityScore = round2(physNorm * 0.40 + bedsNorm * 0.35 + nursesNorm * 0.25);
-    }
-  }
-
-  let score: number;
-  let confidence: "high" | "medium";
-  if (haq != null && capacityScore != null) {
-    score = uhcNorm! * 0.35 + haq * 0.35 + capacityScore * 0.30;
-    confidence = "high";
-  } else if (haq != null) {
-    score = uhcNorm! * 0.50 + haq * 0.50;
-    confidence = "medium";
-  } else {
-    score = uhcNorm!;
-    confidence = "medium";
-  }
-
-  return {
-    country_id: "",
-    dimension_key: "healthcare",
-    score: round2(score),
-    confidence,
-    component_scores: {
-      who_uhc: uhcNorm,
-      haq_index: haq,
-      capacity: capacityScore,
-      physicians: physicians != null ? minMaxNormalise(physicians, 0, 6) : null,
-      beds: beds != null ? minMaxNormalise(beds, 0, 13) : null,
-      nurses: nurses != null ? minMaxNormalise(nurses, 0, 18) : null,
-    },
-  };
-}
-
-// Values patched from the World Bank LPI, not IMD: shown as estimates (keep in sync with ESTIMATED_VALUES in src/lib/constants.ts)
-const INFRASTRUCTURE_ESTIMATES = new Set(["CZ", "VN", "PA", "UY", "CR"]);
-
-function computeInfrastructure(raw: RawMap, iso: string): DimensionScore | null {
-  const imd = safeNum(raw["imd.infrastructure_score"]);
-  if (imd == null) return null;
-
-  return {
-    country_id: "",
-    dimension_key: "infrastructure",
-    score: imd,
-    confidence: INFRASTRUCTURE_ESTIMATES.has(iso) ? "low" : "high",
-    component_scores: { imd_score: imd },
-  };
-}
-
-function computeReligiousFreedom(raw: RawMap): DimensionScore | null {
-  const pewGovt = safeNum(raw["pew.govt_restrictions"]);
-  const pewSocial = safeNum(raw["pew.social_hostility"]);
-
-  if (pewGovt == null && pewSocial == null) return null;
-
-  // Normalise 0-10 scale to 0-100, then invert (higher = more freedom)
-  const govtNorm =
-    pewGovt != null ? 100 - (pewGovt / 10) * 100 : null;
-  const socialNorm =
-    pewSocial != null ? 100 - (pewSocial / 10) * 100 : null;
-
-  let rfScore: number | null = null;
-  if (govtNorm != null && socialNorm != null) {
-    rfScore = govtNorm * 0.5 + socialNorm * 0.5;
-  } else if (govtNorm != null) {
-    rfScore = govtNorm;
-  } else if (socialNorm != null) {
-    rfScore = socialNorm;
-  }
-
-  return {
-    country_id: "",
-    dimension_key: "religious_freedom",
-    score: rfScore != null ? round2(rfScore) : null,
-    confidence: govtNorm != null && socialNorm != null ? "high" : "medium",
-    component_scores: { pew_govt: govtNorm, pew_social: socialNorm },
-  };
-}
-
-function computeEnglishProficiency(
-  raw: RawMap,
-  iso: string
-): DimensionScore | null {
-  if (ENGLISH_NATIVE.has(iso)) {
-    return {
-      country_id: "",
-      dimension_key: "english_proficiency",
-      score: 100,
-      confidence: "high",
-      component_scores: { ef_epi: null, native_speaker: 1 },
-    };
-  }
-
-  const efEpi = safeNum(raw["ef.epi_score"]);
-  if (efEpi == null) return null;
-
-  const epiNorm = minMaxNormalise(efEpi, 400, 650);
-
-  return {
-    country_id: "",
-    dimension_key: "english_proficiency",
-    score: epiNorm,
-    confidence: "high",
-    component_scores: { ef_epi: epiNorm },
-  };
-}
+import {
+  computeAllScores,
+  fetchAllRows,
+  staleScoreKeys,
+  type ClimateRow,
+  type CountryRow,
+  type RawRow,
+} from "./compute.ts";
 
 // ---------------------------------------------------------------------------
 // Main handler
@@ -449,16 +74,11 @@ Deno.serve(async (req) => {
 
     console.log("Fetching raw data and climate data...");
 
-    // Fetch all data in parallel
-    const [countriesResult, rawResult, climateResult] = await Promise.all([
+    const [countriesResult, climateResult] = await Promise.all([
       supabase
         .from("countries")
         .select("id, iso_alpha2")
         .eq("is_active", true),
-      supabase
-        .from("raw_indices")
-        .select("country_id, source, indicator, value")
-        .order("year", { ascending: false }),
       supabase
         .from("climate_data")
         .select(
@@ -470,82 +90,35 @@ Deno.serve(async (req) => {
     if (countriesResult.error) {
       throw new Error(`Countries query failed: ${countriesResult.error.message}`);
     }
-    if (rawResult.error) {
-      throw new Error(`Raw indices query failed: ${rawResult.error.message}`);
+    if (climateResult.error) {
+      throw new Error(`Climate query failed: ${climateResult.error.message}`);
     }
 
+    // Paged read with an exact-count check: a single select is capped at 1000 rows
+    const rawIndices = await fetchAllRows<RawRow>(async (from, to) => {
+      const { data, error, count } = await supabase
+        .from("raw_indices")
+        .select("country_id, source, indicator, value, year", { count: "exact" })
+        .order("id")
+        .range(from, to);
+      if (error) throw new Error(`Raw indices query failed: ${error.message}`);
+      return { rows: (data ?? []) as RawRow[], count };
+    });
+
     const countries = countriesResult.data as CountryRow[];
-    const rawIndices = rawResult.data as RawRow[];
     const climateData = (climateResult.data ?? []) as ClimateRow[];
 
     if (!countries.length) {
       throw new Error("No active countries found. Run seed.ts first.");
     }
-
-    // Group raw indices by country (most recent year first due to ORDER BY)
-    const rawByCountry: Record<string, RawRow[]> = {};
-    for (const row of rawIndices) {
-      if (!rawByCountry[row.country_id]) rawByCountry[row.country_id] = [];
-      rawByCountry[row.country_id].push(row);
+    // An empty read would make every climate score look stale and delete it
+    if (!climateData.length) {
+      throw new Error("climate_data returned no rows; refusing to recompute.");
     }
 
-    // Group climate by country (most recent year first)
-    const climateByCountry: Record<string, ClimateRow> = {};
-    for (const row of climateData) {
-      // Keep only the first (most recent) entry per country
-      if (!climateByCountry[row.country_id]) {
-        climateByCountry[row.country_id] = row;
-      }
-    }
+    console.log(`Read ${rawIndices.length} raw_indices rows.`);
 
-    // Compute all dimension scores
-    const scores: DimensionScore[] = [];
-
-    for (const country of countries) {
-      const raw = getRaw(rawByCountry, country.id);
-      const iso = country.iso_alpha2;
-
-      const computations = [
-        computePurchasingPower(raw),
-        computeCivicCulture(raw),
-        computeSafety(raw),
-        computeWarmth(raw),
-        computeSchoolCulture(raw),
-        computeHealthcare(raw),
-        computeInfrastructure(raw, iso),
-        computeReligiousFreedom(raw),
-        computeEnglishProficiency(raw, iso),
-      ];
-
-      // Climate uses the climate_data table, not raw_indices
-      const climateRow = climateByCountry[country.id];
-      if (climateRow) {
-        const climateScore = computeClimateScore(
-          climateRow.avg_temp_annual,
-          climateRow.rain_days_annual,
-          climateRow.sunshine_hours_annual
-        );
-        scores.push({
-          country_id: country.id,
-          dimension_key: "climate",
-          score: climateScore,
-          confidence: "high",
-          component_scores: {
-            avg_temp: climateRow.avg_temp_annual,
-            avg_temp_winter: climateRow.avg_temp_winter,
-            rain_days: climateRow.rain_days_annual,
-            sunshine_hours: climateRow.sunshine_hours_annual,
-          },
-        });
-      }
-
-      for (const result of computations) {
-        if (result) {
-          result.country_id = country.id;
-          scores.push(result);
-        }
-      }
-    }
+    const scores = computeAllScores(countries, rawIndices, climateData);
 
     console.log(
       `Computed ${scores.length} dimension scores for ${countries.length} countries.`
@@ -578,6 +151,41 @@ Deno.serve(async (req) => {
     }
 
     console.log(`Upserted ${upsertedCount} normalised scores.`);
+
+    // A dimension that no longer computes must lose its old score. Only after every
+    // upsert succeeded, so a failed run never leaves a country with fewer scores.
+    let staleDeleted = 0;
+    if (upsertErrors.length === 0) {
+      try {
+        const stored = await fetchAllRows<{ id: string; country_id: string; dimension_key: string }>(
+          async (from, to) => {
+            const { data, error, count } = await supabase
+              .from("normalised_scores")
+              .select("id, country_id, dimension_key", { count: "exact" })
+              .order("id")
+              .range(from, to);
+            if (error) throw new Error(`normalised_scores read failed: ${error.message}`);
+            return { rows: data ?? [], count };
+          }
+        );
+        const stale = staleScoreKeys(stored, scores);
+        if (stale.length > 0) {
+          const { error } = await supabase
+            .from("normalised_scores")
+            .delete()
+            .in("id", stale.map((s) => s.id));
+          if (error) {
+            upsertErrors.push(`Stale score delete failed: ${error.message}`);
+          } else {
+            staleDeleted = stale.length;
+            console.log(`Deleted ${staleDeleted} stale scores.`);
+          }
+        }
+      } catch (err) {
+        // Upserts already landed: keep going so the view refresh and the log reflect them
+        upsertErrors.push(`Stale score cleanup failed: ${err instanceof Error ? err.message : String(err)}`);
+      }
+    }
 
     // Refresh materialised view
     let viewRefreshed = false;
@@ -617,6 +225,8 @@ Deno.serve(async (req) => {
       status,
       scores_computed: scores.length,
       scores_upserted: upsertedCount,
+      stale_deleted: staleDeleted,
+      raw_rows_read: rawIndices.length,
       countries: countries.length,
       view_refreshed: viewRefreshed,
       errors: allErrors.length > 0 ? allErrors : undefined,

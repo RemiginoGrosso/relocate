@@ -9,14 +9,14 @@ export function initAnalytics() {
   const apiKey = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY;
   if (!apiKey) return;
   amplitude.init(apiKey, {
-    autocapture: { elementInteractions: false },
-    // SDK-level page view autocapture is ON by default (config.defaultTracking.pageViews
-    // defaults to true when `defaultTracking` is unset). We track page views manually via
+    // SDK-level page view autocapture is ON by default. We track page views manually via
     // usePageTracking() with our own page taxonomy (page_name, referrer_page, etc. per
-    // TRACKING_PLAN.md), so default page view tracking is explicitly disabled here to avoid
-    // firing both an Amplitude-native "[Amplitude] Page Viewed" event and our custom
-    // `page_viewed` event for the same navigation.
-    defaultTracking: { pageViews: false },
+    // TRACKING_PLAN.md), so it is disabled here to avoid firing both an Amplitude-native
+    // "[Amplitude] Page Viewed" event and our custom `page_viewed` event for the same
+    // navigation. It must be set inside `autocapture`: when `autocapture` is present the
+    // SDK copies it over `defaultTracking`, so `defaultTracking: { pageViews: false }`
+    // was silently ignored (seen in production 2026-10-08).
+    autocapture: { elementInteractions: false, pageViews: false },
   });
   initialized = true;
 }

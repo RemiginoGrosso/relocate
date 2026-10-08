@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.31 - 2026-10-08
+
+### Fixed
+- **Double page views in Amplitude.** The SDK sent its own `[Amplitude] Page Viewed` beside our `page_viewed` on every page. `pageViews: false` now sits inside `autocapture`; the SDK copies `autocapture` over `defaultTracking`, so the old setting was ignored.
+- **`recompute-scores` edge function (code only, not deployed; review finding C6).** It now reads `raw_indices` in pages and stops with an error unless every row was read (the old single select got 1000 of 1986 rows). It takes the latest year per indicator, deletes scores that no longer compute (only after every write succeeded, and never from an empty climate read), and rounds Warmth the same way as the seed script.
+
+### Added
+- `supabase/functions/recompute-scores/compute.ts`: the function's formulas, free of Deno, with tests in `compute.test.ts`.
+- `scripts/edge-parity.ts`: read-only check that runs the edge formulas over live data and compares all 571 scores, confidence labels and components with production. Run it before deploying the function or re-enabling its cron. Result on 2026-10-08: 1986 rows read, 0 differences.
+
 ## 0.1.30 - 2026-10-08
 
 Methodology Iteration 29. Decision: `decisions/2026-10-08-source-swap-and-honesty-pass.md` in the project repo.
