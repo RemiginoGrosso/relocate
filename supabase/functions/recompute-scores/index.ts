@@ -41,14 +41,15 @@ Deno.serve(async (req) => {
       .from("data_refresh_log")
       .select("source, status")
       .gte("started_at", todayStart.toISOString())
-      .in("source", ["world-bank", "who-health", "open-meteo-climate"]);
+      .in("source", ["world-bank", "who-health"]);
 
     const loggedSources = new Set((refreshLogs ?? []).map((r: { source: string }) => r.source));
     const failedSources = (refreshLogs ?? [])
       .filter((r: { source: string; status: string }) => r.status === "failed")
       .map((r: { source: string }) => r.source);
 
-    const expectedSources = ["world-bank", "who-health", "open-meteo-climate"];
+    // No climate refresh: its cron job was removed on 2026-10-08 (climate averages are static)
+    const expectedSources = ["world-bank", "who-health"];
     const missingSources = expectedSources.filter((s) => !loggedSources.has(s));
 
     if (missingSources.length > 0 || failedSources.length > 0) {
