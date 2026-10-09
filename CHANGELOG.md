@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.36 - 2026-10-09
+
+### Removed
+- The "what would change your top 5" hint on `/ranking` (added in 0.1.32), with `findShortlistLever()`, `SHORTLIST_SIZE`, `LEVER_WEIGHTS` and their tests. The founder judged that it did not earn its place.
+
 ## 0.1.35 - 2026-10-09
 
 Methodology Iteration 32 (project repo, `KNOWLEDGE/03_Research/CHANGELOG.md`). Review finding M7, first part.

@@ -176,12 +176,6 @@ export const MIN_COVERAGE_RATIO = 0.7;
 /** Scores closer than this are treated as tied in user-facing copy. */
 export const TIE_THRESHOLD = 2;
 
-/** Size of the shortlist the "what would change your top 5" hint watches. */
-export const SHORTLIST_SIZE = 5;
-
-/** Slider positions the hint tries for each dimension: lowest non-zero and highest. */
-export const LEVER_WEIGHTS = [1, 10] as const;
-
 /**
  * Raw values the team filled in from a different source, keyed by `source.indicator`.
  * Shown as estimates in country detail and given 'low' confidence.

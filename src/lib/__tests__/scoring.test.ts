@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normaliseWeights, computeComposite, rankCountries, getScoreTier, computeClimateScore, applyClimatePreference, applyIncomeType, findShortlistLever } from '../scoring';
+import { normaliseWeights, computeComposite, rankCountries, getScoreTier, computeClimateScore, applyClimatePreference, applyIncomeType } from '../scoring';
 import { minMaxNormalise, rankToScore, pisaAcademicNormalise, gpiNormalise, pewNormalise } from '../normalisation';
 import { DEFAULT_WEIGHTS, CLIMATE_PROFILES } from '../constants';
 import type { CountryScores, UserWeights, DimensionKey } from '../types';
@@ -439,30 +439,5 @@ describe('applyIncomeType', () => {
     const pp = applyIncomeType([withPP(null)], 'local')[0].dimensionScores.purchasing_power!;
     expect(pp.score).toBeNull();
     expect(pp.confidence).toBe('no_data');
-  });
-});
-
-describe('findShortlistLever', () => {
-  const all = (v: number) => ({
-    purchasing_power: v, civic_culture: v, safety: v, warmth: v, school_culture: v,
-    healthcare: v, infrastructure: v, climate: v, religious_freedom: v, english_proficiency: v,
-  });
-  // Five strong all-rounders, plus one country that only shines on climate
-  const base = ['A', 'B', 'C', 'D', 'E'].map((n, i) =>
-    makeCountry({ id: n, name: n, iso: n, scores: all(70 - i) }),
-  );
-  const sunny = makeCountry({ id: 'S', name: 'Sunny', iso: 'SU', scores: { ...all(60), climate: 100 } });
-
-  it('finds the move that brings a new country into the top 5', () => {
-    const lever = findShortlistLever([...base, sunny], DEFAULT_WEIGHTS);
-    expect(lever?.dimension).toBe('climate');
-    expect(lever?.to).toBe(10);
-    expect(lever?.entering.map((c) => c.name)).toEqual(['Sunny']);
-    expect(lever?.leaving.map((c) => c.name)).toEqual(['E']);
-  });
-
-  it('returns null when no single move changes the top 5', () => {
-    const weak = makeCountry({ id: 'W', name: 'Weak', iso: 'WK', scores: all(10) });
-    expect(findShortlistLever([...base, weak], DEFAULT_WEIGHTS)).toBeNull();
   });
 });

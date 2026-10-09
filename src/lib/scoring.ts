@@ -1,5 +1,5 @@
 import type { ClimatePreference, ClimateProfile, CountryScores, DimensionKey, IncomeType, RankedCountry, ScoreTier, UserWeights } from './types';
-import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, LEVER_WEIGHTS, MIN_COVERAGE_RATIO, SCORE_THRESHOLDS, SHORTLIST_SIZE } from './constants';
+import { CLIMATE_PROFILES, CLIMATE_REFERENCE_TEMP, MIN_COVERAGE_RATIO, SCORE_THRESHOLDS } from './constants';
 import { getCityClimate, getDefaultCity } from './large-countries';
 
 export function normaliseWeights(
@@ -82,49 +82,6 @@ export function rankCountries(
     ...main.map((c, i) => ({ ...c, rank: i + 1 })),
     ...limited.map((c) => ({ ...c, rank: 0 })),
   ];
-}
-
-export interface ShortlistLever {
-  dimension: DimensionKey;
-  from: number;
-  to: number;
-  entering: RankedCountry[];
-  leaving: RankedCountry[];
-}
-
-/**
- * The single slider move that changes the most countries in the user's top
- * SHORTLIST_SIZE. Tries each dimension at each LEVER_WEIGHTS position; on a tie,
- * the smaller move wins. Returns null when no single move changes the shortlist.
- */
-export function findShortlistLever(
-  countries: CountryScores[],
-  weights: UserWeights,
-): ShortlistLever | null {
-  const top = (w: UserWeights) =>
-    rankCountries(countries, w).filter((c) => c.rank > 0).slice(0, SHORTLIST_SIZE);
-  const current = top(weights);
-  if (current.length === 0) return null;
-  const currentIds = new Set(current.map((c) => c.id));
-
-  let best: ShortlistLever | null = null;
-  for (const dimension of Object.keys(weights) as DimensionKey[]) {
-    const from = weights[dimension];
-    for (const to of LEVER_WEIGHTS) {
-      if (to === from) continue;
-      const next = top({ ...weights, [dimension]: to });
-      const nextIds = new Set(next.map((c) => c.id));
-      const entering = next.filter((c) => !currentIds.has(c.id));
-      if (entering.length === 0) continue;
-      const leaving = current.filter((c) => !nextIds.has(c.id));
-      const better =
-        !best ||
-        entering.length > best.entering.length ||
-        (entering.length === best.entering.length && Math.abs(to - from) < Math.abs(best.to - best.from));
-      if (better) best = { dimension, from, to, entering, leaving };
-    }
-  }
-  return best;
 }
 
 export function getScoreTier(score: number): ScoreTier {
