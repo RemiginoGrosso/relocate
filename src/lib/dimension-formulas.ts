@@ -68,3 +68,26 @@ export function computeRuleOfLaw(wgiRol: number | null, wgiCc: number | null): F
     components: { wgi_rule_of_law: wgiRol, wgi_corruption: wgiCc },
   };
 }
+
+/**
+ * Infrastructure: transport and logistics (World Bank LPI infrastructure, 1–5) × 0.50
+ * + digital (internet users % over 60–100, fixed broadband per 100 people over 0–50, averaged) × 0.50.
+ * One half alone → medium.
+ */
+export function computeInfrastructure(
+  lpiInfra: number | null,
+  internetUsersPct: number | null,
+  broadbandPer100: number | null,
+): FormulaResult | null {
+  const logistics = lpiInfra != null ? round2(minMaxNormalise(lpiInfra, 1, 5)!) : null;
+  const internet = internetUsersPct != null ? round2(minMaxNormalise(internetUsersPct, 60, 100)!) : null;
+  const broadband = broadbandPer100 != null ? round2(minMaxNormalise(broadbandPer100, 0, 50)!) : null;
+  const digital = internet != null && broadband != null ? round2((internet + broadband) / 2) : null;
+  if (logistics == null && digital == null) return null;
+  const score = logistics != null && digital != null ? round2(logistics * 0.5 + digital * 0.5) : (logistics ?? digital);
+  return {
+    score,
+    confidence: logistics != null && digital != null ? 'high' : 'medium',
+    components: { logistics, digital, internet_users: internet, broadband },
+  };
+}

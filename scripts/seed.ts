@@ -103,6 +103,9 @@ interface HomicideEntry {
   year: number;
 }
 
+/** Written by scripts/fetch-infrastructure.ts from the World Bank API. */
+type InfrastructureEntry = { iso_alpha2: string } & Record<string, number | string | null>;
+
 type ExternalIndices = Record<string, Record<string, number>>;
 
 interface ClimateEntry {
@@ -340,6 +343,37 @@ async function seedHomicide(data: HomicideEntry[], countryIds: Record<string, st
   console.log(`  Homicide seeded: ${rows.length} rows.`);
 }
 
+const INFRASTRUCTURE_SOURCES: Record<string, { unit: string; url: string }> = {
+  lpi_infrastructure: { unit: 'score_1_5', url: 'https://api.worldbank.org/v2/indicator/LP.LPI.INFR.XQ' },
+  internet_users_pct: { unit: 'percentage', url: 'https://api.worldbank.org/v2/indicator/IT.NET.USER.ZS' },
+  fixed_broadband_per100: { unit: 'per_100_people', url: 'https://api.worldbank.org/v2/indicator/IT.NET.BBND.P2' },
+};
+
+async function seedInfrastructure(data: InfrastructureEntry[], countryIds: Record<string, string>) {
+  const rows = data
+    .filter((e) => countryIds[e.iso_alpha2])
+    .flatMap((e) =>
+      Object.entries(INFRASTRUCTURE_SOURCES)
+        .filter(([key]) => e[key] != null)
+        .map(([key, src]) => ({
+          country_id: countryIds[e.iso_alpha2],
+          source: 'worldbank',
+          indicator: key,
+          value: e[key] as number,
+          unit: src.unit,
+          year: e[`${key}_year`] as number,
+          source_url: src.url,
+          fetched_at: '2026-10-09T00:00:00Z',
+        })),
+    );
+  console.log(`Seeding ${rows.length} World Bank infrastructure rows...`);
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`Infrastructure seed failed: ${error.message}`);
+  console.log(`  Infrastructure seeded: ${rows.length} rows.`);
+}
+
 async function seedHaq(data: HaqEntry[], countryIds: Record<string, string>) {
   console.log(`Seeding HAQ Index data for ${data.length} countries...`);
   const rows = data
@@ -433,17 +467,10 @@ async function seedPisa(pisa: PisaEntry[], countryIds: Record<string, string>) {
 const EXTERNAL_INDEX_YEARS: Record<string, number> = {
   'gpi.gpi_score': 2025,
   'ef.epi_score': 2025,
-  'imd.infrastructure_score': 2024,
   'internations.ease_rank': 2024,
   'worldbank.who_uhc_coverage': 2021,
 };
 const EXTERNAL_INDEX_YEAR_OVERRIDES: Record<string, number> = {
-  // World Bank LPI 2023 patches, not IMD
-  'imd.infrastructure_score:CZ': 2023,
-  'imd.infrastructure_score:VN': 2023,
-  'imd.infrastructure_score:PA': 2023,
-  'imd.infrastructure_score:UY': 2023,
-  'imd.infrastructure_score:CR': 2023,
   // US rank comes from the 2025 Expat Insider
   'internations.ease_rank:US': 2025,
   // Latest year with both PPP and exchange rate (Iteration 29)
@@ -461,6 +488,8 @@ async function seedExternalIndices(data: ExternalIndices, countryIds: Record<str
     const countryId = countryIds[iso];
     if (!countryId) continue;
     for (const [key, value] of Object.entries(indicators)) {
+      // Infrastructure moved to World Bank sources (Iteration 31); the scraped IMD values are not seeded
+      if (key === 'imd.infrastructure_score') continue;
       const [source, indicator] = key.split('.');
       rows.push({
         country_id: countryId,
@@ -518,6 +547,7 @@ async function main() {
   const gallupMai = loadJson<GallupMaiEntry[]>('gallup-mai.json');
   const numbeoCrime = loadJson<NumbeoCrimeEntry[]>('numbeo-crime.json');
   const homicide = loadJson<HomicideEntry[]>('homicide.json');
+  const infrastructure = loadJson<InfrastructureEntry[]>('infrastructure.json');
   const haqIndex = loadJson<HaqEntry[]>('haq-index.json');
   const healthCapacity = loadJson<HealthCapacityEntry[]>('health-capacity.json');
   const pisa = loadJson<PisaEntry[]>('pisa.json');
@@ -537,6 +567,7 @@ async function main() {
   await seedGallupMai(gallupMai, countryIds);
   await seedNumbeoCrime(numbeoCrime, countryIds);
   await seedHomicide(homicide, countryIds);
+  await seedInfrastructure(infrastructure, countryIds);
   await seedHaq(haqIndex, countryIds);
   await seedHealthCapacity(healthCapacity, countryIds);
   await seedPisa(pisa, countryIds);

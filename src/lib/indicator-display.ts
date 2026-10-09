@@ -24,7 +24,9 @@ export const INDICATOR_LABELS: Record<string, string> = {
   'worldbank.oecd_ppp_aic': 'GDP per person (PPP, intl $)',
   'worldbank.homicide_rate': 'Homicides per 100,000',
   'worldbank.price_level_ratio': 'Price Level Ratio',
-  'imd.infrastructure_score': 'IMD Infrastructure Score',
+  'worldbank.lpi_infrastructure': 'Logistics infrastructure (LPI, 1-5)',
+  'worldbank.internet_users_pct': 'Internet users (% of people)',
+  'worldbank.fixed_broadband_per100': 'Fixed broadband per 100 people',
   'pew.govt_restrictions': 'Pew Govt Restrictions',
   'pew.social_hostility': 'Pew Social Hostilities',
   'ef.epi_score': 'EF EPI Score',
@@ -40,7 +42,7 @@ export const DIMENSION_INDICATORS: Record<DimensionKey, string[]> = {
   warmth: ['hofstede.ivr', 'internations.ease_rank', 'gallup.mai'],
   school_culture: ['pisa.pisa_reading', 'pisa.pisa_maths', 'pisa.pisa_science', 'pisa.pisa_belonging', 'pisa.pisa_bullying', 'pisa.pisa_safety'],
   healthcare: ['worldbank.who_uhc_coverage', 'ihme.haq_index', 'oecd.physicians_per_1000', 'oecd.beds_per_1000', 'oecd.nurses_per_1000'],
-  infrastructure: ['imd.infrastructure_score'],
+  infrastructure: ['worldbank.lpi_infrastructure', 'worldbank.internet_users_pct', 'worldbank.fixed_broadband_per100'],
   climate: [],
   religious_freedom: ['pew.govt_restrictions', 'pew.social_hostility'],
   english_proficiency: ['ef.epi_score'],
@@ -72,6 +74,8 @@ export function formatValue(raw: RawIndex): string {
   if (key === 'worldbank.price_level_ratio') return v.toFixed(2);
   if (key === 'gpi.gpi_score') return v.toFixed(3);
   if (key === 'worldbank.homicide_rate') return v.toFixed(1);
+  if (key === 'worldbank.internet_users_pct') return `${Math.round(v)}%`;
+  if (key === 'worldbank.fixed_broadband_per100') return v.toFixed(1);
   if (key === 'worldbank.oecd_ppp_aic') return `$${Math.round(v).toLocaleString('en-US')}`;
   if (key.startsWith('pisa.') && !['pisa.reading', 'pisa.maths', 'pisa.science'].includes(key)) return v.toFixed(2);
   return Number.isInteger(v) ? String(v) : v.toFixed(1);

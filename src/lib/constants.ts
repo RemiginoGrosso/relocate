@@ -95,15 +95,15 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'infrastructure',
     name: 'Infrastructure',
-    description: 'Quality of physical and digital infrastructure: transport, energy, communications, technology.',
-    context: 'Reliable transport, stable electricity, fast internet, and modern communications infrastructure affect daily life in ways you stop noticing until they break. This dimension captures the physical and digital backbone that makes a country function smoothly.',
-    methodology: 'infrastructure = imd_infra_score (direct pass-through, already 0 to 100)',
+    description: 'Transport and logistics quality, and how widely people use the internet and fixed broadband.',
+    context: 'Reliable transport and a good internet connection affect daily life in ways you stop noticing until they break. Half of this score rates ports, railways, roads and IT for moving goods; the other half is how many people are online and how many homes have fixed broadband.',
+    methodology: 'infrastructure = logistics × 0.50 + digital × 0.50, where logistics = World Bank LPI infrastructure (1 to 5 scaled to 0 to 100) and digital = average of internet users (60% to 100% scaled) and fixed broadband per 100 people (0 to 50 scaled)',
     category: 'economic',
-    sources: ['IMD World Competitiveness Infrastructure Score'],
+    sources: ['World Bank Logistics Performance Index (infrastructure)', 'ITU internet use and fixed broadband (via the World Bank)'],
     defaultWeight: 5,
     sortOrder: 7,
     confidence: 'medium',
-    knownLimitation: 'For Czechia, Vietnam, Panama, Uruguay and Costa Rica the value is an estimate based on the World Bank Logistics Performance Index, a different measure. These are marked as estimates on the country page.',
+    knownLimitation: 'The logistics half comes from freight professionals rating trade infrastructure (2023 edition), not residents rating daily life. Nothing here measures electricity reliability or internet speed. Taiwan has no World Bank data; Morocco has no recent logistics rating, so its score uses the digital half only.',
   },
   {
     key: 'climate',
@@ -187,7 +187,6 @@ export const LEVER_WEIGHTS = [1, 10] as const;
  * Shown as estimates in country detail and given 'low' confidence.
  */
 export const ESTIMATED_VALUES: Record<string, string[]> = {
-  'imd.infrastructure_score': ['CZ', 'VN', 'PA', 'UY', 'CR'],
   'gpi.gpi_score': ['LU'],
 };
 
@@ -456,12 +455,26 @@ export const INDICATOR_INTERPRETATIONS: Record<string, { ranges: { max: number; 
       { max: 1.5, label: 'Expensive' },
     ],
   },
-  'imd.infrastructure_score': {
+  'worldbank.lpi_infrastructure': {
     ranges: [
-      { max: 40, label: 'Developing' },
-      { max: 60, label: 'Moderate' },
-      { max: 80, label: 'Advanced' },
-      { max: 100, label: 'World-class' },
+      { max: 2.5, label: 'Weak' },
+      { max: 3.0, label: 'Moderate' },
+      { max: 3.8, label: 'Good' },
+      { max: 5, label: 'Excellent' },
+    ],
+  },
+  'worldbank.internet_users_pct': {
+    ranges: [
+      { max: 80, label: 'Moderate' },
+      { max: 92, label: 'High' },
+      { max: 100, label: 'Very high' },
+    ],
+  },
+  'worldbank.fixed_broadband_per100': {
+    ranges: [
+      { max: 15, label: 'Low' },
+      { max: 30, label: 'Moderate' },
+      { max: 100, label: 'High' },
     ],
   },
   'ef.epi_score': {
@@ -545,7 +558,9 @@ export const INDICATOR_TOOLTIPS: Record<string, string> = {
   'oecd.physicians_per_1000': 'Number of practising doctors per 1,000 people. OECD average is around 3.7.',
   'oecd.beds_per_1000': 'Number of hospital beds per 1,000 people. Measures physical healthcare capacity.',
   'oecd.nurses_per_1000': 'Number of practising nurses per 1,000 people. OECD average is around 9.2.',
-  'imd.infrastructure_score': 'Composite score of transport, energy, telecoms, and digital infrastructure quality.',
+  'worldbank.lpi_infrastructure': 'Quality of trade and transport infrastructure (ports, railways, roads, IT), rated 1 to 5 by freight professionals. World Bank Logistics Performance Index, 2023 edition.',
+  'worldbank.internet_users_pct': 'Share of the population using the internet (ITU, published by the World Bank).',
+  'worldbank.fixed_broadband_per100': 'Fixed broadband subscriptions per 100 people (ITU, published by the World Bank). Most homes share one subscription, so 40 is very high.',
   'ef.epi_score': 'How well adults in the country speak English as a second language. Based on standardised test results.',
   'pew.govt_restrictions': 'Government laws, policies, and actions that restrict religious practice. Lower is more free.',
   'pew.social_hostility': 'Hostility toward religion by individuals or social groups — harassment, violence, discrimination. Lower is more tolerant.',

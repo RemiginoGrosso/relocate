@@ -38,7 +38,7 @@ export const METHODOLOGY_FAQS = [
   },
   {
     question: 'What data sources does Relocate Index use?',
-    answer: 'World Bank (governance indicators, price levels, income per person, and UNODC homicide rates), Numbeo (crime as residents report it), OECD (health workforce and hospital beds, PISA 2022 school data), WHO (universal health coverage), IHME GBD (healthcare access and quality), Hofstede Insights and InterNations (warmth), IMD (infrastructure), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo (modelled climate data). The Global Peace Index is shown on country pages as context but is not scored.',
+    answer: 'World Bank (governance indicators, price levels, income per person, logistics infrastructure, and UNODC homicide rates), Numbeo (crime as residents report it), OECD (health workforce and hospital beds, PISA 2022 school data), WHO (universal health coverage), IHME GBD (healthcare access and quality), Hofstede Insights and InterNations (warmth), ITU (internet use and broadband, via the World Bank), Pew Research (religious freedom), EF EPI (English proficiency), and Open-Meteo (modelled climate data). The Global Peace Index is shown on country pages as context but is not scored.',
   },
   {
     question: 'How many countries does Relocate Index cover?',

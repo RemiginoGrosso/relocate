@@ -46,8 +46,13 @@ const GLOSSARY_TERMS: GlossaryTerm[] = [
     dimensionKey: 'warmth',
   },
   {
-    term: 'IMD (International Institute for Management Development)',
-    definition: "A composite score of transport, energy, telecoms, and digital infrastructure quality from IMD's World Competitiveness rankings, built from 300+ indicators per country. Covers around 60 countries.",
+    term: 'World Bank Logistics Performance Index (LPI)',
+    definition: 'A World Bank survey in which freight professionals rate the quality of a country\'s trade and transport infrastructure (ports, railways, roads, IT) from 1 to 5. Half of the infrastructure score. The latest edition is from 2023.',
+    dimensionKey: 'infrastructure',
+  },
+  {
+    term: 'ITU internet use and fixed broadband',
+    definition: 'The share of people using the internet and the number of fixed broadband subscriptions per 100 people, collected by the International Telecommunication Union and published by the World Bank. Together they make the other half of the infrastructure score.',
     dimensionKey: 'infrastructure',
   },
   {

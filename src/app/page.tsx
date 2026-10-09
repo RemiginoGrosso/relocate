@@ -36,7 +36,7 @@ const SOURCE_NAMES = [
   'PISA 2022',
   'Hofstede',
   'InterNations',
-  'IMD',
+  'ITU',
   'Pew Research',
   'EF EPI',
   'Open-Meteo',
@@ -45,7 +45,7 @@ const SOURCE_NAMES = [
 // Sources with descriptions for the trust section
 const SOURCES_DETAIL = [
   { name: 'OECD', note: 'PISA education data, health workforce and hospital beds' },
-  { name: 'World Bank', note: 'Governance indicators, price levels, income per person' },
+  { name: 'World Bank', note: 'Governance indicators, price levels, income per person, logistics infrastructure' },
   { name: 'WHO', note: 'Healthcare coverage index (UHC)' },
   { name: 'IHME GBD', note: 'Healthcare Access & Quality Index — amenable mortality across 32 causes' },
   { name: 'OECD Health Statistics', note: 'Physicians, hospital beds, and nurses per 1,000 population' },
@@ -54,7 +54,7 @@ const SOURCES_DETAIL = [
   { name: 'PISA 2022', note: 'Academic quality, belonging, bullying, school safety' },
   { name: 'Hofstede Insights', note: 'Indulgence vs. Restraint (IVR) cultural dimension' },
   { name: 'InterNations', note: 'Expat ease of settling in, rated annually' },
-  { name: 'IMD', note: 'Physical and digital infrastructure score' },
+  { name: 'ITU', note: 'Internet use and fixed broadband (published by the World Bank)' },
   { name: 'Pew Research', note: 'Government restrictions and social hostility indexes' },
   { name: 'EF EPI', note: 'Population-level English proficiency, 100+ countries' },
   { name: 'Open-Meteo', note: 'Climate model data: temperature, sunshine and rainfall by city' },

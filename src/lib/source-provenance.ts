@@ -48,7 +48,9 @@ const DIMENSION_SOURCES: Record<DimensionKey, SourceInfo[]> = {
     { key: 'oecd.nurses_per_1000', label: 'Nurses/1k', tier: 'directional' },
   ],
   infrastructure: [
-    { key: 'imd.infrastructure_score', label: 'IMD Infrastructure', tier: 'key' },
+    { key: 'worldbank.lpi_infrastructure', label: 'World Bank LPI Infrastructure', tier: 'key' },
+    { key: 'worldbank.internet_users_pct', label: 'Internet users (ITU)', tier: 'key' },
+    { key: 'worldbank.fixed_broadband_per100', label: 'Fixed broadband (ITU)', tier: 'key' },
   ],
   climate: [],
   religious_freedom: [

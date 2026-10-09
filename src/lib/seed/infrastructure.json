@@ -1,0 +1,533 @@
+[
+  {
+    "iso_alpha2": "DK",
+    "lpi_infrastructure": 4.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 99.76915157,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 43.3933280824544,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "NL",
+    "lpi_infrastructure": 4.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 97.00679779,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 42.9782483069868,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "DE",
+    "lpi_infrastructure": 4.3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 93.49999579,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 45.6069242965787,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CH",
+    "lpi_infrastructure": 4.4,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 97.32103855,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 47.0197818175134,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "SE",
+    "lpi_infrastructure": 4.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 95.76629783,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 40.6156538715616,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "FI",
+    "lpi_infrastructure": 4.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 93.72405196,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 36.4765341417867,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "NO",
+    "lpi_infrastructure": 3.9,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 99,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 45.1633056345554,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "FR",
+    "lpi_infrastructure": 3.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 88.65381638,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 48.9251978969333,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "IE",
+    "lpi_infrastructure": 3.5,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 97.18769836,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 32.3023693358176,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "GB",
+    "lpi_infrastructure": 3.7,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 95.4720993,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 42.1648283773461,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "PT",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 88.48704454,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 45.2439221846256,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "ES",
+    "lpi_infrastructure": 3.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 95.7574516,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 39.2337541858756,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "IT",
+    "lpi_infrastructure": 3.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 89.2207202,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 31.7807732477772,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "AT",
+    "lpi_infrastructure": 3.9,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 91.92573373,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 30.12779672163,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "LU",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 99.12902211,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 40.3174570156723,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "BE",
+    "lpi_infrastructure": 4.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 95.77579144,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 44.2321563183446,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CZ",
+    "lpi_infrastructure": 3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 87.68776014,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 38.8656371139002,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "PL",
+    "lpi_infrastructure": 3.5,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 88.58496367,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 25.3612522999634,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "HU",
+    "lpi_infrastructure": 3.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 93.77898628,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 37.542262483936,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "GR",
+    "lpi_infrastructure": 3.7,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 86.26968886,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 44.6759828527928,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "EE",
+    "lpi_infrastructure": 3.5,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 92.23796204,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 35.3527186879385,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "HR",
+    "lpi_infrastructure": 3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 83.63240029,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 29.5997367962687,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "RO",
+    "lpi_infrastructure": 2.9,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 91.29048551,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 35.7995871488999,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "LT",
+    "lpi_infrastructure": 3.5,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 89.16116293,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 27.8460080234758,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CA",
+    "lpi_infrastructure": 4.3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 94.353302,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 42.5238215177079,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "MX",
+    "lpi_infrastructure": 2.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 83.12233799,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 21.7367225364543,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CL",
+    "lpi_infrastructure": 2.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 95.590243,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 23.731405742065,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CO",
+    "lpi_infrastructure": 2.9,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 79.34543299,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 17.2244156778185,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "AR",
+    "lpi_infrastructure": 2.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 89.66715228,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 26.0976420359532,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "UY",
+    "lpi_infrastructure": 2.7,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 91.99109007,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 33.0440254320868,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "JP",
+    "lpi_infrastructure": 4.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 85.54153081,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 38.6312383711286,
+    "fixed_broadband_per100_year": 2023
+  },
+  {
+    "iso_alpha2": "KR",
+    "lpi_infrastructure": 4.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 97.89563777,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 47.8014965507867,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "SG",
+    "lpi_infrastructure": 4.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 94.37757178,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 27.813655026664,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "MY",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 98.0206059,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 13.5464432669708,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "TH",
+    "lpi_infrastructure": 3.7,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 90.86718789,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 14.8870491187484,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "AU",
+    "lpi_infrastructure": 4.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 96.13140106,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 36.4788276060473,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "NZ",
+    "lpi_infrastructure": 3.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 93.51930237,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 38.048298946057,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "AE",
+    "lpi_infrastructure": 4.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 100,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 40.840113505519,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "SK",
+    "lpi_infrastructure": 3.3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 89.82507032,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 33.8136036435218,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "SI",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 90.76355487,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 34.2332575162942,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "LV",
+    "lpi_infrastructure": 3.3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 92.70757011,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 25.7542854181725,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "IS",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 98.209198,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 37.5242757933482,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "BG",
+    "lpi_infrastructure": 3.1,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 82.438955,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 37.0235717545079,
+    "fixed_broadband_per100_year": 2023
+  },
+  {
+    "iso_alpha2": "CY",
+    "lpi_infrastructure": 2.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 89.60099246,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 37.5627069536424,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "BR",
+    "lpi_infrastructure": 3.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 84.46347227,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 24.079199344422,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CR",
+    "lpi_infrastructure": 2.7,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 87.17019653,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 23.287699004466,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "PA",
+    "lpi_infrastructure": 3.3,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 72.77149963,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 18.1341265585334,
+    "fixed_broadband_per100_year": 2023
+  },
+  {
+    "iso_alpha2": "IN",
+    "lpi_infrastructure": 3.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 70,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 3.15046250037677,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "PH",
+    "lpi_infrastructure": 3.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 67.26300914,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 7.13893301204977,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "VN",
+    "lpi_infrastructure": 3.2,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 84.15,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 23.711259212336,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "ID",
+    "lpi_infrastructure": 2.9,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 72.78075544,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 4.92196685438436,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "CN",
+    "lpi_infrastructure": 4,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 91.6,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 47.1933952081567,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "TR",
+    "lpi_infrastructure": 3.4,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 89.77024003,
+    "internet_users_pct_year": 2025,
+    "fixed_broadband_per100": 23.4317347919186,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "SA",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 100,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 44.0705800179885,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "QA",
+    "lpi_infrastructure": 3.8,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 98.08540344,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 11.8175200751339,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "ZA",
+    "lpi_infrastructure": 3.6,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 78.35759735,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 5.34791194620067,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "MA",
+    "lpi_infrastructure": null,
+    "lpi_infrastructure_year": null,
+    "internet_users_pct": 91.2,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 7.30282126551091,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "PE",
+    "lpi_infrastructure": 2.5,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 81.95705992,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 11.6788671222106,
+    "fixed_broadband_per100_year": 2024
+  },
+  {
+    "iso_alpha2": "US",
+    "lpi_infrastructure": 3.9,
+    "lpi_infrastructure_year": 2022,
+    "internet_users_pct": 94.69380188,
+    "internet_users_pct_year": 2024,
+    "fixed_broadband_per100": 38.8571729185246,
+    "fixed_broadband_per100_year": 2024
+  }
+]

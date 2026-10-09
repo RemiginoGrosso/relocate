@@ -58,6 +58,29 @@ const INDICATORS: IndicatorSpec[] = [
     unit: "per_100k",
     sourceUrl: "https://api.worldbank.org/v2/indicator/VC.IHR.PSRC.P5",
   },
+  // Infrastructure dimension. LPI editions are irregular (2018, 2023): the 5-year window
+  // leaves out 2018-only values (Morocco) on purpose.
+  {
+    wbId: "LP.LPI.INFR.XQ",
+    indicator: "lpi_infrastructure",
+    source: "worldbank",
+    unit: "score_1_5",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/LP.LPI.INFR.XQ",
+  },
+  {
+    wbId: "IT.NET.USER.ZS",
+    indicator: "internet_users_pct",
+    source: "worldbank",
+    unit: "percentage",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/IT.NET.USER.ZS",
+  },
+  {
+    wbId: "IT.NET.BBND.P2",
+    indicator: "fixed_broadband_per100",
+    source: "worldbank",
+    unit: "per_100_people",
+    sourceUrl: "https://api.worldbank.org/v2/indicator/IT.NET.BBND.P2",
+  },
 ];
 
 const PLR_INDICATORS = {

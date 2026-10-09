@@ -275,10 +275,15 @@ function generateInfrastructure(
   const r = dimRank(country.iso, 'infrastructure', allCountries);
   if (r) sentences.push(`${country.name} ranks ${ordinal(r.rank)} out of ${r.total} countries for infrastructure, scoring ${fmtScore(dimScore)} out of 100.`);
 
-  const imd = findRaw(rawIndices, 'imd.infrastructure_score');
-  if (imd?.value != null) {
-    const label = interpret('imd.infrastructure_score', imd.value);
-    sentences.push(`IMD Infrastructure Score: ${formatValue(imd)}${label ? ` (${label.toLowerCase()})` : ''}.`);
+  const lpi = findRaw(rawIndices, 'worldbank.lpi_infrastructure');
+  if (lpi?.value != null) {
+    const label = interpret('worldbank.lpi_infrastructure', lpi.value);
+    sentences.push(`Logistics infrastructure (World Bank LPI): ${formatValue(lpi)} out of 5${label ? ` (${label.toLowerCase()})` : ''}.`);
+  }
+  const users = findRaw(rawIndices, 'worldbank.internet_users_pct');
+  const broadband = findRaw(rawIndices, 'worldbank.fixed_broadband_per100');
+  if (users?.value != null && broadband?.value != null) {
+    sentences.push(`${Math.round(users.value)}% of people use the internet, with ${Math.round(broadband.value)} fixed broadband subscriptions per 100 people.`);
   }
 
   return {

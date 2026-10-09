@@ -5,6 +5,7 @@ import {
   computePurchasingPower,
   computeSafety,
   computeRuleOfLaw,
+  computeInfrastructure,
 } from '../dimension-formulas';
 
 describe('homicideNormalise', () => {
@@ -78,5 +79,27 @@ describe('computeRuleOfLaw', () => {
   });
   it('requires both WGI indicators', () => {
     expect(computeRuleOfLaw(91.0, null)).toBeNull();
+  });
+});
+
+describe('computeInfrastructure', () => {
+  it('averages logistics and digital halves', () => {
+    const r = computeInfrastructure(3.0, 90, 25)!;
+    expect(r.components).toEqual({ logistics: 50, digital: 62.5, internet_users: 75, broadband: 50 });
+    expect(r.score).toBeCloseTo(56.25, 2);
+    expect(r.confidence).toBe('high');
+  });
+  it('clamps to the fixed bounds', () => {
+    expect(computeInfrastructure(5, 100, 80)!.score).toBe(100);
+    expect(computeInfrastructure(1, 50, 0)!.score).toBe(0);
+  });
+  it('scores one half alone at medium confidence', () => {
+    const r = computeInfrastructure(null, 80, 10)!;
+    expect(r.score).toBeCloseTo(35, 2);
+    expect(r.confidence).toBe('medium');
+  });
+  it('needs both digital indicators for the digital half', () => {
+    expect(computeInfrastructure(null, 80, null)).toBeNull();
+    expect(computeInfrastructure(3.0, 80, null)!.score).toBe(50);
   });
 });

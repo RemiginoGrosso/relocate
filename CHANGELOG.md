@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.34 - 2026-10-09
+
+Methodology Iteration 31 (project repo, `KNOWLEDGE/03_Research/CHANGELOG.md`). Review finding M6.
+
+### Changed
+- **Infrastructure rebuilt from open World Bank data.** Score = logistics (World Bank LPI infrastructure, 1 to 5) × 0.50 + digital (internet users and fixed broadband per 100 people, from ITU via the World Bank) × 0.50. Replaces an "IMD" score that had been scraped from worldpopulationreview.com and could not be traced, plus five LPI patches. The three indicators refresh monthly with `refresh-world-bank`; `scripts/fetch-infrastructure.ts` writes the seed file `src/lib/seed/infrastructure.json`. Formula in `src/lib/dimension-formulas.ts` (`computeInfrastructure`, with tests) and mirrored in the `recompute-scores` edge function.
+- Largest moves: Mexico 20.8 to 47.8, Saudi Arabia 59.5 to 79.5, South Africa 20.4 to 46.6, Turkey 31.3 to 60.3, Greece 47.9 to 72.5; Panama 57.5 to 45.8, the US 83.0 to 77.4. Taiwan loses its infrastructure score (no World Bank data); Morocco gains one from the digital half only. Default top 10: Croatia and Spain move up, the US from 8th to 10th.
+- Copy: dimension description, indicator labels and tooltips, country-page text, glossary, home-page and methodology source lists now name the World Bank and ITU instead of IMD.
+
+### Removed
+- The scraped IMD infrastructure values are no longer seeded or shown (they stay in `external-indices*.json` for history), and the "estimate" marks for CZ, VN, PA, UY and CR are gone.
+
 ## 0.1.33 - 2026-10-08
 
 Methodology Iteration 30 (project repo, `KNOWLEDGE/03_Research/CHANGELOG.md`). No formula change.

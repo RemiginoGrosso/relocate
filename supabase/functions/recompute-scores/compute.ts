@@ -314,19 +314,24 @@ function computeHealthcare(raw: RawMap): DimensionScore | null {
   };
 }
 
-// Values patched from the World Bank LPI, not IMD: shown as estimates (keep in sync with ESTIMATED_VALUES in src/lib/constants.ts)
-const INFRASTRUCTURE_ESTIMATES = new Set(["CZ", "VN", "PA", "UY", "CR"]);
-
-function computeInfrastructure(raw: RawMap, iso: string): DimensionScore | null {
-  const imd = safeNum(raw["imd.infrastructure_score"]);
-  if (imd == null) return null;
+// Mirrors computeInfrastructure in src/lib/dimension-formulas.ts:
+// LPI infrastructure (1–5) × 0.50 + digital (internet users 60–100 %, fixed broadband 0–50 per 100, averaged) × 0.50.
+function computeInfrastructure(raw: RawMap): DimensionScore | null {
+  const lpi = safeNum(raw["worldbank.lpi_infrastructure"]);
+  const users = safeNum(raw["worldbank.internet_users_pct"]);
+  const bband = safeNum(raw["worldbank.fixed_broadband_per100"]);
+  const logistics = lpi != null ? round2(minMaxNormalise(lpi, 1, 5)!) : null;
+  const internet = users != null ? round2(minMaxNormalise(users, 60, 100)!) : null;
+  const broadband = bband != null ? round2(minMaxNormalise(bband, 0, 50)!) : null;
+  const digital = internet != null && broadband != null ? round2((internet + broadband) / 2) : null;
+  if (logistics == null && digital == null) return null;
 
   return {
     country_id: "",
     dimension_key: "infrastructure",
-    score: imd,
-    confidence: INFRASTRUCTURE_ESTIMATES.has(iso) ? "low" : "high",
-    component_scores: { imd_score: imd },
+    score: logistics != null && digital != null ? round2(logistics * 0.5 + digital * 0.5) : (logistics ?? digital),
+    confidence: logistics != null && digital != null ? "high" : "medium",
+    component_scores: { logistics, digital, internet_users: internet, broadband },
   };
 }
 
@@ -424,7 +429,7 @@ export function computeAllScores(
       computeWarmth(raw),
       computeSchoolCulture(raw),
       computeHealthcare(raw),
-      computeInfrastructure(raw, iso),
+      computeInfrastructure(raw),
       computeReligiousFreedom(raw),
       computeEnglishProficiency(raw, iso),
     ];

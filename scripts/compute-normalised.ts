@@ -3,8 +3,8 @@ import { join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { minMaxNormalise, pisaAcademicNormalise } from '../src/lib/normalisation';
 import { computeClimateScore } from '../src/lib/scoring';
-import { ENGLISH_NATIVE_COUNTRIES, ESTIMATED_VALUES } from '../src/lib/constants';
-import { computePurchasingPower, computeRuleOfLaw, computeSafety } from '../src/lib/dimension-formulas';
+import { ENGLISH_NATIVE_COUNTRIES } from '../src/lib/constants';
+import { computeInfrastructure, computePurchasingPower, computeRuleOfLaw, computeSafety } from '../src/lib/dimension-formulas';
 
 config({ path: join(__dirname, '..', '.env.local') });
 
@@ -255,15 +255,19 @@ async function main() {
       });
     }
 
-    // Infrastructure
-    const imd = safeNum(raw['imd.infrastructure_score']);
-    if (imd != null) {
+    // Infrastructure: World Bank LPI infrastructure + internet users + fixed broadband
+    const infra = computeInfrastructure(
+      safeNum(raw['worldbank.lpi_infrastructure']),
+      safeNum(raw['worldbank.internet_users_pct']),
+      safeNum(raw['worldbank.fixed_broadband_per100']),
+    );
+    if (infra) {
       scores.push({
         country_id: country.id,
         dimension_key: 'infrastructure',
-        score: imd,
-        confidence: ESTIMATED_VALUES['imd.infrastructure_score'].includes(iso) ? 'low' : 'high',
-        component_scores: { imd_score: imd },
+        score: infra.score,
+        confidence: infra.confidence,
+        component_scores: infra.components,
       });
     }
 

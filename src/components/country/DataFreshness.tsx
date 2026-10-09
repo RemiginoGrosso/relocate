@@ -27,7 +27,6 @@ function sourceLabel(source: string): string {
     pisa: 'PISA',
     gpi: 'GPI',
     internations: 'InterNations',
-    imd: 'IMD',
     pew: 'Pew Research',
     ef: 'EF EPI',
     numbeo: 'Numbeo',
