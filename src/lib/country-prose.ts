@@ -367,7 +367,7 @@ function generateEnglishProficiency(
   const isNative = (ENGLISH_NATIVE_COUNTRIES as readonly string[]).includes(country.iso.toUpperCase());
 
   if (isNative) {
-    sentences.push(`${country.name} is a native English-speaking country, scored at 100.`);
+    sentences.push(`English is a main language in ${country.name}, so it is scored at 100.`);
   } else {
     const r = dimRank(country.iso, 'english_proficiency', allCountries);
     if (r) sentences.push(`${country.name} ranks ${ordinal(r.rank)} out of ${r.total} countries for English proficiency, scoring ${fmtScore(dimScore)} out of 100.`);

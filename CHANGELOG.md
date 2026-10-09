@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.35 - 2026-10-09
+
+Methodology Iteration 32 (project repo, `KNOWLEDGE/03_Research/CHANGELOG.md`). Review finding M7, first part.
+
+### Added
+- `scripts/fetch-ef-epi.ts` reads EF's English Proficiency Index page and writes `src/lib/seed/ef-epi.json` with each country's score and edition year. Run once a year after EF publishes (November). A country missing from the new edition keeps its previous-edition score for one year. The seed loads EF scores from this file only (`seedEfEpi`); the hand-typed values in `external-indices.json` are no longer seeded.
+
+### Changed
+- Singapore is scored 100 for English as a country where English is a main language. Wording "English-native" / "(native)" became "English is a main language" / "(main language)" in the dimension description, country pages and FAQ.
+- Luxembourg gets an English score from EF 2024 (576, scored 70.4); EF 2025 left it out. Latvia corrected to EF 2025's 598 (was 599).
+
+### Removed
+- Production's placeholder EF row for the US (value 100) and ten empty EF rows.
+
 ## 0.1.34 - 2026-10-09
 
 Methodology Iteration 31 (project repo, `KNOWLEDGE/03_Research/CHANGELOG.md`). Review finding M6.

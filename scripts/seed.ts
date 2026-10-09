@@ -106,6 +106,14 @@ interface HomicideEntry {
 /** Written by scripts/fetch-infrastructure.ts from the World Bank API. */
 type InfrastructureEntry = { iso_alpha2: string } & Record<string, number | string | null>;
 
+/** Written by scripts/fetch-ef-epi.ts from EF's ranking page. */
+interface EfEpiEntry {
+  iso_alpha2: string;
+  score: number;
+  year: number;
+  source_url: string;
+}
+
 type ExternalIndices = Record<string, Record<string, number>>;
 
 interface ClimateEntry {
@@ -374,6 +382,27 @@ async function seedInfrastructure(data: InfrastructureEntry[], countryIds: Recor
   console.log(`  Infrastructure seeded: ${rows.length} rows.`);
 }
 
+async function seedEfEpi(data: EfEpiEntry[], countryIds: Record<string, string>) {
+  const rows = data
+    .filter((e) => countryIds[e.iso_alpha2])
+    .map((e) => ({
+      country_id: countryIds[e.iso_alpha2],
+      source: 'ef',
+      indicator: 'epi_score',
+      value: e.score,
+      unit: 'score',
+      year: e.year,
+      source_url: e.source_url,
+      fetched_at: '2026-10-09T00:00:00Z',
+    }));
+  console.log(`Seeding ${rows.length} EF EPI rows...`);
+  const { error } = await supabase
+    .from('raw_indices')
+    .upsert(rows, { onConflict: 'country_id,source,indicator,year' });
+  if (error) throw new Error(`EF EPI seed failed: ${error.message}`);
+  console.log(`  EF EPI seeded: ${rows.length} rows.`);
+}
+
 async function seedHaq(data: HaqEntry[], countryIds: Record<string, string>) {
   console.log(`Seeding HAQ Index data for ${data.length} countries...`);
   const rows = data
@@ -466,7 +495,6 @@ async function seedPisa(pisa: PisaEntry[], countryIds: Record<string, string>) {
 // Rows not listed here keep 2023, where the true year has not been established.
 const EXTERNAL_INDEX_YEARS: Record<string, number> = {
   'gpi.gpi_score': 2025,
-  'ef.epi_score': 2025,
   'internations.ease_rank': 2024,
   'worldbank.who_uhc_coverage': 2021,
 };
@@ -490,6 +518,8 @@ async function seedExternalIndices(data: ExternalIndices, countryIds: Record<str
     for (const [key, value] of Object.entries(indicators)) {
       // Infrastructure moved to World Bank sources (Iteration 31); the scraped IMD values are not seeded
       if (key === 'imd.infrastructure_score') continue;
+      // EF EPI comes from ef-epi.json (scripts/fetch-ef-epi.ts)
+      if (key === 'ef.epi_score') continue;
       const [source, indicator] = key.split('.');
       rows.push({
         country_id: countryId,
@@ -548,6 +578,7 @@ async function main() {
   const numbeoCrime = loadJson<NumbeoCrimeEntry[]>('numbeo-crime.json');
   const homicide = loadJson<HomicideEntry[]>('homicide.json');
   const infrastructure = loadJson<InfrastructureEntry[]>('infrastructure.json');
+  const efEpi = loadJson<EfEpiEntry[]>('ef-epi.json');
   const haqIndex = loadJson<HaqEntry[]>('haq-index.json');
   const healthCapacity = loadJson<HealthCapacityEntry[]>('health-capacity.json');
   const pisa = loadJson<PisaEntry[]>('pisa.json');
@@ -568,6 +599,7 @@ async function main() {
   await seedNumbeoCrime(numbeoCrime, countryIds);
   await seedHomicide(homicide, countryIds);
   await seedInfrastructure(infrastructure, countryIds);
+  await seedEfEpi(efEpi, countryIds);
   await seedHaq(haqIndex, countryIds);
   await seedHealthCapacity(healthCapacity, countryIds);
   await seedPisa(pisa, countryIds);

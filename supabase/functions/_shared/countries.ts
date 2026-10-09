@@ -83,8 +83,8 @@ export const COUNTRIES: CountryRef[] = [
  */
 export const WORLD_BANK_EXCLUDED: Set<string> = new Set(["TW"]);
 
-/** English-native countries scored at 100 for English proficiency. */
-export const ENGLISH_NATIVE: Set<string> = new Set(["GB", "IE", "AU", "NZ", "CA", "US"]);
+/** Countries where English is a main language, scored at 100 for English proficiency. */
+export const ENGLISH_NATIVE: Set<string> = new Set(["GB", "IE", "AU", "NZ", "CA", "US", "SG"]);
 
 /**
  * Southern hemisphere countries where "winter" = Jun-Aug.

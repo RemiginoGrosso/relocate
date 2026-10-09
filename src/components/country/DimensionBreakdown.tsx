@@ -270,7 +270,7 @@ export function DimensionBreakdown({ country, rawIndices, climate, selectedCity 
                         <span className="text-xs text-amber-500">(partial)</span>
                       )}
                       {isNativeEnglishOverride && (
-                        <span className="text-xs text-zinc-400">(native)</span>
+                        <span className="text-xs text-zinc-400">(main language)</span>
                       )}
                     </>
                   ) : (

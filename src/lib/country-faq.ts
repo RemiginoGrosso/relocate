@@ -203,7 +203,7 @@ function englishFaq(
   if (isNative) {
     return {
       question: `How widely is English spoken in ${country.name}?`,
-      answer: `${country.name} is a native English-speaking country and is scored at 100 out of 100 for English proficiency.`,
+      answer: `English is a main language in ${country.name}, so it is scored at 100 out of 100 for English proficiency.`,
     };
   }
 

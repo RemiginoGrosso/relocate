@@ -134,15 +134,15 @@ export const DIMENSIONS: DimensionDefinition[] = [
   {
     key: 'english_proficiency',
     name: 'English Proficiency',
-    description: 'Adult English ability as measured by the EF English Proficiency Index. English-native countries are scored at 100.',
+    description: 'Adult English ability as measured by the EF English Proficiency Index. Countries where English is a main language are scored at 100.',
     context: 'For non-native English speakers relocating abroad, the population\'s English ability determines how easily you can navigate daily life, work, and social connections without learning the local language. A high score means English gets you far; a low score means significant language investment.',
-    methodology: 'english_proficiency = ef_epi_normalised. Native countries hardcoded to 100.',
+    methodology: 'english_proficiency = ef_epi_normalised. Countries where English is a main language are set to 100.',
     category: 'lifestyle',
     sources: ['EF English Proficiency Index'],
     defaultWeight: 5,
     sortOrder: 10,
     confidence: 'medium',
-    knownLimitation: 'EF EPI tests people who chose to take a free online test, who are more educated and urban than average, so scores skew upward. Native-English countries are set to 100 rather than measured.',
+    knownLimitation: 'EF EPI tests people who chose to take a free online test, who are more educated and urban than average, so scores skew upward. Countries where English is a main language are set to 100 rather than measured. A country missing from the latest EF edition keeps its previous score for one year.',
   },
 ];
 
@@ -166,7 +166,7 @@ export const SCORE_THRESHOLDS: Record<ScoreTier, number> = {
   poor: 0,
 };
 
-export const ENGLISH_NATIVE_COUNTRIES = ['GB', 'IE', 'AU', 'NZ', 'CA', 'US'] as const;
+export const ENGLISH_NATIVE_COUNTRIES = ['GB', 'IE', 'AU', 'NZ', 'CA', 'US', 'SG'] as const;
 
 export const WARMTH_MISMATCH_THRESHOLD = 30;
 
